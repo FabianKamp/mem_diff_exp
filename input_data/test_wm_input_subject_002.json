@@ -1,0 +1,9 @@
+[
+
+    {
+        "encoding1":   {"theta":  2.603, "file":"images/174-space_shuttle.jpg"},
+        "encoding2":   {"theta":  0.508, "file":"images/191-kettle.jpg"},
+        "encoding3":   {"theta":  4.697, "file":"images/202-ruby.jpg"},
+        "recognition": {"theta":  2.603, "file":"images/174-outlet.jpg"}
+    }
+]

@@ -1,0 +1,58 @@
+.instruction-container {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    height: 80vh; 
+}
+
+.instruction-header {
+    font-size: x-large; 
+    position: absolute; 
+    top: 50px;
+    color:#4682B4; 
+}
+
+.instruction-paragraph {
+    font-size: x-large; 
+    position: absolute; 
+    top: 40%; 
+    transform: translateY(-50%);
+    color: black; 
+    text-align: center;
+    width: 50vw;
+}
+
+.image-object {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+}
+
+.cross-vertical {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 2px;
+    height: 20px;
+    background-color: black;
+}
+
+.cross-horizontal {
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    width: 20px;
+    height: 2px;
+    background-color: black;
+}
+
+.next-trial-btn #jspsych-html-slider-response-next {
+    position: absolute;
+    bottom: 5vh;
+    right: 5vw;
+    transform: translate(-50%, -50%);
+}
