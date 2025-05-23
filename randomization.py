@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import argparse
 import os
+import uuid
 
 parser = argparse.ArgumentParser(description="Randomization script for memory diffusion experiment.")
 parser.add_argument("--subject_number", type=int, default=4, help="Number of subjects")
@@ -46,144 +47,172 @@ def generate_random_angles(n):
     random_angles = np.round(random_angles, 3)
     return random_angles
 
-subject_id = 1
-while subject_id <= subject_number: 
-    # randomize wm and lm images & their order
-    total_trials = wm_trials + lm_trials
-    random_pair_id = np.random.permutation(np.arange(total_trials))
-    
-    # conditions and condition codes 
-    conditions = ["same", "control", "semantic", "perceptual"]
-    condition_codes = {"same": 1, "control": 2, "semantic": 3, "perceptual": 4}
+def generate_token():
+    return str(uuid.uuid4())
 
-    # randomize which images are used for wm and lm
-    wm_pair_id = random_pair_id[:wm_trials]
-    lm_pair_id = random_pair_id[wm_trials:]
-    
-    # checks
-    num_conditions = len(conditions)
-    assert wm_trials%num_conditions == 0, f"Number of trials must be divisible by {num_conditions}"
-    assert lm_trials%num_conditions == 0, f"Number of trials must be divisible by {num_conditions}"
-    
-    # randomize wm condition across trials
-    wm_repeats = wm_trials//num_conditions
-    wm_conditions = conditions * wm_repeats
-    wm_condition_codes = np.random.permutation([condition_codes[wm_conditions[i]] for i in range(wm_trials)])
-    
-    # randomize lm conditions across images
-    lm_repeats = lm_trials//num_conditions
-    lm_conditions = conditions * lm_repeats
-    lm_condition_codes = np.random.permutation([condition_codes[lm_conditions[i]] for i in range(lm_trials)])
-    
-    # randomize when lm images are presented during the wm block
-    lm_encoding_trials = np.random.choice(np.arange(wm_trials), size=lm_trials, replace=False)
+# generate token
+token_csv = os.path.join(out_dir, "test_token.csv")
+if not os.path.isfile(token_csv): 
+    token_df = pd.DataFrame(columns = ["exp_id","var_name","var_value","token"])
+    token_df.to_csv(token_csv, index=False)
+    start_id = 1
+else: 
+    token_df = pd.read_csv(token_csv)
+    start_id = token_df.iloc[-1,2] + 1
 
-    # randomize sequential positions of wm and lm images
-    positions = [{"wm":i, "lm":j} for i in range(workload) for j in range(workload) if i!=j]
-    num_positions = len(positions)
-    assert wm_trials%num_positions == 0, f"Number of trials must be divisible by {num_positions}"
-    position_repeats = wm_trials//num_positions
-    positions = positions * position_repeats
-    randomized_positions = np.random.permutation(positions)
+token_df = []
+for i in range(subject_number): 
+    token = generate_token()
+    token_df.append(dict(
+        exp_id = "mem_diff",
+        var_name = "subject_id", 
+        var_value = start_id + i, 
+        token = token
+    ))
+token_df = pd.DataFrame(token_df)
+token_df.to_csv(token_csv, mode='a', header=False, index=False)
 
-    # generate random angles angles
-    theta = np.array([generate_random_angles(workload) for _ in range(wm_trials)])
+# randomization
+# counter = 0
+# while counter < subject_number: 
+#     # randomize wm and lm images & their order
+#     total_trials = wm_trials + lm_trials
+#     random_pair_id = np.random.permutation(np.arange(total_trials))
     
-    # randomize distractors
-    total_images = wm_trials * workload
-    random_distractors = np.random.permutation(np.arange(total_images - wm_trials - lm_trials)) + 9000
+#     # conditions and condition codes 
+#     conditions = ["same", "control", "semantic", "perceptual"]
+#     condition_codes = {"same": 1, "control": 2, "semantic": 3, "perceptual": 4}
 
-    ## latin square randomization
-    for i in range(num_conditions): 
-        # working memory
-        latin_wm_codes = wm_condition_codes%num_conditions + 1
-        wm_recognition = wm_pair_id + latin_wm_codes * 1000
-        wm_condition_codes = wm_condition_codes + 1
-        wm_input_data = []
-        distractor_pool = random_distractors.copy()
-
-        for i in range(wm_trials):
-            # wm positions
-            wm_position_index = randomized_positions[i]["wm"]
-            
-            trial_data = {
-                "wm_trial_id": i,
-                "subject_id": subject_id,
-                "wm_pair_id": wm_pair_id[i],
-                "wm_position": wm_position_index + 1,
-                "wm_condition": latin_wm_codes[i],
-                "recognition":  wm_recognition[i],
-                "recognition_theta":  theta[i, wm_position_index],
-                "lm_pair_id": 999, 
-                "lm_position": 999
-            }
-            
-            # generate the enoding images
-            images_encoding = np.full(workload, 999)
-            images_encoding[wm_position_index] = wm_pair_id[i] + 1000
-            
-            # add lm image if lm trial
-            if i in lm_encoding_trials:
-                lm_position_index = randomized_positions[i]["lm"]
-                lm_encoding_image = lm_pair_id[lm_encoding_trials==i][0]
-                images_encoding[lm_position_index] = lm_encoding_image
-                trial_data.update({
-                    "lm_pair_id": lm_encoding_image,
-                    "lm_position": lm_position_index + 1
-                })
-            
-            # distractors
-            num_distractors = np.sum(images_encoding == 999)
-            images_encoding[images_encoding == 999] = distractor_pool[:num_distractors]
-            distractor_pool = distractor_pool[num_distractors:]
-            
-            for j in range(workload):
-                trial_data.update({
-                    f"encoding_{j+1:02d}": images_encoding[j],
-                    f"encoding_theta_{j+1:02d}": theta[i,j]
-                })
-            wm_input_data.append(trial_data)    
+#     # randomize which images are used for wm and lm
+#     wm_pair_id = random_pair_id[:wm_trials]
+#     lm_pair_id = random_pair_id[wm_trials:]
     
-        # long term memory data
-        latin_lm_codes = lm_condition_codes%num_conditions + 1
-        lm_recognition = lm_pair_id + latin_lm_codes * 1000
-        lm_condition_codes = lm_condition_codes + 1
+#     # checks
+#     num_conditions = len(conditions)
+#     assert wm_trials%num_conditions == 0, f"Number of wm trials must be divisible by {num_conditions}"
+#     assert lm_trials%num_conditions == 0, f"Number of lm trials must be divisible by {num_conditions}"
+    
+#     # randomize wm condition across trials
+#     wm_repeats = wm_trials//num_conditions
+#     wm_conditions = conditions * wm_repeats
+#     wm_condition_codes = np.random.permutation([condition_codes[wm_conditions[i]] for i in range(wm_trials)])
+    
+#     # randomize lm conditions across images
+#     lm_repeats = lm_trials//num_conditions
+#     lm_conditions = conditions * lm_repeats
+#     lm_condition_codes = np.random.permutation([condition_codes[lm_conditions[i]] for i in range(lm_trials)])
+    
+#     # randomize when lm images are presented during the wm block
+#     lm_encoding_trials = np.random.choice(np.arange(wm_trials), size=lm_trials, replace=False)
+
+#     # randomize sequential positions of wm and lm images
+#     positions = [{"wm":i, "lm":j} for i in range(workload) for j in range(workload) if i!=j]
+#     num_positions = len(positions)
+#     assert wm_trials%num_positions == 0, f"Number of wm trials must be divisible by {num_positions}"
+#     position_repeats = wm_trials//num_positions
+#     positions = positions * position_repeats
+#     randomized_positions = np.random.permutation(positions)
+
+#     # generate random angles angles
+#     theta = np.array([generate_random_angles(workload) for _ in range(wm_trials)])
+    
+#     # randomize distractors
+#     total_images = wm_trials * workload
+#     random_distractors = np.random.permutation(np.arange(total_images - wm_trials - lm_trials)) + 9000
+
+#     ## latin square randomization
+#     for i in range(num_conditions):  
+#         subject_id = start_id + counter        
         
-        lm_input_data = []
-        for i in range(lm_trials):
-            encoding_trial = lm_encoding_trials[i]
-            encoding_position_index = randomized_positions[encoding_trial]["lm"]
-            lm_input_data.append({
-                "lm_trial_id": i,
-                "subject_id": subject_id,
-                "lm_pair_id": lm_pair_id[i],
-                "lm_condition": latin_lm_codes[i],
-                "recognition": lm_recognition[i],
-                "wm_trial_id": encoding_trial,
-                "encoding_position": encoding_position_index + 1
-            })
-        
-        # save 
-        wm_input_data = pd.DataFrame(wm_input_data)
-        lm_input_data = pd.DataFrame(lm_input_data)   
+#         # working memory
+#         latin_wm_codes = wm_condition_codes%num_conditions + 1
+#         wm_recognition = wm_pair_id + latin_wm_codes * 1000
+#         wm_condition_codes = wm_condition_codes + 1
+#         wm_input_data = []
+#         distractor_pool = random_distractors.copy()
 
-        if out_format == "csv": 
-            wm_csv_file_path = os.path.join(out_dir, f"wm_input_subject_{subject_id:03d}.csv")            
-            wm_input_data.to_csv(wm_csv_file_path, index=False)
-            lm_csv_file_path = os.path.join(out_dir, f"lm_input_subject_{subject_id:03d}.csv")
-            lm_input_data.to_csv(lm_csv_file_path, index=False)
-        
-        elif out_format == "json":    
-            wm_json = wm_input_data.to_json(orient='records', indent=4)
-            wm_file_path = os.path.join(out_dir, f"wm_input_subject_{subject_id:03d}.json")
-            with open(wm_file_path, 'w') as wm_file:
-                wm_file.write(wm_json)
-        
-            lm_json = lm_input_data.to_json(orient='records', indent=4)
-            lm_file_path = os.path.join(out_dir, f"lm_input_subject_{subject_id:03d}.json")
-            with open(lm_file_path, 'w') as lm_file:
-                lm_file.write(lm_json)
+#         for i in range(wm_trials):
+#             # wm positions
+#             wm_position_index = randomized_positions[i]["wm"]
+            
+#             trial_data = {
+#                 "wm_trial_id": i,
+#                 "subject_id": subject_id,
+#                 "wm_pair_id": wm_pair_id[i],
+#                 "wm_position": wm_position_index + 1,
+#                 "wm_condition": latin_wm_codes[i],
+#                 "recognition":  wm_recognition[i],
+#                 "recognition_theta":  theta[i, wm_position_index],
+#                 "lm_pair_id": 999, 
+#                 "lm_position": 999
+#             }
+            
+#             # generate the enoding images
+#             images_encoding = np.full(workload, 999)
+#             images_encoding[wm_position_index] = wm_pair_id[i] + 1000
+            
+#             # add lm image if lm trial
+#             if i in lm_encoding_trials:
+#                 lm_position_index = randomized_positions[i]["lm"]
+#                 lm_encoding_image = lm_pair_id[lm_encoding_trials==i][0]
+#                 images_encoding[lm_position_index] = lm_encoding_image
+#                 trial_data.update({
+#                     "lm_pair_id": lm_encoding_image,
+#                     "lm_position": lm_position_index + 1
+#                 })
+            
+#             # distractors
+#             num_distractors = np.sum(images_encoding == 999)
+#             images_encoding[images_encoding == 999] = distractor_pool[:num_distractors]
+#             distractor_pool = distractor_pool[num_distractors:]
+            
+#             for j in range(workload):
+#                 trial_data.update({
+#                     f"encoding_{j+1:02d}": images_encoding[j],
+#                     f"encoding_theta_{j+1:02d}": theta[i,j]
+#                 })
+#             wm_input_data.append(trial_data)    
     
-        # update subject id to the next
-        subject_id += 1
+#         # long term memory data
+#         latin_lm_codes = lm_condition_codes%num_conditions + 1
+#         lm_recognition = lm_pair_id + latin_lm_codes * 1000
+#         lm_condition_codes = lm_condition_codes + 1
+        
+#         lm_input_data = []
+#         for i in range(lm_trials):
+#             encoding_trial = lm_encoding_trials[i]
+#             encoding_position_index = randomized_positions[encoding_trial]["lm"]
+#             lm_input_data.append({
+#                 "lm_trial_id": i,
+#                 "subject_id": subject_id,
+#                 "lm_pair_id": lm_pair_id[i],
+#                 "lm_condition": latin_lm_codes[i],
+#                 "recognition": lm_recognition[i],
+#                 "wm_trial_id": encoding_trial,
+#                 "encoding_position": encoding_position_index + 1
+#             })
+        
+#         # save 
+#         wm_input_data = pd.DataFrame(wm_input_data)
+#         lm_input_data = pd.DataFrame(lm_input_data)   
+
+#         if out_format == "csv": 
+#             wm_csv_file_path = os.path.join(out_dir, f"wm_input_subject_{subject_id:03d}.csv")            
+#             wm_input_data.to_csv(wm_csv_file_path, index=False)
+#             lm_csv_file_path = os.path.join(out_dir, f"lm_input_subject_{subject_id:03d}.csv")
+#             lm_input_data.to_csv(lm_csv_file_path, index=False)
+        
+#         elif out_format == "json":    
+#             wm_json = wm_input_data.to_json(orient='records', indent=4)
+#             wm_file_path = os.path.join(out_dir, f"wm_input_subject_{subject_id:03d}.json")
+#             with open(wm_file_path, 'w') as wm_file:
+#                 wm_file.write(wm_json)
+        
+#             lm_json = lm_input_data.to_json(orient='records', indent=4)
+#             lm_file_path = os.path.join(out_dir, f"lm_input_subject_{subject_id:03d}.json")
+#             with open(lm_file_path, 'w') as lm_file:
+#                 lm_file.write(lm_json)
+        
+#         counter += 1
+    
             

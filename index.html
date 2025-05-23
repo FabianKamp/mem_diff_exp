@@ -61,19 +61,19 @@
     const memory_delay = 3000; //ms
 
     // get & save meta data
-    var prolific_id = jsPsych.data.getURLVariable('PROLIFIC_PID');
-    var study_id = jsPsych.data.getURLVariable('STUDY_ID');
-    var session_id = jsPsych.data.getURLVariable('SESSION_ID');
-    var subject_id = 2
+    // var prolific_id = jsPsych.data.getURLVariable('PROLIFIC_PID');
+    // var study_id = jsPsych.data.getURLVariable('STUDY_ID');
+    // var session_id = jsPsych.data.getURLVariable('SESSION_ID');
+    var subject_id = jsPsych.data.getURLVariable('subject_id')
 
     jsPsych.data.addProperties({
       start : (new Date).toISOString().replace(/z|t/gi,' ').trim(),
-      prolific_id: prolific_id,
+    //   prolific_id: prolific_id,
       subject_id: subject_id,
-      study_id: study_id,
+    //   study_id: study_id,
       OS : window.navigator.platform,
-      prolific_id : prolific_id,
-      session_id: session_id,
+    //   prolific_id : prolific_id,
+    //   session_id: session_id,
       fullscreen_mode: true, 
       radius: radius, 
       memory_delay: memory_delay
