@@ -2,6 +2,9 @@
 <html>
   <head>
     <title>Experiment</title>
+    
+    <script src="jquery/jquery-3.7.1.min.js"></script>
+
     <script src="jspsych/jspsych.js"></script>
     <script src="jspsych/plugin-external-html.js"></script>
     <script src="jspsych/plugin-fullscreen.js"></script>
@@ -11,7 +14,9 @@
     <script src="jspsych/plugin-html-keyboard-response.js"></script>
     <script src="jspsych/plugin-html-slider-response.js"></script>
     <script src="jspsych/plugin-instructions.js"></script>
+    
     <script src="experimentHelper.js"></script>
+    
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
     <link href="jspsych/survey.css" rel="stylesheet" type="text/css" />
     <link href="experiment.css" rel="stylesheet" type="text/css" />
@@ -44,7 +49,7 @@
                             document.location = "/next";
                         } else {
                             // If error, assue local save
-                            jsPsych.data.localSave('mem_diff.csv', 'csv');
+                            jsPsych.data.get().localSave('json', 'mem_diff.json');
                         }
                     }
                 });
@@ -52,7 +57,9 @@
         }
     });
     
+    // TODO change the slider so that its a scale with 3 to right and 3 to the left
     // experiment parameters
+
     const radius = 200; //px
     const encoding_time = 1000; //ms
     const work_load = 3; // number of enc images
@@ -64,7 +71,10 @@
     // var prolific_id = jsPsych.data.getURLVariable('PROLIFIC_PID');
     // var study_id = jsPsych.data.getURLVariable('STUDY_ID');
     // var session_id = jsPsych.data.getURLVariable('SESSION_ID');
+    
+    // TODO reset the subject ID to the original
     var subject_id = jsPsych.data.getURLVariable('subject_id')
+    // subject_id = 4
 
     jsPsych.data.addProperties({
       start : (new Date).toISOString().replace(/z|t/gi,' ').trim(),
@@ -81,7 +91,6 @@
 
     // load wm image data
     subject_id_str = String(subject_id).padStart(3, '0')
-    console.log(subject_id_str)
     var wm_input_data = await fetch(`input_data/test_wm_input_subject_${subject_id_str}.json`)
         .then(response => response.json())
         .catch(error => console.error(error));
@@ -654,10 +663,10 @@
         }
     };
     // push everything into timeline
-    experiment_timeline.push(consent)
-    experiment_timeline.push(enter_fullscreen)
-    experiment_timeline.push(demographics)
-    experiment_timeline.push(wm_instructions)
+    // experiment_timeline.push(consent)
+    // experiment_timeline.push(enter_fullscreen)
+    // experiment_timeline.push(demographics)
+    // experiment_timeline.push(wm_instructions)
     // experiment_timeline.push(check_fullscreen)
     experiment_timeline.push(createWorkingMemoryBlock(wm_input_data)) //practice run
     // experiment_timeline.push(start_wm)
