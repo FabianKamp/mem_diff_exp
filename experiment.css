@@ -15,17 +15,17 @@
 .instruction-paragraph {
     font-size: x-large; 
     position: absolute; 
-    top: 40%; 
+    top: 45%; 
     transform: translateY(-50%);
     color: black; 
     text-align: center;
-    width: 50vw;
+    width: 60vw;
 }
 
 .image-object {
     position: absolute;
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     transform: translate(-50%, -50%);
     border-radius: 10px;
 }
@@ -52,7 +52,103 @@
 
 .next-trial-btn #jspsych-html-slider-response-next {
     position: absolute;
-    bottom: 5vh;
-    right: 5vw;
+    bottom: 30px;
+    right: 30px;
     transform: translate(-50%, -50%);
 }
+
+:root {
+    --color__fill:    rgba(255, 255, 255, 1);
+    --color__default: rgba(0,0,0,.4);
+    --color__hover:   rgba(0,0,0,.6);
+    --color__active:  rgba(0,0,0,.8);
+}
+
+/* thumb */
+.jspsych-slider {
+    &::-webkit-slider-thumb {
+        width: 3em;
+        height: 2em;
+        margin-top: 0;
+        border-radius: 1em;
+        border: 2px solid var(--color__default);
+        background-color: var(--color__fill);
+        cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+        width: 2em;
+        height: 2em;
+        margin-top: 0;
+        border-radius: 2em;
+        border: 2px solid var(--color__default);
+        background-color: var(--color__fill);
+        cursor: pointer;
+    }
+    &::-ms-thumb {
+        width: 2em;
+        height: 2em;
+        margin-top: 0;
+        border-radius: 1em;
+        border: 2px solid var(--color__default);
+        background-color: var(--color__fill);
+        cursor: pointer;
+    }
+}
+
+/* .jspsych-slider::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateY(50%);
+    height: 1em;
+    width: 2px;
+    background-color: var(--color__default);
+    pointer-events: none;
+    z-index: 0; 
+} */
+
+/* track */
+.jspsych-slider {
+    &::-webkit-slider-runnable-track {
+        width: 100%;
+        cursor: pointer;
+        height: 1em;
+        border-bottom: 2px solid var(--color__default);
+        background-color: transparent;
+        /* background: radial-gradient(circle at 50% 50%, var(--color__default) 2px, transparent 2px); */
+        background: linear-gradient(to right, transparent 49.5%, var(--color__default) 50%, transparent 50.5%);
+        background-repeat: no-repeat;
+        border-top-color: transparent;
+        border-left-color: transparent;
+        border-right-color: transparent;
+    }
+    &::-moz-range-track {
+        width: 100%;
+        cursor: pointer;
+        height: 0em;
+        border-bottom: 2px solid var(--color__default);
+        background-color: transparent;
+        border-top-color: transparent;
+        border-left-color: transparent;
+        border-right-color: transparent;
+    }
+    &::-ms-track {
+        background: transparent;
+        border-color: transparent;
+        color: transparent;
+    }
+}
+
+.jspsych-slider:hover{
+    &::-webkit-slider-thumb { border-color: var(--color__hover); }
+    &::-moz-range-thumb     { border-color: var(--color__hover); }
+    &::-ms-thumb            { border-color: var(--color__hover); }
+}
+
+.jspsych-slider:active{
+    &::-webkit-slider-thumb { border-color: var(--color__active); }
+    &::-moz-range-thumb     { border-color: var(--color__active); }
+    &::-ms-thumb            { border-color: var(--color__active); }
+}
+

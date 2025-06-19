@@ -1,2 +1,6 @@
-_archive/
-output_data/
+/_archive/
+/output_data/
+/stimuli/
+/token/
+/input_data/
+/consent_form/
