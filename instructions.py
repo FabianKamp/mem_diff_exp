@@ -5,7 +5,6 @@ import os
 version = "test"
 wm_positions = [1,1,3] # hard coded positions of the wm stimuli
 
-
 def generate_random_angles(n):
     """
     Generate a list of random angles evenly distributed around a circle.

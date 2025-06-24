@@ -24,8 +24,8 @@
 
 .image-object {
     position: absolute;
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     transform: translate(-50%, -50%);
     border-radius: 10px;
 }
@@ -64,91 +64,118 @@
     --color__active:  rgba(0,0,0,.8);
 }
 
-/* thumb */
-.jspsych-slider {
-    &::-webkit-slider-thumb {
-        width: 3em;
-        height: 2em;
-        margin-top: 0;
-        border-radius: 1em;
-        border: 2px solid var(--color__default);
-        background-color: var(--color__fill);
-        cursor: pointer;
-    }
 
-    &::-moz-range-thumb {
-        width: 2em;
-        height: 2em;
-        margin-top: 0;
-        border-radius: 2em;
-        border: 2px solid var(--color__default);
-        background-color: var(--color__fill);
-        cursor: pointer;
-    }
-    &::-ms-thumb {
-        width: 2em;
-        height: 2em;
-        margin-top: 0;
-        border-radius: 1em;
-        border: 2px solid var(--color__default);
-        background-color: var(--color__fill);
-        cursor: pointer;
-    }
+.jspsych-slider {
+  height: 3em;
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  margin: 0 auto;
+  display: block;
 }
 
-/* .jspsych-slider::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    transform: translateY(50%);
-    height: 1em;
-    width: 2px;
-    background-color: var(--color__default);
-    pointer-events: none;
-    z-index: 0; 
-} */
+:root {
+    --slider-dot-size: 0.2em;
+    --color__bright:  rgba(0,0,0,.1);
+    --color__default: rgba(0,0,0,.3);
+    --color__dark:    rgba(0,0,0,.6);
+    --slider-track-bg:
+        linear-gradient(to right, transparent 0%, transparent 5%, var(--color__default) 5%, var(--color__default) 95%, transparent 95%, transparent 100%) 
+            center/100% .5px no-repeat,
+        radial-gradient(circle at 5% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 20% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 35% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 50% center, var(--color__bright) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 65% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 80% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 95% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size));
+}
 
-/* track */
-.jspsych-slider {
-    &::-webkit-slider-runnable-track {
-        width: 100%;
-        cursor: pointer;
-        height: 1em;
-        border-bottom: 2px solid var(--color__default);
-        background-color: transparent;
-        /* background: radial-gradient(circle at 50% 50%, var(--color__default) 2px, transparent 2px); */
-        background: linear-gradient(to right, transparent 49.5%, var(--color__default) 50%, transparent 50.5%);
-        background-repeat: no-repeat;
-        border-top-color: transparent;
-        border-left-color: transparent;
-        border-right-color: transparent;
-    }
-    &::-moz-range-track {
-        width: 100%;
-        cursor: pointer;
-        height: 0em;
-        border-bottom: 2px solid var(--color__default);
-        background-color: transparent;
-        border-top-color: transparent;
-        border-left-color: transparent;
-        border-right-color: transparent;
-    }
-    &::-ms-track {
-        background: transparent;
-        border-color: transparent;
-        color: transparent;
-    }
+.jspsych-slider::-webkit-slider-runnable-track {
+    height: 2em;
+    background: var(--slider-track-bg);
+    background-repeat: no-repeat;
+    border-top: 1px solid var(--color__dark);
+    border-bottom: 1px solid var(--color__dark);
+    border-right: none;
+    border-left: none;
+    border-radius: 0em;
+    box-shadow: none;
+}
+
+.jspsych-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.8em;
+    height: 1.7em;
+    background: white;
+    border: 1px solid var(--color__default);
+    border-radius: 1em;
+    box-shadow: 0 .5em .25em -1px rgba(114,114,114,0.32);
+    margin-top: calc((2em - 1.9em) / 2);
+    z-index: 2;
+}
+
+.jspsych-slider::-moz-range-track {
+    height: 2em;
+    background: var(--slider-track-bg);
+    background-repeat: no-repeat;
+    border-top: 1px solid var(--color__dark);
+    border-bottom: 1px solid var(--color__dark);
+    border-right: none;
+    border-left: none;
+    border-radius: 0em;
+    box-shadow: none;
+}
+
+.jspsych-slider::-moz-range-thumb {
+    width: 1.8em;
+    height: 1.7em;
+    background: white;
+    border: 1px solid var(--color__default);
+    border-radius: 1em;
+    box-shadow: 0 .5em .25em -1px rgba(114,114,114,0.32);
+    position: relative;
+    z-index: 2;
+}
+
+.jspsych-slider::-ms-fill-lower {
+    background: transparent;
+    border: none;
+}
+.jspsych-slider::-ms-fill-upper {
+    background: transparent;
+    border: none;
+}
+.jspsych-slider::-ms-thumb {
+    width: 1.8em;
+    height: 1.7em;
+    background: white;
+    border: 1px solid var(--color__default);
+    border-radius: 1em;
+    box-shadow: 0 .5em .25em -1px rgba(114,114,114,0.32);
+    position: relative;
+    z-index: 2;
+}
+.jspsych-slider::-ms-tooltip {
+    display: none;
+}
+.jspsych-slider::-ms-track {
+    height: 2em;
+    background: var(--slider-track-bg);
+    background-repeat: no-repeat;
+    border-top: 1px solid var(--color__dark);
+    border-bottom: 1px solid var(--color__dark);
+    border-right: none;
+    border-left: none;
+    border-radius: 0em;
+    box-shadow: none;
+    color: transparent;
 }
 
 .jspsych-slider:hover{
-    &::-webkit-slider-thumb { border-color: var(--color__hover); }
-    &::-moz-range-thumb     { border-color: var(--color__hover); }
-    &::-ms-thumb            { border-color: var(--color__hover); }
-}
-
-.jspsych-slider:active{
-    &::-webkit-slider-thumb { border-color: var(--color__active); }
-    &::-moz-range-thumb     { border-color: var(--color__active); }
-    &::-ms-thumb            { border-color: var(--color__active); }
+    &::-webkit-slider-thumb { border-color: var(--color__dark); }
+    &::-moz-range-thumb     { border-color: var(--color__dark); }
+    &::-ms-thumb            { border-color: var(--color__dark); }
 }
 

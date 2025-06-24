@@ -9,10 +9,10 @@ wm_trials = 120
 lm_trials = 56
 
 out_dir = f"input_data/{version}/"
-load = 5 if version != "high-load" else 5
+load = 5 if version != "high-load" else 7
 
 # script start
-if subject_number%4==0:
+if subject_number%4!=0:
     print("Subject number will be higher due to latin square randomization")
           
 if not os.path.exists(out_dir): 
@@ -20,7 +20,8 @@ if not os.path.exists(out_dir):
 
 def get_image_paths(stimuli_folder): 
     image_path = list(glob.glob(os.path.join(stimuli_folder, "**", "*.jpg"), recursive=True))
-    image_path = [os.path.join("stimuli", i.split("stimuli/", 1)[-1]) for i in image_path]
+    image_path = [os.path.join("stimuli", i.split("stimuli/", 1)[-1]) for i in image_path 
+                  if "instruction" not in i]
     image_id = [int(i.split("/")[-1].rstrip(".jpg")) for i in image_path]
     image_paths = pd.DataFrame(dict(image_id=image_id, image_path=image_path)).sort_values(by="image_id")
     return image_paths
@@ -59,7 +60,7 @@ nan = 9999
 counter = 1
 
 while counter < subject_number:    
-    # randomize which images ids are used for wm and lm
+    # randomize images ids for wm and lm
     wm_ids = np.random.permutation(np.arange(wm_trials) +   1)
     lm_ids = np.random.permutation(np.arange(lm_trials) + 201) 
 
@@ -82,8 +83,9 @@ while counter < subject_number:
 
     # randomize distractors
     total_images = wm_trials * load
-    random_distractors = np.random.permutation(np.arange(total_images - wm_trials - lm_trials)+1) + 9000
-    random_distractors = random_distractors
+    random_distractors = np.arange(total_images - wm_trials - lm_trials) + 1
+    random_distractors = [np.random.permutation(random_distractors[i::5]) for i in np.random.permutation(range(5))]
+    random_distractors = np.concat(random_distractors).flatten() + 9000
 
     # assemble encoding images
     encoding_ids = np.zeros((wm_trials, load))
@@ -99,13 +101,19 @@ while counter < subject_number:
     wm_positions += 1 
     lm_positions[lm_positions!=9999] += 1 
 
+    # wm block ids 
+    wm_block_ids = np.ones(wm_trials).astype(int)
+    wm_block_ids[wm_trials//2:] = 2
+
+    # assemble together
     wm_trial_data = dict(
         wm_trial_id = np.arange(wm_trials), 
         wm_id = wm_ids.astype(int),
         wm_position = wm_positions,
         lm_id = lm_ids_long.astype(int),
         lm_position = lm_positions, 
-        recognition_theta = recognition_thetas
+        recognition_theta = recognition_thetas,
+        wm_block_id = wm_block_ids,
     )
     
     for i in range(load):
