@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+    <link href="experiment.css" rel="stylesheet" type="text/css" />
+    
     <title>Consent Form</title>
 </head>
 <body>
@@ -10,14 +14,14 @@
     <p>Please review the consent form below before proceeding.</p>
     <p>You can indicate whether you consent to participate at the bottom of the page.</p>
     <div style="width: 60vw"></div>
-    <embed src="consent_form/HumanEval_consent_FB15012024.pdf" type="application/pdf" width="100%" height="800px" />
+    <embed src="consent_form/consent.pdf" type="application/pdf" width="100%" height="800px" />
     
 </div>
     <p style="text-align: left; margin-bottom: 1px"><input type="checkbox" id="consent_checkbox" /> 
-        I have read and consent the consent form above.</p>
+        I have read and consent the form above.</p>
     <p style="text-align: left; margin-top: 1px;"><input type="checkbox" id="no_consent_checkbox" /> 
         I do not consent.</p>
-    <button id="continue_button" style="margin-bottom: 20px;">Continue</button>
+    <button class="jspsych-btn" id="continue_button" style="margin-bottom: 20px;">Continue</button>
 
     <script>
         document.getElementById('continue_button').addEventListener('click', function() {

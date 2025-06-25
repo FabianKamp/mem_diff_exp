@@ -5,6 +5,7 @@ import numpy as np
 from datetime import datetime
 
 version = "test"
+sequential = 0
 input_dir = f"input_data/{version}"
 
 def generate_token():
@@ -25,12 +26,18 @@ def generate_token():
         var_value = version, 
         token = token
     ))
+
+    var3 = pd.DataFrame(dict(
+        exp_id = "mem_diff", 
+        var_name = "seq", 
+        var_value = sequential, 
+        token = token
+    ))
     
-    token_df = pd.concat([var1, var2])
+    token_df = pd.concat([var1, var2, var3])
 
     date = datetime.now().strftime("%Y%m%d")
     token_csv = os.path.join("token", f"token_{date}.csv")
-
 
     token_df.to_csv(token_csv, index=False)
 

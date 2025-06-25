@@ -3,8 +3,10 @@ import pandas as pd
 import os
 import glob
 
+# TODO make testing data for 20 subjects
+
 version = "test" # or "high-load"
-subject_number = 16
+subject_number = 20
 wm_trials = 120
 lm_trials = 56
 
