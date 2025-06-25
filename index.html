@@ -77,8 +77,11 @@
 
     // TODO read version from URL
     // var version = jsPsych.data.getURLVariable('version')
-    var version = "test"
-    var sequential = (jsPsych.data.getURLVariable('seq') == 0) ? false : true;
+    var version = "low-load"
+    
+    // TODO read from URL
+    //var sequential = (jsPsych.data.getURLVariable('seq') == 0) ? false : true;
+    var sequential = false
 
     const load = (version === "high-load") ? 7 : 5; // number of enc images
 
@@ -732,7 +735,7 @@
                     data.stimulus = file
                     data.theta = theta
                     data.wm_trial_id = jsPsych.evaluateTimelineVariable('wm_trial_id')
-                    data.trial_type = "wm-encoding";
+                    data.trial_type = "encoding";
                     data.timestamp = new Date().toLocaleTimeString()
                 }
             })
@@ -1043,31 +1046,30 @@
         return {timeline:dt_timeline};
     }
     
-
     // push everything into timeline
     var experiment_timeline = [];
 
-    // experiment_timeline.push(consent)
-    // experiment_timeline.push(enter_fullscreen)
-    // experiment_timeline.push(demographics)
+    experiment_timeline.push(consent)
+    experiment_timeline.push(enter_fullscreen)
+    experiment_timeline.push(demographics)
 
-    // experiment_timeline.push(wm_instruction)
-    // experiment_timeline.push(check_fullscreen)
-    // experiment_timeline.push(createWM(practice_input_data))
+    experiment_timeline.push(wm_instruction)
+    experiment_timeline.push(check_fullscreen)
+    experiment_timeline.push(createWM(practice_input_data))
 
-    // experiment_timeline.push(start_wm)
-    // experiment_timeline.push(check_fullscreen)
-    // experiment_timeline.push(createWM(wm_input_data_block1))
+    experiment_timeline.push(start_wm)
+    experiment_timeline.push(check_fullscreen)
+    experiment_timeline.push(createWM(wm_input_data_block1))
 
-    // experiment_timeline.push(break_trial)
-    // experiment_timeline.push(check_fullscreen)
+    experiment_timeline.push(break_trial)
+    experiment_timeline.push(check_fullscreen)
     
-    // experiment_timeline.push(countdown(5))
-    // experiment_timeline.push(createWM(wm_input_data_block2))
+    experiment_timeline.push(countdown(5))
+    experiment_timeline.push(createWM(wm_input_data_block2))
 
-    // experiment_timeline.push(distractor_instructions)
-    // experiment_timeline.push(check_fullscreen)
-    // experiment_timeline.push(createDistractorTask())
+    experiment_timeline.push(distractor_instructions)
+    experiment_timeline.push(check_fullscreen)
+    experiment_timeline.push(createDistractorTask())
 
     experiment_timeline.push(lm_instructions)
     experiment_timeline.push(start_lm)

@@ -4,7 +4,7 @@ import uuid
 import numpy as np
 from datetime import datetime
 
-version = "test"
+version = "low-load"
 sequential = 0
 input_dir = f"input_data/{version}"
 
