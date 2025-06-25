@@ -2,6 +2,7 @@ import os
 import pandas as pd 
 import uuid
 import numpy as np
+from datetime import datetime
 
 version = "test"
 input_dir = f"input_data/{version}"
@@ -27,11 +28,9 @@ def generate_token():
     
     token_df = pd.concat([var1, var2])
 
-    i = 1
-    while True:
-        token_csv = os.path.join("token", f"token_{i:02d}.csv")
-        if not os.path.exists(token_csv): break
-        i += 1
+    date = datetime.now().strftime("%Y%m%d")
+    token_csv = os.path.join("token", f"token_{date}.csv")
+
 
     token_df.to_csv(token_csv, index=False)
 

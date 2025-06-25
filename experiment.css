@@ -15,11 +15,11 @@
 .instruction-paragraph {
     font-size: x-large; 
     position: absolute; 
-    top: 45%; 
+    top: 40%; 
     transform: translateY(-50%);
     color: black; 
     text-align: center;
-    width: 60vw;
+    width: 75%;
 }
 
 .image-object {
@@ -76,19 +76,21 @@
 
 :root {
     --slider-dot-size: 0.2em;
-    --color__bright:  rgba(0,0,0,.1);
-    --color__default: rgba(0,0,0,.3);
+    --color__default: rgba(0, 0, 0, 0.2);
+    --color__center:  rgba(0,0,0,.05);
+    --color__bright:    rgba(0,0,0,.2);
+    --color__medium:    rgba(0,0,0,.4);
     --color__dark:    rgba(0,0,0,.6);
     --slider-track-bg:
-        linear-gradient(to right, transparent 0%, transparent 5%, var(--color__default) 5%, var(--color__default) 95%, transparent 95%, transparent 100%) 
-            center/100% .5px no-repeat,
-        radial-gradient(circle at 5% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
-        radial-gradient(circle at 20% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
-        radial-gradient(circle at 35% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
-        radial-gradient(circle at 50% center, var(--color__bright) var(--slider-dot-size), transparent var(--slider-dot-size)),
-        radial-gradient(circle at 65% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
-        radial-gradient(circle at 80% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
-        radial-gradient(circle at 95% center, var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size));
+        linear-gradient(to right, transparent 0%, transparent 5%, var(--color__default) 5%, var(--color__default) 95%, 
+            transparent 95%, transparent 100%) center/100% .5px no-repeat,
+        radial-gradient(circle at 5% center, var(--color__dark) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 20% center, var(--color__medium) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 35% center, var(--color__bright) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 50% center, var(--color__center) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 65% center, var(--color__bright) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 80% center, var(--color__medium) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 95% center, var(--color__dark) var(--slider-dot-size), transparent var(--slider-dot-size));
 }
 
 .jspsych-slider::-webkit-slider-runnable-track {
@@ -109,7 +111,7 @@
     width: 1.8em;
     height: 1.7em;
     background: white;
-    border: 1px solid var(--color__default);
+    border: 1.5px solid var(--color__default);
     border-radius: 1em;
     box-shadow: 0 .5em .25em -1px rgba(114,114,114,0.32);
     margin-top: calc((2em - 1.9em) / 2);
