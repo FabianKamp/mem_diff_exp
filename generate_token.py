@@ -5,7 +5,8 @@ import numpy as np
 from datetime import datetime
 
 version = "low-load"
-sequential = 0
+sequential = np.ones(20)
+sequential[:10] = 0
 input_dir = f"input_data/{version}"
 
 def generate_token():

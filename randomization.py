@@ -5,7 +5,7 @@ import glob
 
 # TODO make testing data for 20 subjects
 
-version = "low-load" # or "high-load"
+version = "high-load" # or "high-load"
 subject_number = 20
 wm_trials = 120
 lm_trials = 56

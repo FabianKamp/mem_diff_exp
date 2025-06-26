@@ -17,7 +17,6 @@
     <script src="jspsych/plugin-instructions.js"></script>
     <script src="jspsych/plugin-preload.js"></script>
     
-    <script src="experiment.js"></script>
     <script src="experimentHelper.js"></script>
     
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
@@ -60,8 +59,7 @@
     });
 
     // experiment parameters
-    const radius = 180; //px
-    const encoding_time = 2000; //1000; //ms
+    const radius = 220; //px
     const inter_trial_delay = 1000; //ms (1000 has a good feel)
     const inter_img_delay = 500; //ms
     const memory_delay = 5000; //ms
@@ -82,7 +80,8 @@
     // TODO read from URL
     //var sequential = (jsPsych.data.getURLVariable('seq') == 0) ? false : true;
     var sequential = false
-
+    
+    const encoding_time = (sequential) ? 400 : 2000; //ms
     const load = (version === "high-load") ? 7 : 5; // number of enc images
 
     // add meta data
@@ -160,8 +159,8 @@
                 <strong>remain in fullscreen mode during the entire experiment</strong>.
                 <br><br>
                 Once the experiment is over, you will be redirected to Prolific automatically. 
-                <br>
-                Please, don\'t close the experiment until this happens.</br><br><br>
+                Please, don\'t close the experiment until this happens.
+                </br><br><br>
                 To enter fullscreen mode and <span>continue</span>, please click <span style="font-style: italic;">Continue</span>.
             </p>
         </div>`,
@@ -244,6 +243,75 @@
         }};
 
     // INSTRUCTIONS
+    // change encoding slide depending on the load condition
+    if (version=="high-load") {
+        var instruction_coord = [
+            -171.91, -102.21,  
+            138.02,  -144.75,  
+            199.23,    17.58, 
+            -27.19,  -198.14,  
+            -187.14, 70.57,  
+            -61.43,  190.33,  
+            110.41,  166.76
+        ]
+    } else {
+        var instruction_coord = [
+            -150.15,    132.12,   
+            199.13,     -18.61, 
+            -172.11,    -101.87,   
+            43.77,      -195.15,  
+            79.32,      183.6 
+        ]
+    }
+
+    encoding_slide =
+        `<div class="instruction-container">
+            <p class="instruction-header"><strong>Memorize</strong></p>
+            <div class="image-container-1"> 
+                <img src="stimuli/instructions/instruction_slide/enc1.jpg" class="image-object" 
+                style="left: calc(50% - ${instruction_coord[0]}px); top: calc(50% + ${instruction_coord[1]}px);"/>
+            </div>
+            <div class="image-container-2">    
+                <img src="stimuli/instructions/instruction_slide/enc2.jpg" class="image-object" 
+                style="left: calc(50% - ${instruction_coord[2]}px); top: calc(50% + ${instruction_coord[3]}px);"/>
+            </div>
+            <div class="image-container-3"> 
+                <img src="stimuli/instructions/instruction_slide/enc3.jpg" class="image-object" 
+                style="left: calc(50% - ${instruction_coord[4]}px); top: calc(50% + ${instruction_coord[5]}px);"/>
+            </div>
+            <div class="image-container-4"> 
+                <img src="stimuli/instructions/instruction_slide/enc4.jpg" class="image-object" 
+                style="left: calc(50% - ${instruction_coord[6]}px); top: calc(50% + ${instruction_coord[7]}px);"/>
+            </div>
+            <div class="image-container-5"> 
+                <img src="stimuli/instructions/instruction_slide/enc5.jpg" class="image-object" 
+                style="left: calc(50% - ${instruction_coord[8]}px); top: calc(50% + ${instruction_coord[9]}px);"/>
+            </div>`
+    
+    if (version == "high-load") {
+       encoding_slide += 
+            `<div class="image-container-4"> 
+                    <img src="stimuli/instructions/instruction_slide/enc6.jpg" class="image-object" 
+                    style="left: calc(50% - ${instruction_coord[10]}px); top: calc(50% + ${instruction_coord[11]}px);"/>
+                </div>
+                <div class="image-container-5"> 
+                    <img src="stimuli/instructions/instruction_slide/enc7.jpg" class="image-object" 
+                    style="left: calc(50% - ${instruction_coord[12]}px); top: calc(50% + ${instruction_coord[13]}px);"/>
+            </div>` 
+    }
+
+    var sequential_text = (sequential) ? `sequentially` : ``
+    encoding_slide += 
+        `<div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
+            <p class="instruction-paragraph" style="position: absolute; top: 85%; font-size:large; width: 750px">
+                <strong>1.</strong> We will ask you to <strong>memorize images</strong>. 
+                The images will be presented ${sequential_text} at random positions on your display (see above).
+            </p>
+            <p style="position: absolute; bottom: 10px; font-size: medium; color:#4682B4;">
+                To continue press <strong>right arrow</strong>.
+            </p>
+        </div>`
+
     var wm_instruction = {
         type: jsPsychInstructions,
         key_forward: 'ArrowRight',
@@ -265,45 +333,12 @@
                 </p>
             </div>`
             ],
-            [
-            `<div class="instruction-container">
-                <p class="instruction-header"><strong>Memorize</strong></p>
-                <div class="image-container-1"> 
-                    <img src="stimuli/instructions/instruction_slide/enc1.jpg" class="image-object" 
-                    style="top: calc(50% - ${179.83}px); left: calc(50% + ${7.88}px);"/>
-                </div>
-                <div class="image-container-2">    
-                    <img src="stimuli/instructions/instruction_slide/enc2.jpg" class="image-object" 
-                    style="top: calc(50% - ${63.}px); left: calc(50% + ${-168.61}px);"/>
-                </div>
-                <div class="image-container-3"> 
-                    <img src="stimuli/instructions/instruction_slide/enc3.jpg" class="image-object" 
-                    style="top: calc(50% - ${-150.11}px); left: calc(50% + ${99.34}px);"/>
-                </div>
-                <div class="image-container-4"> 
-                    <img src="stimuli/instructions/instruction_slide/enc4.jpg" class="image-object" 
-                    style="top: calc(50% - ${48.01}px); left: calc(50% + ${173.48}px);"/>
-                </div>
-                <div class="image-container-5"> 
-                    <img src="stimuli/instructions/instruction_slide/enc5.jpg" class="image-object" 
-                    style="top: calc(50% - ${-140.82}px); left: calc(50% + ${-112.11}px);"/>
-                </div>
-                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                
-                <p class="instruction-paragraph" style="position: absolute; top: 82%; font-size:large; width: 750px">
-                    <strong>1.</strong> We will ask you to <strong>memorize images</strong>. The images will be 
-                    presented sequentially at random positions on your display (see above).
-                </p>
-                <p style="position: absolute; bottom: 10px; font-size: medium; color:#4682B4;">
-                    To continue press <strong>right arrow</strong>.
-                </p>
-            </div>`
-            ],
+            encoding_slide,
             [
             `<div class="instruction-container">
                 <p class="instruction-header"><strong>Delay</strong></p>
                 <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>       
-                <p class="instruction-paragraph" style="position: absolute; top: 82%; font-size:large; width: 750px">
+                <p class="instruction-paragraph" style="position: absolute; top: 85%; font-size:large; width: 750px">
                     <strong>2.</strong> The image presentation will be followed by a <strong>short delay</strong>. 
                     The delay will only take a couple of seconds. Please, focus on the cross on the screen during the delay.
                 </p>
@@ -316,11 +351,11 @@
             `<div class="instruction-container">
                 <p class="instruction-header"><strong>Is this the same image as before?</strong></p>
                 <div class="image-container-4"> 
-                    <img src="stimuli/instructions/instruction_slide/enc4.jpg" class="image-object" 
-                    style="top: calc(50% - ${48.01}px); left: calc(50% + ${173.48}px);"/>
+                    <img src="stimuli/instructions/instruction_slide/recog.jpg" class="image-object" 
+                    style="left: calc(50% - ${instruction_coord[6]}px); top: calc(50% + ${instruction_coord[7]}px);"/>
                 </div>
                 <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                <p class="instruction-paragraph" style="position: absolute; top: 82%; font-size:large; width: 750px">
+                <p class="instruction-paragraph" style="position: absolute; top: 85%; font-size:large; width: 750px">
                     <strong>3.</strong> After the delay you will again see an image on your display. 
                     We will ask you if this is the <strong>same image as before at this position</strong>. 
                 </p>
@@ -333,8 +368,8 @@
             `<div class="instruction-container">
                 <p class="instruction-header"><strong>Is this the same image as before?</strong></p>
                 <div class="image-container-4"> 
-                    <img src="stimuli/instructions/instruction_slide/enc4.jpg" class="image-object" 
-                    style="top: calc(50% - ${48.01}px); left: calc(50% + ${173.48}px); opacity: 0.4;"/>
+                    <img src="stimuli/instructions/instruction_slide/recog.jpg" class="image-object" 
+                    style="left: calc(50% - ${instruction_coord[6]}px); top: calc(50% + ${instruction_coord[7]}px); opacity: 0.4;"/>
                 </div>
                 <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
                 
@@ -764,7 +799,7 @@
                 require_movement: false,
                 // slider_start: Math.floor(Math.random() * 101),
                 slider_start: 50,
-                slider_width: 250,
+                slider_width: 280,
                 min: 5,
                 max: 95,
                 step: 15,
@@ -1049,9 +1084,9 @@
     // push everything into timeline
     var experiment_timeline = [];
 
-    experiment_timeline.push(consent)
-    experiment_timeline.push(enter_fullscreen)
-    experiment_timeline.push(demographics)
+    // experiment_timeline.push(consent)
+    // experiment_timeline.push(enter_fullscreen)
+    // experiment_timeline.push(demographics)
 
     experiment_timeline.push(wm_instruction)
     experiment_timeline.push(check_fullscreen)
