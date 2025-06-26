@@ -70,16 +70,16 @@
     // var session_id = jsPsych.data.getURLVariable('SESSION_ID');
 
     // TODO reset the subject ID to the original 
-    // var subject_id = jsPsych.data.getURLVariable('subject_id')
-    var subject_id = 1
+    var subject_id = jsPsych.data.getURLVariable('subject_id')
+    // var subject_id = 1
 
     // TODO read version from URL
-    // var version = jsPsych.data.getURLVariable('version')
-    var version = "low-load"
+    var version = jsPsych.data.getURLVariable('version')
+    // var version = "low-load"
     
     // TODO read from URL
-    //var sequential = (jsPsych.data.getURLVariable('seq') == 0) ? false : true;
-    var sequential = false
+    var sequential = (jsPsych.data.getURLVariable('seq') == 0) ? false : true;
+    // var sequential = false
     
     const encoding_time = (sequential) ? 400 : 2000; //ms
     const load = (version === "high-load") ? 7 : 5; // number of enc images
