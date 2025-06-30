@@ -54,7 +54,7 @@
                     }
                 });
             })
-            window.location.href = "https://app.prolific.com/"
+            // window.location.href = "https://app.prolific.com/"
         }
     });
 
@@ -63,11 +63,6 @@
     const inter_trial_delay = 1000; //ms (1000 has a good feel)
     const inter_img_delay = 500; //ms
     const memory_delay = 5000; //ms
-
-    // get & save meta data
-    // var prolific_id = jsPsych.data.getURLVariable('PROLIFIC_PID');
-    // var study_id = jsPsych.data.getURLVariable('STUDY_ID');
-    // var session_id = jsPsych.data.getURLVariable('SESSION_ID');
 
     // TODO reset the subject ID to the original 
     var subject_id = jsPsych.data.getURLVariable('subject_id')
