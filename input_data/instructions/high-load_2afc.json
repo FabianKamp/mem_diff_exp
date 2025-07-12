@@ -7,7 +7,7 @@
         "encoding_file_5":"stimuli\/instructions\/practice_001\/enc5.jpg",
         "encoding_file_6":"stimuli\/instructions\/practice_001\/enc6.jpg",
         "encoding_file_7":"stimuli\/instructions\/practice_001\/enc7.jpg",
-        "wm_recognition_file":"stimuli\/instructions\/practice_001\/recog.jpg",
+        "wm_recognition_file":"stimuli\/instructions\/practice_001\/recog_2afc.jpg",
         "encoding_theta_1":4.869,
         "encoding_theta_2":1.278,
         "encoding_theta_3":5.766,
@@ -19,10 +19,11 @@
         "wm_trial_id":9999,
         "wm_id":9999,
         "wm_condition":9999,
-        "wm_position":1,
+        "wm_position":2,
         "lm_position":9999,
-        "trial_type":"practice",
-        "version":"test"
+        "trial_type":"practice", 
+        "left_correct":1
+        
     },
     {
         "encoding_file_1":"stimuli\/instructions\/practice_002\/enc1.jpg",
@@ -32,7 +33,7 @@
         "encoding_file_5":"stimuli\/instructions\/practice_002\/enc5.jpg",
         "encoding_file_6":"stimuli\/instructions\/practice_002\/enc6.jpg",
         "encoding_file_7":"stimuli\/instructions\/practice_002\/enc7.jpg",
-        "wm_recognition_file":"stimuli\/instructions\/practice_002\/recog.jpg",
+        "wm_recognition_file":"stimuli\/instructions\/practice_002\/recog_2afc.jpg",
         "encoding_theta_1":2.762,
         "encoding_theta_2":3.66,
         "encoding_theta_3":0.07,
@@ -44,10 +45,10 @@
         "wm_trial_id":9999,
         "wm_id":9999,
         "wm_condition":9999,
-        "wm_position":1,
+        "wm_position":2,
         "lm_position":9999,
         "trial_type":"practice",
-        "version":"test"
+        "left_correct":0
     },
     {
         "encoding_file_1":"stimuli\/instructions\/practice_003\/enc1.jpg",
@@ -57,7 +58,7 @@
         "encoding_file_5":"stimuli\/instructions\/practice_003\/enc5.jpg",
         "encoding_file_6":"stimuli\/instructions\/practice_003\/enc6.jpg",
         "encoding_file_7":"stimuli\/instructions\/practice_003\/enc7.jpg",
-        "wm_recognition_file":"stimuli\/instructions\/practice_003\/recog.jpg",
+        "wm_recognition_file":"stimuli\/instructions\/practice_003\/recog_2afc.jpg",
         "encoding_theta_1":2.866,
         "encoding_theta_2":5.559,
         "encoding_theta_3":3.763,
@@ -69,9 +70,9 @@
         "wm_trial_id":9999,
         "wm_id":9999,
         "wm_condition":9999,
-        "wm_position":3,
+        "wm_position":4,
         "lm_position":9999,
-        "trial_type":"practice",
-        "version":"test"
+        "trial_type":"practice", 
+        "left_correct":1
     }
 ]

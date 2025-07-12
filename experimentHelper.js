@@ -1,6 +1,6 @@
-function convert2cartesian(radius, theta) {
-    const x = radius * Math.cos(theta);
-    const y = radius * Math.sin(theta);
+function convert2cartesian(rx, ry, theta) {
+    const x = rx * Math.cos(theta);
+    const y = ry * Math.sin(theta);
     return {x:x,y:y};
 }
 

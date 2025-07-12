@@ -1,6 +1,7 @@
 /_archive/
 /output_data/
 /stimuli/
+/stimuli.zip
+/output_check.ipynb
 /token/
-/input_data/
-/consent_form/
+/docs/
