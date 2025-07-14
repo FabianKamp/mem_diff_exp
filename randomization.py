@@ -3,14 +3,14 @@ import pandas as pd
 import os
 import glob
 
-load_condition = "high-load"
+load_condition = "low-load"
 response_format = "2afc"
 version = "_".join([load_condition, response_format])
 
 # TODO change the number of trials back to the original values
 subject_number = 20
-wm_trials = 48 # or 120
-lm_trials = 24 # or 54 # or 56
+wm_trials = 120 #48 # or 120
+lm_trials = 54 # 24 # or 54 # or 56
 
 out_dir = f"input_data/{version}/"
 load = 5 if load_condition != "high-load" else 7
@@ -66,7 +66,7 @@ counter = 1
 while counter < subject_number:    
     # randomize images ids for wm and lm
     wm_ids = np.random.permutation(np.arange(wm_trials) +   1)
-    lm_ids = np.random.permutation(np.arange(lm_trials) + 201) 
+    lm_ids = np.random.permutation(np.arange(lm_trials) + 201) # lm items have index over 200
 
     wm_encoding = wm_ids + 1000
     lm_encoding = lm_ids + 1000
@@ -105,9 +105,11 @@ while counter < subject_number:
     wm_positions += 1 
     lm_positions[lm_positions!=9999] += 1 
 
-    # wm block ids 
+    # block ids 
     wm_block_ids = np.ones(wm_trials).astype(int)
     wm_block_ids[wm_trials//2:] = 2
+    lm_block_ids = np.ones(lm_trials).astype(int)
+    lm_block_ids[lm_encoding_trials>=wm_trials//2] = 2
 
     # assemble together
     wm_trial_data = dict(
@@ -135,7 +137,8 @@ while counter < subject_number:
         lm_trial_id = np.arange(lm_trials), 
         lm_id = lm_ids,
         lm_encoding_file = lm_encoding_files,
-        encoding_trial_id = lm_encoding_trials
+        encoding_trial_id = lm_encoding_trials,
+        lm_block_id = lm_block_ids,
     )
 
     ## latin square randomization of conditions/recognition images

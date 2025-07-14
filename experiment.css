@@ -64,9 +64,9 @@
 
 .next-trial-btn #jspsych-html-slider-response-next {
     position: absolute;
-    bottom: 4%;
+    top: 88%;
     /* right: 20%; */
-    left: calc(50% + 250px);
+    left: calc(50% + 200px);
     transform: translate(-50%, -50%);
 }
 
