@@ -1,40 +1,95 @@
 .instruction-container {
-    display: flex;
-    flex-direction: column; 
-    align-items: flex-start;
-    align-items: center; 
-    height: 80vh; 
+    position: static;
+    width: 80%;
+    height: 100%; 
 }
 
 .instruction-header {
+    font-family: 'Courier New', monospace;
     font-size: x-large; 
     position: absolute; 
     top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
     color:#4682B4; 
 }
 
 .instruction-paragraph {
-    font-size: x-large; 
+    font-family: 'Courier New', monospace;
+    font-size: large; 
     position: absolute; 
-    top: 40%; 
-    transform: translateY(-50%);
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
     color: black; 
     text-align: left;
-    width: 75%;
+    width: 600px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(70, 130, 180, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.instruction-paragraph-left {
+    font-family: 'Courier New', monospace;
+    font-size: large; 
+    position: absolute; 
+    top: 15%; 
+    left: 3%;
+    color: black; 
+    text-align: justify;
+    width: 250px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(70, 130, 180, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.continue-prompt {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: large;
+    font-family: 'Courier New', monospace;
+    color: #4682B4;
+    z-index: 1000;
 }
 
 .image-object {
     position: absolute;
-    width: 100px;
-    height: 100px;
+    width: 130px;
+    height: 130px;
     transform: translate(-50%, -50%);
     border-radius: 10px;
 }
 
+.image-button {
+    position: absolute;
+    width: 100%; 
+    height: 100%; 
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    transition: filter 0.3s; 
+}
+
+.image-button:hover {
+    filter: brightness(85%);
+}
+
+.image-button:active {
+    transform: translate(-50%, -50%) scale(0.95); /* Slight shrink on click */
+}
+
 .square {
     position:absolute;
-    width: 100px;
-    height: 100px;
+    width: 130px;
+    height: 130px;
     transform: translate(-50%, -50%);
     border-radius: 10px;
     background-color: transparent;
@@ -66,7 +121,6 @@
     position: absolute;
     top: 88%;
     /* right: 20%; */
-    left: calc(50% + 200px);
     transform: translate(-50%, -50%);
 }
 
@@ -77,29 +131,29 @@
     --color__active:  rgba(0,0,0,.8);
 }
 
-
 .jspsych-slider {
-  height: 3em;
+  height: 5em; /* Increased from 3em */
   -webkit-appearance: none;
   appearance: none;
   position: relative;
   margin: 0 auto;
   display: block;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
 }
 
 :root {
-    --slider-dot-size: 0.2em;
+    --slider-dot-size: 0.4em; /* Increased from 0.2em */
     --color__default:   rgba(0, 0, 0, 0.2);
-    --color__bright:    rgba(200, 200, 200, 1);
-    --color__medium:    rgba(120, 120, 120, 1);
-    --color__dark:      rgba(50, 50, 50, 1);
+    --color__bright:    rgba(255, 255, 255, 1); /* Changed to white */
+    --color__medium:    rgba(120, 120, 120, 1); /* Back to original */
+    --color__dark:      rgba(50, 50, 50, 1); /* Back to original */
     --slider-track-bg:
-        radial-gradient(circle at 5% center, var(--color__dark) var(--slider-dot-size), transparent var(--slider-dot-size)),
-        radial-gradient(circle at 20% center, var(--color__medium) var(--slider-dot-size), transparent var(--slider-dot-size)),
-        radial-gradient(circle at 35% center, var(--color__bright) var(--slider-dot-size), transparent var(--slider-dot-size)),
-        radial-gradient(circle at 65% center, var(--color__bright) var(--slider-dot-size), transparent var(--slider-dot-size)),
-        radial-gradient(circle at 80% center, var(--color__medium) var(--slider-dot-size), transparent var(--slider-dot-size)),
-        radial-gradient(circle at 95% center, var(--color__dark) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 5% center, var(--color__bright) calc(var(--slider-dot-size) * 0.8), var(--color__default) calc(var(--slider-dot-size) * 0.8), var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 20% center, var(--color__bright) calc(var(--slider-dot-size) * 0.8), var(--color__default) calc(var(--slider-dot-size) * 0.8), var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 35% center, var(--color__bright) calc(var(--slider-dot-size) * 0.8), var(--color__default) calc(var(--slider-dot-size) * 0.8), var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 65% center, var(--color__bright) calc(var(--slider-dot-size) * 0.8), var(--color__default) calc(var(--slider-dot-size) * 0.8), var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 80% center, var(--color__bright) calc(var(--slider-dot-size) * 0.8), var(--color__default) calc(var(--slider-dot-size) * 0.8), var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
+        radial-gradient(circle at 95% center, var(--color__bright) calc(var(--slider-dot-size) * 0.8), var(--color__default) calc(var(--slider-dot-size) * 0.8), var(--color__default) var(--slider-dot-size), transparent var(--slider-dot-size)),
         linear-gradient(to right, transparent 0%, transparent 5%, var(--color__default) 5%, var(--color__default) 95%, 
             transparent 95%, transparent 100%) center/100% .5px no-repeat, 
         linear-gradient(to bottom, transparent 0%, transparent 20%, var(--color__default) 20%, var(--color__default) 80%, 
@@ -110,49 +164,59 @@
     }
 
 .jspsych-slider::-webkit-slider-runnable-track {
-    height: 2em;
+    height: 3.5em; /* Increased from 2em */
     background: var(--slider-track-bg);
     background-repeat: no-repeat;
-    border-top: 1.5px solid var(--color__default);
-    border-bottom: 1.5px solid var(--color__default);
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
     border-right: none;
     border-left: none;
-    border-radius: 0em;
-    box-shadow: none;
+    border-radius: 0.3em;
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.25),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.7);
 }
 
 .jspsych-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 1.8em;
-    height: 1.7em;
-    background: white;
-    border: 1.5px solid var(--color__default);
-    border-radius: 1em;
-    box-shadow: 0 .5em .25em -1px rgba(114,114,114,0.32);
-    margin-top: calc((2em - 1.9em) / 2);
+    width: 2.5em; /* Increased from 1.8em */
+    height: 2.5em; /* Made equal to width for perfect circle */
+    background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 50%, #eeeeee 100%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%; /* Changed to perfect circle */
+    box-shadow: 
+        0 2px 6px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.1);
+    margin-top: calc((3.5em - 2.5em) / 2); /* Adjusted for new height */
     z-index: 2;
 }
 
 .jspsych-slider::-moz-range-track {
-    height: 2em;
+    height: 3.5em; /* Increased from 2em */
     background: var(--slider-track-bg);
     background-repeat: no-repeat;
-    border-top: 1px solid var(--color__dark);
-    border-bottom: 1px solid var(--color__dark);
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
     border-right: none;
     border-left: none;
-    border-radius: 0em;
-    box-shadow: none;
+    border-radius: 0.3em;
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.7);
 }
 
 .jspsych-slider::-moz-range-thumb {
-    width: 1.8em;
-    height: 1.7em;
-    background: white;
-    border: 1px solid var(--color__default);
-    border-radius: 1em;
-    box-shadow: 0 .5em .25em -1px rgba(114,114,114,0.32);
+    width: 2.5em; /* Increased from 1.8em */
+    height: 2.5em; /* Made equal to width for perfect circle */
+    background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 50%, #eeeeee 100%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%; /* Changed to perfect circle */
+    box-shadow: 
+        0 1px 3px rgba(0, 0, 0, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.05);
     position: relative;
     z-index: 2;
 }
@@ -166,12 +230,15 @@
     border: none;
 }
 .jspsych-slider::-ms-thumb {
-    width: 1.8em;
-    height: 1.7em;
-    background: white;
-    border: 1px solid var(--color__default);
-    border-radius: 1em;
-    box-shadow: 0 .5em .25em -1px rgba(114,114,114,0.32);
+    width: 2.5em; /* Increased from 1.8em */
+    height: 2.5em; /* Made equal to width for perfect circle */
+    background: linear-gradient(145deg, #ffffff 0%, #f8f8f8 50%, #eeeeee 100%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%; /* Changed to perfect circle */
+    box-shadow: 
+        0 1px 3px rgba(0, 0, 0, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.05);
     position: relative;
     z-index: 2;
 }
@@ -179,15 +246,17 @@
     display: none;
 }
 .jspsych-slider::-ms-track {
-    height: 2em;
+    height: 3.5em; /* Increased from 2em */
     background: var(--slider-track-bg);
     background-repeat: no-repeat;
-    border-top: 1px solid var(--color__dark);
-    border-bottom: 1px solid var(--color__dark);
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
     border-right: none;
     border-left: none;
-    border-radius: 0em;
-    box-shadow: none;
+    border-radius: 0.3em;
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.7);
     color: transparent;
 }
 
@@ -196,4 +265,3 @@
     &::-moz-range-thumb     { border-color: var(--color__dark); }
     &::-ms-thumb            { border-color: var(--color__dark); }
 }
-

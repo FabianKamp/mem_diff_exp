@@ -13,6 +13,7 @@
     <script src="jspsych/plugin-survey-html-form.js"></script>
     <script src="jspsych/plugin-survey-text.js"></script>
     <script src="jspsych/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/plugin-html-button-response.js"></script>
     <script src="jspsych/plugin-html-slider-response.js"></script>
     <script src="jspsych/plugin-instructions.js"></script>
     <script src="jspsych/plugin-preload.js"></script>
@@ -61,20 +62,20 @@
     // experiment parameters
     const inter_trial_delay = 1000; //ms (1000 has a good feel)
     const inter_img_delay = 220; //ms
-    const memory_delay = 5000; //ms
+    const memory_delay = 3000; //ms
 
     // TODO update the instructions
 
     // TODO reset the subject ID to the original 
     // TODO instruction for the response format
     // var subject_id = jsPsych.data.getURLVariable('sid')
-    var subject_id = 10
+    var subject_id = 1
 
     // var version_code = jsPsych.data.getURLVariable('vc')
     version_code = "00"
     // var load_condition = jsPsych.data.getURLVariable('load')
-    var load_condition = "high-load" // high-load
-    const load = (load_condition === "high-load") ? 7 : 5; // number of enc images
+    var load_condition = "low-load" // high-load
+    const load = (load_condition === "high-load") ? 7 : 4; // number of enc images
 
     // var response_format = jsPsych.data.getURLVariable('response')
     var response_format = "2afc" // n-o
@@ -83,8 +84,8 @@
     var version = `${load_condition}_${response_format}`
     
     // radius for image presentation
-    var rx = 220; //px
-    var ry = 180; //px
+    var rx = 280; //px
+    var ry = 240; //px
 
     if (load_condition === "high-load") {
         rx += 50
@@ -95,8 +96,9 @@
     var sequential =  false;
 
     // var encoding_time = (jsPsych.data.getURLVariable('etime') == 'short') ? 300 : 500;
-    var encoding_time = 300
-    encoding_time = (sequential) ? encoding_time*1 : encoding_time*load; //ms
+    var encoding_time_short = 1500
+    var encoding_time_long = 2500
+    // encoding_time = (sequential) ? encoding_time*1 : encoding_time*load; //ms
     
     // add meta data
     jsPsych.data.addProperties({
@@ -109,30 +111,20 @@
         radius_y: ry, 
         memory_delay: memory_delay
     });
-
-    // load practice data
-    var practice_input_data = await fetch(`input_data/instructions/${version}.json`)
-        .then(response => response.json())
-        .catch(error => console.error(error));
-
+    
     // load wm image data
     subject_id_str = String(subject_id).padStart(3, '0')
-    var wm_input_data = await fetch(`input_data/${version}/wm_input_subject_${subject_id_str}.json`)
+    var input_data = await fetch(`input_data/${version}/input_subject_${subject_id_str}.json`)
         .then(response => response.json())
         .catch(error => console.error(error));
 
+    var practice_input_data = input_data.filter((trial) => trial.trial_type === "practice");
+    var wm_input_data = input_data.filter((trial) => trial.trial_type === "wm");
+    var lm_input_data = input_data.filter((trial) => trial.trial_type === "lm");
+    
     // split into blocks
     var wm_input_data_block1 = wm_input_data.filter((trial) => trial.wm_block_id === 1);
     var wm_input_data_block2 = wm_input_data.filter((trial) => trial.wm_block_id === 2);
-
-    // load lm image data
-    var lm_input_data = await fetch(`input_data/${version}/lm_input_subject_${subject_id_str}.json`)
-        .then(response => response.json())
-        .catch(error => console.error(error));
-    
-    // split into blocks
-    var lm_input_data_block1 = lm_input_data.filter((trial) => trial.lm_block_id === 1);
-    var lm_input_data_block2 = lm_input_data.filter((trial) => trial.lm_block_id === 2);
 
     // consent
     var participantConsentStatus = null;
@@ -168,11 +160,13 @@
     var enter_fullscreen = {
         type: jsPsychFullscreen,
         fullscreen_mode: true,
+        choices: ['Continue'],
         message:         
-        `<div class="instruction-container">
-            <p class="instruction-header"><strong>Welcome to the experiment!</strong></p>
+        `
+        <p class="instruction-header"><strong>Welcome to the experiment!</strong></p>
+        <div style="height: 80vh; position: relative;">
             <p class="instruction-paragraph">
-                We will now enter fullscreen mode.
+                We will now enter <strong>fullscreen mode</strong>.
                 <br><br>
                 To ensure the quality of the results, we'd ask you to 
                 <br>
@@ -181,7 +175,7 @@
                 Once the experiment is over, you will be redirected to Prolific automatically. 
                 Please, don\'t close the experiment until this happens.
                 </br><br><br>
-                To enter fullscreen mode and <span>continue</span>, please click <span style="font-style: italic;">Continue</span>.
+                To enter fullscreen mode, please click <strong>Continue</strong>.
             </p>
         </div>`,
     }
@@ -191,7 +185,7 @@
         type: jsPsychFullscreen,
         fullscreen_mode: true,
         message: 
-        `<div class="instruction-container">
+        `<div>
             <p class="instruction-paragraph">
                 We detected that you exited the fullscreen mode.<br><br>
                 To ensure the quality of the results, we'd kindly ask you to <strong>remain in fullscreen mode</strong> for the duration of the experiment.<br><br>
@@ -263,122 +257,64 @@
         }};
 
     // INSTRUCTIONS
-    // change encoding slide depending on the load condition
-    var encoding_slide = 
-        `<div class="instruction-container">`
-
-    if (load_condition=="high-load") {
-        var instruction_angles = [3.276, 5.072, 1.481, 4.174, 2.379, 0.584, 5.969]        
-    } else {
-        var instruction_angles = [0.792, 5.818, 2.048, 4.562, 3.305]
+    function generate_instruction_angles(load) {
+        var result = [];
+        var step = (2 * Math.PI) / load;
+        var offset = Math.PI / 6; // 30 degree offset
+        for (let i = 0; i < load; i++) {
+            result.push(i * step + offset);
+        }
+        return result;
     }
-    sample_pos = convert2cartesian(rx, ry, instruction_angles[3])
-
+    
+    var instruction_angles = generate_instruction_angles(load)
+    var sample_pos = convert2cartesian(rx, ry, instruction_angles[1])
+    var instruction_files = ["dist1.jpg", "sample1.jpg", "dist2.jpg", "dist3.jpg", "dist4.jpg", "dist5.jpg", "dist6.jpg"]
+    var encoding_slide = `<div>`
     for (let i = 0; i < instruction_angles.length; i++) {
         var pos = convert2cartesian(rx,ry, instruction_angles[i])
+        console.log(instruction_files[i])
         encoding_slide += 
             `<div class="image-container"> 
-                <img src="stimuli/instructions/instruction_slide/enc${i+1}.jpg" class="image-object" 
+                <img src="test_stimuli/instructions/${instruction_files[i]}" class="image-object" 
                 style="left: calc(50% - ${pos.x}px); top: calc(50% + ${pos.y}px);"/>
             </div>`
     }
-
-    var sequential_text = (sequential) ? `<strong>sequentially</strong>` : ``
     encoding_slide += 
         `<div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-            <p class="instruction-paragraph" style="position: absolute; top: 30%; left: 5%; font-size:large; width: 250px; text-align: left;">
-                <strong>1. Memorize.</strong> We will ask you to memorize <strong>${load}</strong> images. 
-                The images will be presented ${sequential_text} at random positions on your display.
+            <p class="instruction-paragraph-left">
+                <strong>1. Memorize</strong><br><br> 
+                We will ask you to memorize <strong>${load} images</strong>.<br><br>
+                You have <strong>1-3 seconds</strong> to memorize all images.<br><br>
+                The trial duration will differ from trial to trial.<br><br>
             </p>
-            <p style="position: absolute; bottom: 10px; font-size: medium; color:#4682B4;">
-                To continue press <strong>right arrow</strong>.
+            <p class="continue-prompt">
+                To continue press <strong>right arrow</strong>
             </p>
-        </div>`
-    
-    // response slide
-    instruction_slider = 
-        `<div style="width: 350px; text-align: left; position: absolute; top: 80vh;">
-            <input type="range" class="jspsych-slider" value="50" min="5" max="95" step="15" id="jspsych-html-slider-response-response"/>
-            <div style="position: absolute; left: 35%; top: 100%; transform: translateX(-50%) rotate(-15deg); font-size: small; 
-                color: rgba(0,0,0,.6); margin-top: 0px;">
-                <span>guess</span>
-            </div>
-            <div style="position: absolute; left: 20%; top: 100%; transform: translateX(-50%) rotate(-15deg); font-size: small; 
-                color: rgba(0,0,0,.6); margin-top: 0px;">
-                <span>probably</span>
-            </div>
-            <div style="position: absolute; left: 5%; top: 100%; transform: translateX(-50%) rotate(-15deg); font-size: small; 
-                color: rgba(0,0,0,.6); margin-top: 0px;">
-                <span>certain</span>
-            </div>
-            <div style="position: absolute; left: 65%; top: 100%; transform: translateX(-50%) rotate(-15deg); font-size: small; 
-                color: rgba(0,0,0,.6); margin-top: 0px;">
-                <span>guess</span>
-            </div>
-            <div style="position: absolute; left: 80%; top: 100%; transform: translateX(-50%) rotate(-15deg); font-size: small; 
-                color: rgba(0,0,0,.6); margin-top: 0px;">
-                <span>probably</span>
-            </div>
-            <div style="position: absolute; left: 95%; top: 100%; transform: translateX(-50%) rotate(-15deg); font-size: small; 
-                color: rgba(0,0,0,.6); margin-top: 0px;">
-                <span>certain</span>
-            </div>
-        </div>`
-    
-    if (response_format != "2afc") {
-        wm_recognition_slide = 
-            `<div class="instruction-container">
-                <div class="image-container-4"> 
-                    <img src="stimuli/instructions/instruction_slide/wm_recog.jpg" class="image-object" 
-                    style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px); opacity: 0.4;"/>
-                </div>
-                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>`
-        wm_recognition_slide += instruction_slider
-        wm_recognition_slide +=
-                `<p class="instruction-paragraph" style="position: absolute; top: 50%; left: 5%; font-size:large; width: 300px; text-align: left;">
-                    <strong>4. Have you seen this image before at this position?</strong> Please, respond using the <strong>slider</strong>. 
-                    The left side indicates that the image is <strong>"same"</strong> as before and 
-                    the right side means that this is a <strong>"different"</strong> image.
-                    Use the slider to indicate how confident (guess, probably, confident) you are about your decision as shown above.  
-                    You have to move the slider of center to continue.
-                </p>
-                <p style="position: absolute; bottom: 10px; font-size: medium; color:#4682B4;">
-                    To continue press <strong>right arrow</strong>
-                </p>
             </div>`
-    } else {
-        wm_recognition_slide = 
-            `<div class="instruction-container">
-                <div> 
-                    <div class="square" 
-                        style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);"></div>
-                </div>
+    
+    wm_recognition_slide = 
+        `<div class="square" 
+            style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+        </div>
                 
-                <div class="image-container-1"> 
-                    <img src="stimuli/instructions/instruction_slide/enc4.jpg" class="image-object" 
-                    style="top: 50%; left: calc(50% - 60px);"/>
-                </div>
-                
-                <div class="image-container-2"> 
-                    <img src="stimuli/instructions/instruction_slide/wm_recog.jpg" class="image-object" 
-                    style="top: 50%; left: calc(50% + 60px);"/>
-                </div>`
-        wm_recognition_slide += instruction_slider
-        wm_recognition_slide +=
-                `<p class="instruction-paragraph" style="position: absolute; top: 47%; left: 5%; font-size:large; width: 300px; text-align: left;">
-                    <strong>3. Which image have you seen before?</strong> 
-                    The square indicates the position at which the image appeared before.
-                    Please, respond using the slider. 
-                    The left side indicates that you have seen the left image before and 
-                    the right side means that you have seen the right image before.
-                    Use the slider to indicate how confident (guess, probably, confident) you are about your decision.  
-                    <br><br><strong>Important,</strong> you have to move the slider of center to continue.
-                </p>
-                <p style="position: absolute; bottom: 10px; font-size: medium; color:#4682B4;">
-                    To continue press <strong>right arrow</strong>
-                </p>
-            </div>`
-    }
+
+        <div>
+            <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="test_stimuli/instructions/sample2.jpg" class="image-object"/>
+            <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="test_stimuli/instructions/sample4.jpg" class="image-object"/>
+        </div>
+
+        <p class="instruction-paragraph-left">
+            <strong>3. Which image matches the previous image better?</strong><br><br> 
+            After the delay you will see <strong>2 new images</strong>, i.e.
+            you haven't seen either of the images before.<br><br>
+            Your task is to <strong>choose the image that matches the previous image better</strong>.
+            The square indicates the position of the previous image.<br><br>
+            You can choose the image by clicking on it.
+        </p>
+        <p class="continue-prompt">
+            To continue press <strong>right arrow</strong>
+        </p>`
 
     var wm_instruction = {
         type: jsPsychInstructions,
@@ -388,46 +324,87 @@
         record_data: false,
         pages: [
             [
-            `<div class="instruction-container">
+            `<div>
                 <p class="instruction-header"><strong>Instructions</strong></p>
                 <p class="instruction-paragraph">
-                    During this experiment, we will ask you to memorize images that appear at different positions on your the display.
+                    During this experiment, we will ask you to memorize images that appear on your the display.
                     <br><br>
                     The following instructions will explain in detail how the task works.
-                    <br><br><br><br>
-                    <strong>The instructions are self-paced</strong>. You can navigate back and forth through the instructions using the arrow keys on your keyboard.</p>
-                <p style="position: absolute; bottom: 10px; font-size: medium; color:#4682B4;">
-                    To continue press <strong>right arrow</strong>.
+                    <br><br><br>
+                    <strong>The instructions are self-paced</strong>. 
+                    You can navigate back and forth through the instructions using the arrow keys on your keyboard.
+                </p>
+                
+                <p class="continue-prompt">
+                    To continue press <strong>right arrow</strong>
                 </p>
             </div>`
             ],
             encoding_slide,
             [
-            `<div class="instruction-container">
+            `<div>
                 <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>       
-                <p class="instruction-paragraph" style="position: absolute; top: 30%; left: 5%; font-size:large; width: 300px; text-align: left;">
-                    <strong>2. Delay.</strong> The image presentation will be followed by a short delay. 
-                    The delay will only take a couple of seconds. Please, focus on the cross on the screen during the delay.
+                <p class="instruction-paragraph-left">
+                    <strong>2. Delay</strong><br><br> 
+                    Afterwards there will be a short delay. <br><br>
+                    The delay will take a couple of seconds. <br><br>
+                    Please, focus on the cross on the screen.
                 </p>
-                <p style="position: absolute; bottom: 10px; font-size: medium; color:#4682B4;">
-                    To continue press <strong>right arrow</strong>.
+                <p class="continue-prompt">
+                    To continue press <strong>right arrow</strong>
                 </p>
             </div>`
             ],
             wm_recognition_slide,
+            // [
+            // `<p class="instruction-paragraph-left">
+            //     <strong>Important!</strong><br><br>
+            //     The images can match <strong>conceptually and/or visually</strong>.<br><br>
+            //     For example, the left and middle image both depict dates but look differently.<br><br>
+            //     While, the middle and right image depict objects from different categories 
+            //     but look alike. 
+            // </p>
+            
+            // <div>
+            //     <img style="position: absolute; top: 50%; left: calc( 50% - 150px);" src="test_stimuli/instructions/sample3.jpg" class="image-object"/>
+            //     <img style="position: absolute; top: 50%; left: 50%" src="test_stimuli/instructions/sample1.jpg" class="image-object"/>
+            //     <img style="position: absolute; top: 50%; left: calc( 50% + 150px);" src="test_stimuli/instructions/sample4.jpg" class="image-object"/>
+            // </div>
+
+            // <p class="continue-prompt">
+            //     To continue press <strong>right arrow</strong>
+            // </p>`
+            // ],
+            // [
+            // `<p class="instruction-paragraph-left">
+            //     <strong>Important!</strong><br><br>
+            //     It's also possible that the images match on neither visually nor conceptually. 
+            //     For example the left and middle image don't match at all.<br><br>
+            //     And some images match perfectly: The middle and right image depict dates that also look similar. 
+            // </p>
+            // <div>
+            //     <img style="position: absolute; top: 50%; left: calc( 50% - 150px);" src="test_stimuli/instructions/sample5.jpg" class="image-object"/>
+            //     <img style="position: absolute; top: 50%; left: 50%" src="test_stimuli/instructions/sample1.jpg" class="image-object"/>
+            //     <img style="position: absolute; top: 50%; left: calc( 50% + 150px);" src="test_stimuli/instructions/sample2.jpg" class="image-object"/>
+            // </div>
+            // <p class="continue-prompt">
+            //     To continue press <strong>right arrow</strong>
+            // </p>`
+            // ],
             [
-            `<div class="instruction-container">
-                <p class="instruction-header"><strong>Practice</strong></p>
-                <p class="instruction-paragraph">
-                    We will continue with <strong>three practice runs</strong>.
-                    <br><br>
-                    Please try to memorize the images as well as you can.
-                    <br>
-                    Respond using the slider.</p>
-                <p style="position: absolute; bottom: 10px; font-size: medium; color:#4682B4;">
-                    To continue press <strong>right arrow</strong>.
-                </p>
-            </div>`
+            `<p class="instruction-header"><strong>Practice</strong></p>
+            <p class="instruction-paragraph">
+                We will continue with <strong>12 practice runs</strong>.<br><br>
+                You will get <strong>feedback</strong>: The memorized image will 
+                appear again as soon as you made your choice. So, you can check if your choice was correct.
+                <br><br>
+                Please, try to memorize the images as well as you can and
+                <strong> choose the image that matches the previous image better.</strong>
+                
+            </p>
+            <p class="continue-prompt">
+                To start the practice press <strong>right arrow</strong>
+            </p>`
             ]
         ]
         }
@@ -442,14 +419,18 @@
         min_viewing_time: 3000,
         pages: [
             [
-            `<div class="instruction-container">
-                <p class="instruction-header"><strong>Starting the experiment</strong></p>
-                <p class="instruction-paragraph">
-                    We will now start the experiment.<br><br>
-                    The next break will be in ~15 minutes.<br><br><br><br>
+            `<div>
+                <p class="instruction-header">
+                    <strong>Starting the experiment</strong>
                 </p>
-                <p style="position: absolute; bottom: 30%; font-size: x-large; color:#4682B4;">
-                    Press <strong>Enter</strong> to start. 
+                <p class="instruction-paragraph">
+                    Amazing! We will now start the experiment.
+                    The next break will be in ~15 minutes.<br><br>
+                    Attention, there will be <strong>no feedback</strong> in during the experiment.<br><br>
+                    Press <strong>enter</strong> to start.
+                </p>
+                <p class="continue-prompt">
+                    To start the experiment <strong>ENTER</strong>
                 </p>
             </div>`
             ]
@@ -460,15 +441,16 @@
     var break_trial = {
         type: jsPsychHtmlKeyboardResponse, 
         stimulus: 
-            `<div class="instruction-container">
+            `<div>
                 <p class="instruction-header"><strong>Break</strong></p>
                 <p class="instruction-paragraph"> 
-                    If you need a break, you can take one now.<br>
-                    Please allow yourself a maximum of 2 minutes.<br><br><br>
+                    If you need a break, you can take one now.<br><br>
+                    Please allow yourself a maximum of <strong>2 minutes</strong>.<br>
+                    Press <strong>enter</strong> to continue.<br><br>
                     <strong>The task will continue automatically after 2 minutes.</strong>
                 </p>
-                <p style="position: absolute; bottom: 5%; font-size: medium; color:#4682B4;">
-                    When you are ready to continue press <strong>Enter</strong>
+                <p class="continue-prompt">
+                    To continue press <strong>Enter</strong>
                 </p>
             </div>`,
         choices: ['Enter'],
@@ -499,9 +481,11 @@
                 record_data: false,
                 stimulus: function(){
                     var html = 
-                        `<div class="instruction-container">
-                            <p class="instruction-paragraph">
-                                The next experimental block will start in <br><strong>${seconds-i} seconds</strong>.
+                        `<div style="width:250px; height:75vh;">
+                            <p style="font-family: 'Courier New', monospace; font-size: 3rem; 
+                                    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                                    text-align: center; color: #4682B4; margin: 0; line-height: 1;">
+                                <strong>${seconds-i}</strong>
                             </p>
                         </div>`
                     return html;
@@ -511,53 +495,72 @@
         return {timeline:counter}; 
     }
 
-    // TODO fix size and position of the recognition slide 
-    if (response_format != "2afc") {
-        lm_recognition_slide = 
-            `<div class="instruction-container">
-                <div> 
-                    <img src="stimuli/instructions/instruction_slide/enc3.jpg" style="position: absolute; border-radius:10px; 
-                    height:200px; width:200px; top: 50%; left: 50%;
-                    transform: translate(-50%, -50%);"/>
-                </div>`
-        lm_recognition_slide += instruction_slider
-        lm_recognition_slide +=
-                `<p class="instruction-paragraph" style="position: absolute; top: 50%; left: 5%; font-size:large; width: 300px; text-align: left;">
-                    <strong>4. Have you seen this image?</strong>
-                    As before, please respond using the slider. The left side indicates that the image has been shown before (i.e. it is <strong>old</strong>), 
-                    the right side means that has not been shown (i.e. it is <strong>new</strong>).
-                    Use the slider to indicate how confident (guess, probably, confident) you are about your decision as shown above.  
-                    You have to move the slider of center to continue to the next trial.
-                </p>
-                <p style="position: absolute; bottom: 10px; font-size: medium; color:#4682B4;">
-                    To continue press <strong>right arrow</strong>
-                </p>
-            </div>`
-    } else {
-        lm_recognition_slide = 
-            `<div class="instruction-container">                
-                <div class="image-container-1"> 
-                    <img src="stimuli/instructions/instruction_slide/enc3.jpg" class="image-object" 
-                    style="top: 50%; left: calc(50% - 120px); height:200px; width:200px;"/>
+    const lm_base_layout = () => `
+        <div style="margin: 0 auto;">
+        <div style="width:900px; height:40vh; position: relative;">
+            <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: -140px; left: 50%;
+                    transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
+                <strong>Have you seen this image before?</strong>
+            </p>
+            <div>
+                <img src="test_stimuli/instructions/sample1.jpg" style="position: absolute; border-radius:10px;
+                                        height:200px; width:200px; top: 30%; left: 50%;
+                                        transform: translate(-50%, -50%);"/>
+            </div>`;
+
+    const lm_scale_labels = () => `
+            <div style="position: absolute; bottom: .6em; left: 50%; transform: translateX(-50%);
+                        width: 100px; height: 10px; display: flex; align-items: center;">
+                <div style="width: 0; height: 0; border-right: 8px solid rgba(51, 51, 51, 0.2); border-top: 5px solid transparent; border-bottom: 5px solid transparent;"></div>
+                <div style="flex: 1; height: 2px; background: linear-gradient(to right, rgba(51, 51, 51, 0.2) 0%, rgba(51, 51, 51, 0.15) 10%, rgba(51, 51, 51, 0.05) 40%, rgba(51, 51, 51, 0.01) 50%, rgba(51, 51, 51, 0.05) 60%, rgba(51, 51, 51, 0.15) 90%, rgba(51, 51, 51, 0.2) 100%);"></div>
+                <div style="width: 0; height: 0; border-left: 8px solid rgba(51, 51, 51, 0.2); border-top: 5px solid transparent; border-bottom: 5px solid transparent;"></div>
+            </div>
+            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 40%; transform: translate(-45%, 50%);">No</p>
+            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 60%; transform: translate(-50%, 50%);">Yes</p>`;
+
+    const lm_slider = () => `
+        <div> 
+        <div style="position: absolute; left: 50%; transform: translateX(-50%); width: 320px;">
+                <input type="range" class="jspsych-slider" value="50" min="5" max="95" step="15" disabled/>
+                <div>
+                    ${['certain', 'probably', 'guess', ' ', 'guess', 'probably', 'certain'].map((label, i) => 
+                        `<div style="border: 1px solid transparent; display: inline-block; position: absolute; left:calc(${i * 16.67}% - (16.67% / 2) - ${i === 1 ? '-1.25px' : i === 2 ? '-2.5px' : i === 4 ? '2.5px' : i === 5 ? '1.25px' : '0px'}); text-align: center; width: 16.67%;"><span style="text-align: center; font-size: 80%; font-family: 'Courier New', monospace; transform: rotate(-30deg); display: inline-block;">${label}</span></div>`
+                    ).join('')}
                 </div>
-                <div class="image-container-1"> 
-                    <img src="stimuli/instructions/instruction_slide/lm_recog.jpg" class="image-object" 
-                    style="top: 50%; left: calc(50% + 120px); height:200px; width:200px;"/>
-                </div>`
-        lm_recognition_slide += instruction_slider
-        lm_recognition_slide +=
-                `<p class="instruction-paragraph" style="position: absolute; top: 45%; left: 5%; font-size:large; width: 300px; text-align: left;">
-                    <strong>4. Have you seen this image?</strong>
-                    As before, please respond using the slider. The left side indicates that the image has been shown before (i.e. it is <strong>old</strong>), 
-                    the right side means that has not been shown (i.e. it is <strong>new</strong>).
-                    Use the slider to indicate how confident (guess, probably, confident) you are about your decision as shown above.  
-                    You have to move the slider of center to continue to the next trial.
-                </p>
-                <p style="position: absolute; bottom: 10px; font-size: medium; color:#4682B4;">
-                    To continue press <strong>right arrow</strong>
-                </p>
-            </div>`
-    }
+            </div>
+        </div>`;
+
+    // LM recognition slides
+    lm_recognition_slide_1 = lm_base_layout() + `
+        </div>
+            <p class="instruction-paragraph-left">
+                <strong>Have you seen this image?</strong><br><br>
+                Now we would like to know if you can still remember the images from the task before. <br><br>
+                You will see images which were shown in the task before as well as some new images. <br><br>
+                Please, try to remember if you have seen the image before or not.
+            </p>
+            <p class="continue-prompt">To continue press <strong>right arrow</strong></p>
+        </div>`;
+    
+    lm_recognition_slide_2 = lm_base_layout() + lm_scale_labels() + `
+        </div>` + lm_slider() + `
+            <p class="instruction-paragraph-left">
+                <strong>Use the slider to respond</strong><br><br>
+                The <strong>right side</strong> of the slider indicates that the image has been shown before (i.e. it is <strong>old</strong>).<br><br>
+                The <strong>left side</strong>  means that has not been shown (i.e. it is <strong>new</strong>).
+            </p>
+            <p class="continue-prompt">To continue press <strong>right arrow</strong></p>
+        </div>`;
+
+    lm_recognition_slide_3 = lm_base_layout() + lm_scale_labels() + `
+        </div>` + lm_slider() + `
+            <p class="instruction-paragraph-left">
+                <strong>Use the slider to respond to indicate your confidence</strong><br><br>
+                You have three options: <strong>guess - probably - certain</strong>.<br><br>
+                Please, move the slider to the position that indicates your confidence level.
+            </p>
+            <p class="continue-prompt">To continue press <strong>right arrow</strong></p>
+        </div>`;
 
     // instructions long term memory 
     var lm_instructions =         
@@ -566,22 +569,27 @@
             key_forward: 'ArrowRight',
             record_data: false,
             pages:[[
-                `<div class="instruction-container">
+                `<div>
+                    <p class="instruction-header">
+                        <strong>Instructions</strong>
+                    </p>
                     <p class="instruction-paragraph"> 
                         <strong>Great, you are almost done!</strong>
                         <br><br><br>
-                        In the last task we will now show you images again and want to know if you remember the images from the first task.
+                        In the last task we will show you again some images. We want to know if you still remember the images from the first task.
                         <br><br>
                         For each image we will ask if you have seen it before (i.e. during the first/second block of the experiment)
                         <br><br><br><br>
-                        The The following instructions will explain the task in detail. 
+                        The following instructions will explain the task in detail. Press the <strong>right arrow</strong> key to continue.
                     </p>
-                    <p style="position: absolute; bottom: 10px; font-size: medium; color:#4682B4;">
-                        To continue press <strong>right arrow</strong>.
+                    <p class="continue-prompt">
+                        To continue press <strong>right arrow</strong>
                     </p>
                 </div>`
             ], 
-            lm_recognition_slide
+            lm_recognition_slide_1, 
+            lm_recognition_slide_2, 
+            lm_recognition_slide_3, 
             ],
         };
     
@@ -595,14 +603,15 @@
         min_viewing_time: 3000,
         pages: [
             [
-            `<div class="instruction-container">
+            `<div">
                 <p class="instruction-header"><strong>Starting the last task</strong></p>
                 <p class="instruction-paragraph">
                     We will now start the last task of this experiment.<br><br>
-                    This will take ~10 minutes.
+                    There will be <strong>no practice</strong>, you will directly start the real task.<br><br>
+                    This task will take approx. <strong>10 minutes</strong>.
                 </p>
-                <p style="position: absolute; bottom: 30%; font-size: x-large; color:#4682B4;">
-                    Press <strong>Enter</strong> to start. 
+                <p class="continue-prompt">
+                    To start, press <strong>Enter</strong> to start. 
                 </p>
             </div>`
             ]
@@ -634,17 +643,17 @@
     // TASK WRAPPERS
     slider_labels = 
         [
-            `<span style="font-size: x-small; transform: rotate(-30deg); display: inline-block;">certain</span>`,
-            `<span style="font-size: x-small; transform: rotate(-30deg); display: inline-block;">probably</span>`,
-            `<span style="font-size: x-small; transform: rotate(-30deg); display: inline-block;">guess</span>`,
-            `<span style="font-size: x-small; transform: rotate(-30deg); display: inline-block;"> </span>`,
-            `<span style="font-size: x-small; transform: rotate(-30deg); display: inline-block;">guess</span>`,
-            `<span style="font-size: x-small; transform: rotate(-30deg); display: inline-block;">probably</span>`,
-            `<span style="font-size: x-small; transform: rotate(-30deg); display: inline-block;">certain</span>`
+            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">certain</span>`,
+            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">probably</span>`,
+            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">guess</span>`,
+            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;"> </span>`,
+            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">guess</span>`,
+            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">probably</span>`,
+            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">certain</span>`
         ]
-    
+
     // WM TASK
-    function createWM(timeline_variables) {
+    function createWM(timeline_variables, feedback) {
         // timeline: initial delay -> 3 encoding images (inter stimulus delay) -> memory delay -> recognition slide
         var wm_timeline = [];
         
@@ -659,7 +668,8 @@
                 for (let j = 0; j < load; j++) {
                     files.push(jsPsych.evaluateTimelineVariable(`encoding_file_${j+1}`));
                 }
-                files.push(jsPsych.evaluateTimelineVariable('wm_recognition_file'))
+                files.push(jsPsych.evaluateTimelineVariable('wm_recognition_lure_file'))
+                files.push(jsPsych.evaluateTimelineVariable('wm_recognition_control_file'))
                 return files;
             }
         })
@@ -680,64 +690,19 @@
             }
         })
 
-        // encoding
-        if (sequential) {
-            for (let i = 0; i < load; i++) {
-                if (i != 0) {
-                    wm_timeline.push(
-                    {
-                        type: jsPsychHtmlKeyboardResponse,
-                        choices: "NO_KEYS",
-                        trial_duration: inter_img_delay,
-                        record_data: false,
-                        stimulus: function(){
-                            var html = 
-                            `<div style="width:250px; height:75vh;">
-                                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                            </div>`
-                            return html;
-                        }
-                    })
-                }
-                
-                wm_timeline.push(
-                    {
-                        type: jsPsychHtmlKeyboardResponse,
-                        choices: "NO_KEYS",
-                        trial_duration: encoding_time,
-                        stimulus: function() {
-                            var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
-                            var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
-                            var pos = convert2cartesian(rx, ry, theta)
-                            var html =                         
-                            `<div style="width:500px; height:75vh;">
-                                <div> 
-                                    <img src="${file}" class="image-object" 
-                                    style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
-                                </div>
-                                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                            </div>`
-                            return html;},
-                        
-                        on_finish: function(data) { 
-                            var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
-                            var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
-                            data.stimulus = file
-                            data.theta = theta
-                            data.trial_type = "encoding";
-                            data.wm_trial_id = jsPsych.evaluateTimelineVariable('wm_trial_id');
-                            data.timestamp = new Date().toLocaleTimeString()
-
-                        }
-                    })
-            }
-        } else {
-        
+        // encoding        
         wm_timeline.push(
             {
                 type: jsPsychHtmlKeyboardResponse,
                 choices: "NO_KEYS",
-                trial_duration: encoding_time,
+                trial_duration: function() {
+                    var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
+                    if (long_encoding == 1) {
+                        return encoding_time_long
+                    } else {
+                        return encoding_time_short
+                    }
+                },
                 stimulus: function() {
                     var html = `<div style="width:500px; height:75vh;">`
                     for (let i = 0; i < load; i++) {
@@ -773,7 +738,6 @@
                     data.timestamp = new Date().toLocaleTimeString()
                 }
             })
-        }
 
         // delay
         wm_timeline.push(
@@ -785,343 +749,293 @@
                 stimulus: function(){
                     var html = 
                         `<div style="width:250px; height:75vh;">
-                            <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
+                            <div class="cross"><div class="cross-vertical"></div>
+                            <div class="cross-horizontal"></div></div>
                         </div>`
                     return html;
                 }
             })
         
-        // recognition
-        if (response_format != "2afc") {
+        wm_timeline.push(
+            {
+                type: jsPsychHtmlButtonResponse,
+                choices: ["left", "right"],
+                button_layout: 'grid',
+                button_html: (choice) => {
+                    var control_file = jsPsych.evaluateTimelineVariable('wm_recognition_control_file')
+                    var lure_file = jsPsych.evaluateTimelineVariable(`wm_recognition_lure_file`)
+                    var left_lure = jsPsych.evaluateTimelineVariable('left_lure') 
+                    
+                    if (left_lure === 1) {
+                        var left_image = lure_file
+                        var right_image = control_file
+                    } else {
+                        var left_image = control_file
+                        var right_image = lure_file 
+                    }
+                    
+                    left_button = 
+                        `<div style="cursor: pointer; width: 130px; height: 130px; 
+                                    position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
+                        <img src="${left_image}" class="image-button" />
+                        </div>`
+                    
+                    right_button = 
+                        `<div style="cursor: pointer; width: 130px; height: 130px; 
+                                    position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
+                        <img src="${right_image}" class="image-button"/>
+                        </div>`
+
+                    console.log(left_image)
+                    console.log(right_image)
+                    
+                    if (choice == "left") {
+                        return left_button;
+                    } else {
+                        return right_button;
+                    }
+                },
+
+                stimulus: function() {
+                    var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
+                    var pos = convert2cartesian(rx, ry, theta)
+                    var html = 
+                        `<div style="width:500px; height: 75vh;">
+                            <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
+                            transform: translateX(-50%); color:#4682B4; text-align: center;">
+                                <strong></strong>
+                            </p>
+                            
+                            <div> 
+                                <div class="square" 
+                                    style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
+                                </div>
+                            </div>
+
+                        </div>`
+                    return html;
+                },
+
+                on_finish: function(data) { 
+                    data.wm_trial_id = jsPsych.evaluateTimelineVariable('wm_trial_id')
+                    data.image_id = jsPsych.evaluateTimelineVariable('wm_id')
+                    data.lure = jsPsych.evaluateTimelineVariable('wm_recognition_lure_file')
+                    data.control = jsPsych.evaluateTimelineVariable('wm_recognition_control_file')
+                    data.stimulus = "2AFC"
+                    data.theta = jsPsych.evaluateTimelineVariable('recognition_theta')
+                    data.wm_condition = jsPsych.evaluateTimelineVariable('wm_condition')
+                    data.wm_position = jsPsych.evaluateTimelineVariable('wm_position')
+                    // data.lm_position = jsPsych.evaluateTimelineVariable('lm_position')
+                    data.left_lure = jsPsych.evaluateTimelineVariable('left_lure') 
+                    data.trial_type = "wm-recognition"
+                    data.timestamp = new Date().toLocaleTimeString()
+
+                }
+            }
+        )
+
+        if (feedback == 1) {
             wm_timeline.push(
                 {
-                    type: jsPsychHtmlSliderResponse,
-                    require_movement: false,
-                    // slider_start: Math.floor(Math.random() * 101),
-                    slider_start: 50,
-                    slider_width: 280,
-                    min: 5,
-                    max: 95,
-                    step: 15,
-                    labels: slider_labels,
-                    css_classes : ["next-trial-btn"],
+                type: jsPsychHtmlKeyboardResponse,
+                choices: "NO_KEYS",
+                trial_duration: 1000,
+                stimulus: function() {
+                    var wm_sample_file = jsPsych.evaluateTimelineVariable('wm_sample_file')
+                    var control_file = jsPsych.evaluateTimelineVariable('wm_recognition_control_file')
+                    var lure_file = jsPsych.evaluateTimelineVariable(`wm_recognition_lure_file`)
+                    var left_lure = jsPsych.evaluateTimelineVariable(`left_lure`) 
+                    
+                    if (left_lure === 1) {
+                        var left_image = lure_file
+                        var right_image = control_file
+                    } else {
+                        var left_image = control_file
+                        var right_image = lure_file 
+                    }
 
-                    stimulus: function() {
-                        var file = jsPsych.evaluateTimelineVariable('wm_recognition_file')
-                        var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                        var pos = convert2cartesian(rx, ry, theta)
-                        var html = 
-                            `<div style="width:500px; height:75vh;">
-                                <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
-                                transform: translateX(-50%); color:#4682B4; text-align: center;">
-                                    <strong>Is this the same image as before?</strong>
-                                </p>
+                    var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
+                    var pos = convert2cartesian(rx, ry, theta)
+                    var html = 
+                        `<div style="width:500px; height: 75vh;">
+                            <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
+                            transform: translateX(-50%); color:#4682B4; text-align: center;">
+                                <strong></strong>
+                            </p>
+                            
+                            <div> 
+                                <div class="square" 
+                                    style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
+                                </div>
+                            </div>
+
+                            <div style="width:500px; height:75vh;">
                                 <div> 
-                                    <img src="${file}" class="image-object" 
+                                    <img src="${wm_sample_file}" class="image-object" 
                                     style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
                                 </div>
-                                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                            </div>`
-                        return html;
-                    },
+                            </div>
 
-                    // forces the slider to be move off center before the next trial starts
-                    on_load: () => {
-                        let moved = false;
-                        const slider = document.querySelector('input[type="range"]');
-                        const nextBtn = document.querySelector('#jspsych-html-slider-response-next');
+                            <div style="cursor: pointer; width: 130px; height: 130px; 
+                                    position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
+                                    <img src="${right_image}" class="image-button"/>                           
+                            </div>
 
-                        nextBtn.disabled = true;
-                        slider.addEventListener('input', () => {
-                            if (parseInt(slider.value) !== 50) {
-                            moved = true;
-                            nextBtn.disabled = false;
-                            } else {
-                            moved = false;
-                            nextBtn.disabled = true;
-                            }
-                        });
-                    },
-                
-                    on_finish: function(data) { 
-                        data.wm_trial_id = jsPsych.evaluateTimelineVariable('wm_trial_id')
-                        data.image_id = jsPsych.evaluateTimelineVariable('wm_id')
-                        data.stimulus = jsPsych.evaluateTimelineVariable('wm_recognition_file')
-                        data.theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                        data.wm_condition = jsPsych.evaluateTimelineVariable('wm_condition')
-                        data.wm_position = jsPsych.evaluateTimelineVariable('wm_position')
-                        data.lm_position = jsPsych.evaluateTimelineVariable('lm_position')
-                        data.trial_type = "wm-recognition"
-                        data.timestamp = new Date().toLocaleTimeString()
+                            <div style="cursor: pointer; width: 130px; height: 130px; 
+                                    position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
+                                    <img src="${left_image}" class="image-button" />
+                            </div>
 
-                    }
-            })
-        
-        } else {
-            wm_timeline.push(
-                {
-                    type: jsPsychHtmlSliderResponse,
-                    require_movement: false,
-                    slider_start: 50,
-                    slider_width: 260,
-                    min: 5,
-                    max: 95,
-                    step: 15,
-                    labels: slider_labels,
-                    css_classes : ["next-trial-btn"],
-                    stimulus: function() {
-                        var idx = jsPsych.evaluateTimelineVariable('wm_position')
-                        var enc_file = jsPsych.evaluateTimelineVariable(`encoding_file_${idx}`)
-                        var recog_file = jsPsych.evaluateTimelineVariable('wm_recognition_file')
-                        var left_correct = jsPsych.evaluateTimelineVariable('left_correct') 
-                        
-                        if (left_correct === 1) {
-                            var left_image = enc_file
-                            var right_image = recog_file
-                        } else {
-                            var left_image = recog_file
-                            var right_image = enc_file 
-                        }
-
-                        var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                        var pos = convert2cartesian(rx, ry, theta)
-
-                        var html = 
-                            `<div style="width:500px; height: 75vh;">
-                                <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
-                                transform: translateX(-50%); color:#4682B4; text-align: center;">
-                                    <strong></strong>
-                                </p>
-                                
-                                <div> 
-                                    <div class="square" 
-                                        style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"></div>
-                                </div>
-                                
-                                <div> 
-                                    <img src="${left_image}" class="image-object" 
-                                    style="top: 50%; left: calc(50% + 60px);"/>
-                                </div>
-                                
-                                <div> 
-                                    <img src="${right_image}" class="image-object" 
-                                    style="top: 50%; left: calc(50% - 60px);"/>
-                                </div> 
-                            </div>`
-                        return html;
-                    },
-                    on_load: () => {
-                        let moved = false;
-                        const slider = document.querySelector('input[type="range"]');
-                        const nextBtn = document.querySelector('#jspsych-html-slider-response-next');
-
-                        nextBtn.disabled = true;
-                        slider.addEventListener('input', () => {
-                            if (parseInt(slider.value) !== 50) {
-                            moved = true;
-                            nextBtn.disabled = false;
-                            } else {
-                            moved = false;
-                            nextBtn.disabled = true;
-                            }
-                        });
-                    },
-                    on_finish: function(data) { 
-                        data.wm_trial_id = jsPsych.evaluateTimelineVariable('wm_trial_id')
-                        data.image_id = jsPsych.evaluateTimelineVariable('wm_id')
-                        data.stimulus = jsPsych.evaluateTimelineVariable('wm_recognition_file')
-                        data.theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                        data.wm_condition = jsPsych.evaluateTimelineVariable('wm_condition')
-                        data.wm_position = jsPsych.evaluateTimelineVariable('wm_position')
-                        data.lm_position = jsPsych.evaluateTimelineVariable('lm_position')
-                        data.left_correct = jsPsych.evaluateTimelineVariable('left_correct') 
-                        data.trial_type = "wm-recognition"
-                        data.timestamp = new Date().toLocaleTimeString()
-
-                    }
+                        </div>`
+                    return html;
                 }
-            )
+            })    
         }
         return {timeline:wm_timeline, timeline_variables:timeline_variables};
     }
 
     // long term memory task
     function createLM(timeline_variables) {
-        var lm_timeline = [];
-        // small delay
+        var lm_timeline = [];       
+        // image presentation
         lm_timeline.push(
             {
-                type: jsPsychHtmlKeyboardResponse,
-                choices: "NO_KEYS",
-                trial_duration: inter_trial_delay,
-                record_data: false,
-                stimulus: function(){
+                type: jsPsychHtmlSliderResponse,
+                require_movement: false, // defined later in on load
+                slider_start: 50,
+                slider_width: 320,
+                min: 5,
+                max: 95,
+                step: 15,
+                labels: slider_labels,
+                // css_classes : ["next-trial-btn"],
+                stimulus: function() {
+                    var file = jsPsych.evaluateTimelineVariable('lm_recognition_file')
                     var html = 
-                    `<div style="width:250px; height:75vh;">
-                            <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                    </div>`
+                        `<div style="width:900px; height:50vh; position: relative;">
+                            <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: -30px; left: 50%;
+                                    transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
+                                <strong>Have you seen this image before?</strong>
+                            </p>
+
+                            <div style="position: absolute; bottom: .6em; left: 50%; transform: translateX(-50%);
+                                        width: 100px; height: 10px; display: flex; align-items: center;">
+                                <div style="width: 0; height: 0; 
+                                        border-right: 8px solid rgba(51, 51, 51, 0.2); 
+                                        border-top: 5px solid transparent; 
+                                        border-bottom: 5px solid transparent;
+                                        "></div>
+                                <div style="flex: 1; height: 2px; 
+                                        background: linear-gradient(to right, 
+                                            rgba(51, 51, 51, 0.2) 0%, 
+                                            rgba(51, 51, 51, 0.15) 10%, 
+                                            rgba(51, 51, 51, 0.05) 40%, 
+                                            rgba(51, 51, 51, 0.01) 50%, 
+                                            rgba(51, 51, 51, 0.05) 60%, 
+                                            rgba(51, 51, 51, 0.15) 90%, 
+                                            rgba(51, 51, 51, 0.2) 100%);"></div>
+                                <div style="width: 0; height: 0; 
+                                        border-left: 8px solid rgba(51, 51, 51, 0.2); 
+                                        border-top: 5px solid transparent; 
+                                        border-bottom: 5px solid transparent;
+                                        "></div>
+                            </div>
+
+                            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 40%; 
+                                transform: translate(-45%, 50%);">
+                                No
+                            </p>
+                            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 60%; 
+                                transform: translate(-50%, 50%);">
+                                Yes
+                            </p>
+                            
+                            <div>
+                                <img src="${file}" style="position: absolute; border-radius:10px;
+                                                        height:200px; width:200px; top: 50%; left: 50%;
+                                                        transform: translate(-50%, -50%);"/>
+                            </div>
+                        </div>`
+
                     return html;
-                }
-            })
-        
-        // image presentation
-        if (response_format != "2afc") {
-            lm_timeline.push(
-                {
-                    type: jsPsychHtmlSliderResponse,
-                    require_movement: false, // defined later in on load
-                    slider_start: 50,
-                    slider_width: 250,
-                    min: 5,
-                    max: 95,
-                    step: 15,
-                    labels: slider_labels,
-                    css_classes : ["next-trial-btn"],
-                    stimulus: function() {
-                        var file = jsPsych.evaluateTimelineVariable('lm_recognition_file')
-                        var html = 
-                            `<div style="width:500px; height:75vh;">
-                                <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
-                                transform: translateX(-50%); color:#4682B4; text-align: center;">
-                                    <strong>Have you seen this image before?</strong>
-                                </p>    
-                                <div> 
-                                    <img src="${file}" style="position: absolute; border-radius:10px; 
-                                    height:200px; width:200px; top: 50%; left: 50%;
-                                    transform: translate(-50%, -50%);"/>
-                                </div>
-                            </div>`
-                        return html;
-                        },
-                    on_load: () => {
-                        let moved = false;
-                        const slider = document.querySelector('input[type="range"]');
-                        const nextBtn = document.querySelector('#jspsych-html-slider-response-next');
-
-                        nextBtn.disabled = true;
-                        slider.addEventListener('input', () => {
-                            if (parseInt(slider.value) !== 50) {
-                            moved = true;
-                            nextBtn.disabled = false;
-                            } else {
-                            moved = false;
-                            nextBtn.disabled = true;
-                            }
-                        });
                     },
-                    on_finish: function(data) { 
-                        data.stimulus = jsPsych.evaluateTimelineVariable('lm_recognition_file')
-                        data.image_id = jsPsych.evaluateTimelineVariable('lm_id')
-                        data.condition = jsPsych.evaluateTimelineVariable('lm_condition')
-                        data.lm_trial_id = jsPsych.evaluateTimelineVariable('lm_trial_id')
-                        data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
-
-                        data.trial_type = "lm-recognition";
-                        data.timestamp = new Date().toLocaleTimeString()
-                    }
-                }
-            )
-            
-        } else {
-            lm_timeline.push(
-                {
-                    type: jsPsychHtmlSliderResponse,
-                    require_movement: false,
-                    // slider_start: Math.floor(Math.random() * 101),
-                    slider_start: 50,
-                    slider_width: 260,
-                    min: 5,
-                    max: 95,
-                    step: 15,
-                    labels: slider_labels,
-                    css_classes : ["next-trial-btn"],
-                    stimulus: function() {
-                        var enc_file = jsPsych.evaluateTimelineVariable('lm_encoding_file')
-                        var recog_file = jsPsych.evaluateTimelineVariable('lm_recognition_file')
-
-                        if (jsPsych.evaluateTimelineVariable(`left_correct`) === 1) {
-                            var left_image = enc_file
-                            var right_image = recog_file
+                on_load: () => {
+                    let moved = false;
+                    const slider = document.querySelector('input[type="range"]');
+                    const nextBtn = document.querySelector('#jspsych-html-slider-response-next');
+                    nextBtn.disabled = true;
+                    slider.addEventListener('input', () => {
+                        if (parseInt(slider.value) !== 50) {
+                        moved = true;
+                        nextBtn.disabled = false;
                         } else {
-                            var left_image = recog_file
-                            var right_image = enc_file 
-                        }
-
-                        var html = 
-                            `<div style="width:500px; height: 70vh;">
-                                <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
-                                transform: translateX(-50%); color:#4682B4; text-align: center;">
-                                    <strong></strong>
-                                </p>
-                                
-                                <div> 
-                                    <img src="${left_image}" class="image-object" 
-                                    style="height:200px; width:200px; top: 50%; left: calc(50% + 120px);"/>
-                                </div>
-                                <div> 
-                                    <img src="${right_image}" class="image-object" 
-                                    style="height:200px; width:200px; top: 50%; left: calc(50% - 120px);"/>
-                                </div>                                
-                            </div>`
-                        return html;
-                    }, 
-                    on_load: () => {
-                        let moved = false;
-                        const slider = document.querySelector('input[type="range"]');
-                        const nextBtn = document.querySelector('#jspsych-html-slider-response-next');
+                        moved = false;
                         nextBtn.disabled = true;
-                        slider.addEventListener('input', () => {
-                            if (parseInt(slider.value) !== 50) {
-                            moved = true;
-                            nextBtn.disabled = false;
-                            } else {
-                            moved = false;
-                            nextBtn.disabled = true;
-                            }
-                        });
-                    },
-                    on_finish: function(data) { 
-                        data.stimulus = jsPsych.evaluateTimelineVariable('lm_recognition_file')
-                        data.image_id = jsPsych.evaluateTimelineVariable('lm_id')
-                        data.condition = jsPsych.evaluateTimelineVariable('lm_condition')
-                        data.lm_trial_id= jsPsych.evaluateTimelineVariable('lm_trial_id')
-                        data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
-                        data.left_correct = jsPsych.evaluateTimelineVariable('left_correct')
-
-                        data.trial_type = "lm-recognition";
-                        data.timestamp = new Date().toLocaleTimeString()
-                    }
+                        }
+                    });
+                },
+                on_finish: function(data) { 
+                    data.stimulus = jsPsych.evaluateTimelineVariable('lm_recognition_file')
+                    data.image_id = jsPsych.evaluateTimelineVariable('lm_recognition')
+                    data.old = jsPsych.evaluateTimelineVariable('old')
+                    console.log(data.old)
+                    data.lm_trial_id = jsPsych.evaluateTimelineVariable('lm_trial_id')
+                    data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial')
+                    data.trial_type = "lm-recognition";
+                    data.timestamp = new Date().toLocaleTimeString()
                 }
-            )
-        }
+            }
+        )
+            
         return {timeline:lm_timeline, timeline_variables:timeline_variables};
     }
 
     // distractor instructions 
-    var distractor_instructions =         
-        {
-            type: jsPsychHtmlKeyboardResponse, 
-            record_data: false,
-            stimulus: 
-            `<div class="instruction-container">
+    var end_wm = {
+        type: jsPsychHtmlKeyboardResponse, 
+        stimulus: 
+            `<div>
                 <p class="instruction-paragraph"> 
-                    <strong>Great, you have successfully completed the first task!</strong>
-                    <br><br><br>
-                    We will now ask you to do some basic mental math for ~2 minutes.<br><br>
-                    We will ask you to <strong>substract numbers from 100</strong><br>
+                    <strong>Great, you have successfully completed the first task!</strong><br><br>
+
+                    You are free to take a short break now before 
+                    beginning the next task (max. 2 minutes)<br><br>
+                    
+                    The following task will be much shorter.
+                    The next slide will have the detailed instructions.
+                </p>
+                <p class="continue-prompt">
+                    To continue press <strong>right arrow</strong>
+                </p>
+            </div>`,
+        choices: ['ArrowRight'],
+        trial_duration: 120000
+    }
+
+    var distractor_instructions = {
+        type: jsPsychHtmlKeyboardResponse, 
+        stimulus: 
+            `<div>
+                <p class="instruction-header">
+                    <strong>Instructions</strong>
+                </p>
+                <p class="instruction-paragraph"> 
+                    We will now ask you to do some <strong>basic mental math</strong> for ~2 minutes.<br><br>
+                    We'd ask you to sequentially <strong>substract numbers from 100</strong><br>
                     <em>(e.g. 100-3=97 <span style="font-size:x-large;">&#8594;</span> 97-5=92 
                         <span style="font-size:x-large;">&#8594;</span> 92-3=89 ... )</em>.
                     <br><br>
-                    You will see each number for 5 seconds.
-                    <br><br><br><br><br>
-                    You are free to take a short break now before beginning the next task (max. 2 minutes)
+                    You will see each number for <strong>3 seconds</strong> and then the 
+                    task will automatically move forward to the next number.
+
                 </p>
-                <p style="position: absolute; bottom: 5%; font-size: medium; color:#4682B4;">To continue press <strong>Enter</strong></p>
-            </div>`, 
-            choices: ['Enter'],
-            trial_duration: 120000, // 2 minutes
-            response_ends_trial: true,
-        };
+                <p class="continue-prompt">
+                    To continue press <strong>Enter</strong>
+                </p>
+            </div>`,
+        choices: ['Enter'],
+        trial_duration: 120000
+    }
 
     // distractor task
     function createDistractorTask() {  
@@ -1134,13 +1048,13 @@
             choices: "NO_KEYS",
             record_data: false,
             stimulus: 
-                `<div class="instruction-container">
-                    <p class="instruction-paragraph" style="top:45%"> 
+                `<div>
+                    <p class="instruction-paragraph" style="top:48%"> 
                         The initial number is <strong>${initial_number}</strong>.
                     </p>
                 </div>`,
             choices: ['Enter'],
-            trial_duration: 5000,
+            trial_duration: 3000,
             response_ends_trial: true,
             }
         );
@@ -1170,13 +1084,13 @@
                     type: jsPsychHtmlKeyboardResponse,
                     choices: "NO_KEYS",
                     record_data: false,
-                    trial_duration: 5000, //ms
+                    trial_duration: 3000, //ms
                     stimulus: function(){
                         total -= randomInteger;
                         var html = 
-                        `<div class="instruction-container">
-                            <p class="instruction-paragraph" style="top:45%"> 
-                                Substract <strong>${randomInteger}</strong> from the previous number.</p>
+                        `<div>
+                            <p class="instruction-paragraph" style="top:48%"> 
+                                <strong>Substract ${randomInteger}</strong> from the previous number.</p>
                         </div>`
                         return html}
                 })           
@@ -1185,7 +1099,12 @@
             dt_timeline.push(
             {
                 type: jsPsychSurveyText,
-                questions: [{prompt: 'What is the current number?'}],
+                questions: [{prompt: `
+                    <p style="font-family: 'Courier New', monospace; font-size: x-large; color:#4682B4; ">
+                        What is the current number?
+                    </p>
+                    `
+                }],
                 on_finish: function(data) {
                     data.trial_type = "distractor-task";
                     data.correct_response = total;
@@ -1208,16 +1127,19 @@
                         if (parseInt(jsPsych.data.get().last(1).values()[0].response["Q0"], 10) === total) {
                             var feedback = `Awesome, that was the correct number!`
                         } else {
-                            var feedback = `Almost, the correct number was <strong>${total}</strong>.`
+                            var feedback = `Almost, the <strong>correct number was ${total}</strong>.`
                         }
 
                         var html = 
-                        `<div class="instruction-container">
+                        `<div>
                             <p class="instruction-paragraph"> 
                                 ${feedback}<br><br>
-                                Please, continue to substract<br>starting from <strong>${total}</strong>.
+                                Please, continue to substract.<br><br>
+                                <strong>Continue from ${total}</strong>.
                             </p>
-                            <p style="position: absolute; bottom: 5%; font-size: medium; color:#4682B4;">To continue press <strong>Enter</strong></p>
+                            <p class="continue-prompt">
+                                To continue press <strong>Enter</strong>
+                            </p>
                         </div>`
                         return html;
                     }
@@ -1226,48 +1148,46 @@
         return {timeline:dt_timeline};
     }
     
+    // Overall timeline
     // push everything into timeline
     var experiment_timeline = [];
 
-    // experiment_timeline.push(consent)
-    // experiment_timeline.push(enter_fullscreen)
-    // experiment_timeline.push(demographics)
+    experiment_timeline.push(consent)
+    experiment_timeline.push(enter_fullscreen)
+    experiment_timeline.push(demographics)
 
-    // experiment_timeline.push(wm_instruction)
-    // experiment_timeline.push(check_fullscreen)
-    // experiment_timeline.push(createWM(practice_input_data))
+    experiment_timeline.push(wm_instruction)
+    experiment_timeline.push(check_fullscreen)
+    experiment_timeline.push(countdown(3))
+    experiment_timeline.push(createWM(practice_input_data,feedback=1))
 
-    // WM BLOCK 1
-    // experiment_timeline.push(start_wm)
-    // experiment_timeline.push(check_fullscreen)
-    experiment_timeline.push(createWM(wm_input_data_block1))
+    // // WM BLOCK 1
+    experiment_timeline.push(start_wm)
+    experiment_timeline.push(check_fullscreen)
+    experiment_timeline.push(countdown(3))
+    experiment_timeline.push(createWM(wm_input_data_block1,feedback=0))
 
-    // LM BLOCK 1
-    // experiment_timeline.push(distractor_instructions)
-    // experiment_timeline.push(check_fullscreen)
-    // experiment_timeline.push(createDistractorTask())
-    // experiment_timeline.push(lm_instructions)
-    // experiment_timeline.push(start_lm)
-    // experiment_timeline.push(check_fullscreen)
-    // experiment_timeline.push(createLM(lm_input_data))
-
-    // BREAK
-    // experiment_timeline.push(break_trial)
-    // experiment_timeline.push(check_fullscreen)
+    // // BREAK
+    experiment_timeline.push(break_trial)
+    experiment_timeline.push(check_fullscreen)
     
-    // WM BLOCK 2
-    // experiment_timeline.push(countdown(5))
-    // experiment_timeline.push(createWM(wm_input_data_block2))
+    // // WM BLOCK 2
+    experiment_timeline.push(countdown(3))
+    experiment_timeline.push(createWM(wm_input_data_block2,feedback=0))
+    experiment_timeline.push(end_wm)
+    
+    experiment_timeline.push(distractor_instructions)
+    experiment_timeline.push(check_fullscreen)
+    experiment_timeline.push(countdown(3))
+    experiment_timeline.push(createDistractorTask())
 
-    // experiment_timeline.push(distractor_instructions)
-    // experiment_timeline.push(check_fullscreen)
-    // experiment_timeline.push(createDistractorTask())
+    experiment_timeline.push(lm_instructions)
+    experiment_timeline.push(start_lm)
+    experiment_timeline.push(countdown(3))
 
-    // experiment_timeline.push(lm_instructions)
-    // experiment_timeline.push(start_lm)
-    // experiment_timeline.push(check_fullscreen)
+    experiment_timeline.push(check_fullscreen)
     experiment_timeline.push(createLM(lm_input_data))
-    // experiment_timeline.push(end_experiment)
+    experiment_timeline.push(end_experiment)
 
     // run
     jsPsych.run(experiment_timeline);
