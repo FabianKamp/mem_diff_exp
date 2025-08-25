@@ -276,7 +276,7 @@
         console.log(instruction_files[i])
         encoding_slide += 
             `<div class="image-container"> 
-                <img src="test_stimuli/instructions/${instruction_files[i]}" class="image-object" 
+                <img src="stimuli/instructions/${instruction_files[i]}" class="image-object" 
                 style="left: calc(50% - ${pos.x}px); top: calc(50% + ${pos.y}px);"/>
             </div>`
     }
@@ -300,8 +300,8 @@
                 
 
         <div>
-            <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="test_stimuli/instructions/sample2.jpg" class="image-object"/>
-            <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="test_stimuli/instructions/sample4.jpg" class="image-object"/>
+            <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+            <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
         </div>
 
         <p class="instruction-paragraph-left">
@@ -356,41 +356,6 @@
             </div>`
             ],
             wm_recognition_slide,
-            // [
-            // `<p class="instruction-paragraph-left">
-            //     <strong>Important!</strong><br><br>
-            //     The images can match <strong>conceptually and/or visually</strong>.<br><br>
-            //     For example, the left and middle image both depict dates but look differently.<br><br>
-            //     While, the middle and right image depict objects from different categories 
-            //     but look alike. 
-            // </p>
-            
-            // <div>
-            //     <img style="position: absolute; top: 50%; left: calc( 50% - 150px);" src="test_stimuli/instructions/sample3.jpg" class="image-object"/>
-            //     <img style="position: absolute; top: 50%; left: 50%" src="test_stimuli/instructions/sample1.jpg" class="image-object"/>
-            //     <img style="position: absolute; top: 50%; left: calc( 50% + 150px);" src="test_stimuli/instructions/sample4.jpg" class="image-object"/>
-            // </div>
-
-            // <p class="continue-prompt">
-            //     To continue press <strong>right arrow</strong>
-            // </p>`
-            // ],
-            // [
-            // `<p class="instruction-paragraph-left">
-            //     <strong>Important!</strong><br><br>
-            //     It's also possible that the images match on neither visually nor conceptually. 
-            //     For example the left and middle image don't match at all.<br><br>
-            //     And some images match perfectly: The middle and right image depict dates that also look similar. 
-            // </p>
-            // <div>
-            //     <img style="position: absolute; top: 50%; left: calc( 50% - 150px);" src="test_stimuli/instructions/sample5.jpg" class="image-object"/>
-            //     <img style="position: absolute; top: 50%; left: 50%" src="test_stimuli/instructions/sample1.jpg" class="image-object"/>
-            //     <img style="position: absolute; top: 50%; left: calc( 50% + 150px);" src="test_stimuli/instructions/sample2.jpg" class="image-object"/>
-            // </div>
-            // <p class="continue-prompt">
-            //     To continue press <strong>right arrow</strong>
-            // </p>`
-            // ],
             [
             `<p class="instruction-header"><strong>Practice</strong></p>
             <p class="instruction-paragraph">
@@ -406,8 +371,7 @@
                 To start the practice press <strong>right arrow</strong>
             </p>`
             ]
-        ]
-        }
+        ]}
     
     // start wm experiment
     var start_wm = {
@@ -503,7 +467,7 @@
                 <strong>Have you seen this image before?</strong>
             </p>
             <div>
-                <img src="test_stimuli/instructions/sample1.jpg" style="position: absolute; border-radius:10px;
+                <img src="stimuli/instructions/sample1.jpg" style="position: absolute; border-radius:10px;
                                         height:200px; width:200px; top: 30%; left: 50%;
                                         transform: translate(-50%, -50%);"/>
             </div>`;
