@@ -8,7 +8,6 @@ load_condition = "low-load"
 response_format = "2afc"
 version = "_".join([load_condition, response_format])
 
-# TODO change the number of trials back to the original values
 subject_number = 4
 practice_trials = 12
 wm_trials = 160 #48 # or 120
