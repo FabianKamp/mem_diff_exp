@@ -4,18 +4,17 @@ import os
 import glob
 import json
 
-load_condition = "low-load"
-response_format = "2afc"
-version = "_".join([load_condition, response_format])
-
-subject_number = 4
+start_id = 1 # if subject id is already given away
+subject_number = 50
 practice_trials = 12
-wm_trials = 160 #48 # or 120
-all_wm_trials = wm_trials + practice_trials
-lm_trials = 240
 
-out_dir = f"input_data/{version}/"
-load = 4 if load_condition != "high-load" else 6
+wm_trials = 160 
+all_wm_trials = wm_trials + practice_trials
+lm_trials = 260
+ncatch = 8
+
+out_dir = f"input_data/"
+load = 4 
 
 # script start
 if subject_number%4!=0:
@@ -61,9 +60,44 @@ def generate_random_angles(n):
     random_angles = np.round(random_angles, 3)
     return random_angles
 
+def generate_catch_trials(ncatch):
+    encoding_thetas = np.vstack([generate_random_angles(load) for _ in range(ncatch)])
+    recognition_thetas = encoding_thetas[:,0]
+
+    encoding_ids = np.vstack([np.random.choice(np.arange(1,500), load,replace=False)+9000 for _ in range(ncatch)])
+    encoding_files = np.array([get_file_path(i) for i in encoding_ids.flatten()])
+    encoding_files = encoding_files.reshape(encoding_ids.shape)
+    
+    catch_trial_data = dict(
+        wm_id = 9999,
+        condition = 9999,
+        trial_id = np.arange(ncatch), 
+        sample_position = 1,
+        recognition_theta = recognition_thetas,
+        trial_type = "catch",
+        recognition_control_file = encoding_files[:,0],
+        recognition_lure_file = encoding_files[:,0][::-1],
+        long_encoding = np.ones(ncatch),
+        left_lure = np.random.choice([0,1], ncatch, replace=True).astype(int),
+        wm_block_id = np.repeat([1,2], int(ncatch/2))
+    )
+
+    for i in range(load):
+        catch_trial_data.update({
+            f"encoding_{i+1}": encoding_ids[:,i],
+            f"encoding_file_{i+1}": encoding_files[:,i],
+            f"encoding_theta_{i+1}": encoding_thetas[:,i],
+        })
+
+    catch_trial_df = pd.DataFrame(catch_trial_data)
+    catch_json_data = catch_trial_df.to_dict(orient='records')
+    catch_positions = np.linspace(practice_trials+10, wm_trials-20, ncatch).astype(int)
+
+    return catch_positions, catch_json_data
+
 # randomization
 nan = 9999
-counter = 1
+counter = 0
 
 while counter < subject_number:    
     # randomize images ids for wm and lm
@@ -72,11 +106,11 @@ while counter < subject_number:
     wm_sample_files = np.array([get_file_path(i) for i in wm_encoding])
     
     # randomize sequential position
-    wm_positions = np.array([np.random.choice(np.arange(load), 1, replace=False)[0] for _ in range(all_wm_trials)])
+    sample_positions = np.array([np.random.choice(np.arange(load), 1, replace=False)[0] for _ in range(all_wm_trials)])
 
     # generate angles
     encoding_thetas = np.vstack([generate_random_angles(load) for _ in range(all_wm_trials)])
-    recognition_thetas = encoding_thetas[np.arange(all_wm_trials), wm_positions].flatten()
+    recognition_thetas = encoding_thetas[np.arange(all_wm_trials), sample_positions].flatten()
 
     # randomize distractors (Attention: avoid trials with several distractors from the same category )
     total_images = all_wm_trials * load
@@ -86,14 +120,14 @@ while counter < subject_number:
 
     # get all images for encoding
     encoding_ids = np.zeros((all_wm_trials, load))
-    encoding_ids[np.arange(all_wm_trials), wm_positions] = wm_encoding
+    encoding_ids[np.arange(all_wm_trials), sample_positions] = wm_encoding
     encoding_ids[encoding_ids == 0] = wm_distractors
     encoding_ids = encoding_ids.astype(int)
     encoding_files = np.array([get_file_path(i) for i in encoding_ids.flatten()])
     encoding_files = encoding_files.reshape(encoding_ids.shape)
 
     # positions start at 1
-    wm_positions += 1 
+    sample_positions += 1 
 
     # block ids 
     wm_block_ids = np.ones(wm_trials).astype(int)
@@ -105,10 +139,10 @@ while counter < subject_number:
 
     # assemble together
     wm_trial_data = dict(
-        wm_trial_id = np.arange(all_wm_trials), 
+        trial_id = np.arange(all_wm_trials), 
         wm_id = wm_ids.astype(int),
         wm_sample_file = wm_sample_files,
-        wm_position = wm_positions,
+        sample_position = sample_positions,
         recognition_theta = recognition_thetas,
         wm_block_id = wm_block_ids, 
         trial_type = wm_trial_type,
@@ -154,7 +188,7 @@ while counter < subject_number:
     wm_trial_data.update(left_lure = wm_left_lure.astype(int))
 
     # lm stimuli
-    lm_distractors = np.random.choice(np.arange(total_images-all_wm_trials + 3, 722), 
+    lm_distractors = np.random.choice(np.arange(total_images-all_wm_trials + 3, 722, 2), 
                                       lm_trials-wm_trials, replace=False)
     lm_distractors += 9000
     lm_ids = wm_ids[practice_trials::]
@@ -170,17 +204,20 @@ while counter < subject_number:
 
     # assemble ltm data
     lm_trial_data = dict(
-        lm_trial_id = np.arange(lm_trials), 
-        lm_recognition = lm_recognition,
-        lm_recognition_file = lm_recognition_files,
+        trial_id = np.arange(lm_trials), 
+        recognition_id = lm_recognition,
+        recognition_file = lm_recognition_files,
         old = old,
         encoding_trial = encoding_trial, 
         trial_type = "lm"
     )
 
+    # catch trials
+    catch_positions, catch_json_data = generate_catch_trials(ncatch)
+
     ## latin square randomization of conditions
     for i in range(num_conditions):  
-        subject_id = counter       
+        subject_id = counter + start_id       
         
         # working memory
         latin_wm_codes = wm_conditions_random % num_conditions + 1
@@ -196,13 +233,12 @@ while counter < subject_number:
         wm_recognition_control_files = np.array([get_file_path(i) for i in wm_recognition_control.flatten()])
         
         wm_trial_data.update(
-            wm_recognition_lure = wm_recognition_lure.astype(int),
-            wm_recognition_lure_file = wm_recognition_lure_files,
-            wm_recognition_control = wm_recognition_control.astype(int),
-            wm_recognition_control_file = wm_recognition_control_files,
-            wm_condition = latin_wm_codes,
+            recognition_lure_id = wm_recognition_lure.astype(int),
+            recognition_lure_file = wm_recognition_lure_files,
+            recognition_control_id = wm_recognition_control.astype(int),
+            recognition_control_file = wm_recognition_control_files,
+            condition = latin_wm_codes,
             subject_id = subject_id,
-            version = version,
         )   
 
         # save 
@@ -211,8 +247,12 @@ while counter < subject_number:
         lm_trial_df = pd.DataFrame(lm_trial_data)    
         lm_json_data = lm_trial_df.to_dict(orient='records')
         
-        combined_json_data = wm_json_data + lm_json_data
+        # insert catch trials
+        for p, catch_trial in zip(catch_positions, catch_json_data):
+            wm_json_data.insert(p,catch_trial)
         
+        # combine wm and lm data
+        combined_json_data = wm_json_data + lm_json_data
         combined_file_path = os.path.join(out_dir, f"input_subject_{subject_id:03d}.json")
         with open(combined_file_path, 'w') as combined_file:
             json.dump(combined_json_data, combined_file, indent=4)

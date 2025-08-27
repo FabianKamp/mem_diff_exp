@@ -5,7 +5,6 @@
     <title>Experiment</title>
     
     <script src="jquery/jquery-3.7.1.min.js"></script>
-
     <script src="jspsych/jspsych.js"></script>
     <script src="jspsych/plugin-external-html.js"></script>
     <script src="jspsych/plugin-fullscreen.js"></script>
@@ -17,7 +16,6 @@
     <script src="jspsych/plugin-html-slider-response.js"></script>
     <script src="jspsych/plugin-instructions.js"></script>
     <script src="jspsych/plugin-preload.js"></script>
-    
     <script src="experimentHelper.js"></script>
     
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
@@ -59,52 +57,28 @@
         }
     });
 
-    // experiment parameters
-    const inter_trial_delay = 1000; //ms (1000 has a good feel)
-    const inter_img_delay = 220; //ms
-    const memory_delay = 3000; //ms
-
-    // TODO update the instructions
-
     // TODO reset the subject ID to the original 
-    // TODO instruction for the response format
     // var subject_id = jsPsych.data.getURLVariable('sid')
     var subject_id = 1
+    const load = 4; // number of enc images
 
-    // var version_code = jsPsych.data.getURLVariable('vc')
-    version_code = "00"
-    // var load_condition = jsPsych.data.getURLVariable('load')
-    var load_condition = "low-load" // high-load
-    const load = (load_condition === "high-load") ? 7 : 4; // number of enc images
+    // experiment parameters
+    const inter_trial_delay = 750; //ms (1000 has a good feel)
+    const memory_delay = 3000; //ms
+    const catch_delay = 500; // delay for catch trials
 
-    // var response_format = jsPsych.data.getURLVariable('response')
-    var response_format = "2afc" // n-o
+    const encoding_time_short = 1250;
+    const encoding_time_long = 2500;
+    const catch_encoding = 4000; // encoding time for catch trials
 
-    // define version 
-    var version = `${load_condition}_${response_format}`
-    
     // radius for image presentation
     var rx = 280; //px
     var ry = 240; //px
-
-    if (load_condition === "high-load") {
-        rx += 50
-    }
-
-    // TODO read from URL
-    // var sequential = (jsPsych.data.getURLVariable('seq') == 'N') ? false : true;
-    var sequential =  false;
-
-    // var encoding_time = (jsPsych.data.getURLVariable('etime') == 'short') ? 300 : 500;
-    var encoding_time_short = 1500
-    var encoding_time_long = 2500
-    // encoding_time = (sequential) ? encoding_time*1 : encoding_time*load; //ms
     
     // add meta data
     jsPsych.data.addProperties({
         startTime : new Date().toISOString().replace('T', ' ').slice(0, 19),
         subject_id: subject_id,
-        version_code: version_code,
         OS : window.navigator.platform,
         fullscreen_mode: true, 
         radius_x: rx, 
@@ -114,12 +88,12 @@
     
     // load wm image data
     subject_id_str = String(subject_id).padStart(3, '0')
-    var input_data = await fetch(`input_data/${version}/input_subject_${subject_id_str}.json`)
+    var input_data = await fetch(`input_data/input_subject_${subject_id_str}.json`)
         .then(response => response.json())
         .catch(error => console.error(error));
 
     var practice_input_data = input_data.filter((trial) => trial.trial_type === "practice");
-    var wm_input_data = input_data.filter((trial) => trial.trial_type === "wm");
+    var wm_input_data = input_data.filter((trial) => trial.trial_type === "wm" || trial.trial_type === "catch");
     var lm_input_data = input_data.filter((trial) => trial.trial_type === "lm");
     
     // split into blocks
@@ -195,6 +169,7 @@
         </div>`,
         delay_after: 1000
     }
+
     var fullscreenExits = 0; 
     var check_fullscreen = {
         timeline: [reenter_fullscreen],
@@ -273,7 +248,6 @@
     var encoding_slide = `<div>`
     for (let i = 0; i < instruction_angles.length; i++) {
         var pos = convert2cartesian(rx,ry, instruction_angles[i])
-        console.log(instruction_files[i])
         encoding_slide += 
             `<div class="image-container"> 
                 <img src="stimuli/instructions/${instruction_files[i]}" class="image-object" 
@@ -297,8 +271,7 @@
         `<div class="square" 
             style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
         </div>
-                
-
+            
         <div>
             <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
             <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
@@ -312,6 +285,7 @@
             The square indicates the position of the previous image.<br><br>
             You can choose the image by clicking on it.
         </p>
+
         <p class="continue-prompt">
             To continue press <strong>right arrow</strong>
         </p>`
@@ -632,8 +606,8 @@
                 for (let j = 0; j < load; j++) {
                     files.push(jsPsych.evaluateTimelineVariable(`encoding_file_${j+1}`));
                 }
-                files.push(jsPsych.evaluateTimelineVariable('wm_recognition_lure_file'))
-                files.push(jsPsych.evaluateTimelineVariable('wm_recognition_control_file'))
+                files.push(jsPsych.evaluateTimelineVariable('recognition_lure_file'))
+                files.push(jsPsych.evaluateTimelineVariable('recognition_control_file'))
                 return files;
             }
         })
@@ -661,6 +635,12 @@
                 choices: "NO_KEYS",
                 trial_duration: function() {
                     var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
+                    var trial_type = jsPsych.evaluateTimelineVariable(`trial_type`)
+
+                    if (trial_type == `catch`) {
+                        return catch_encoding
+                    }
+                    
                     if (long_encoding == 1) {
                         return encoding_time_long
                     } else {
@@ -697,7 +677,7 @@
                     }
                     data.stimulus = file
                     data.theta = theta
-                    data.wm_trial_id = jsPsych.evaluateTimelineVariable('wm_trial_id')
+                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                     data.trial_type = "encoding";
                     data.timestamp = new Date().toLocaleTimeString()
                 }
@@ -708,7 +688,14 @@
             {
                 type: jsPsychHtmlKeyboardResponse,
                 choices: "NO_KEYS",
-                trial_duration: memory_delay,
+                trial_duration: function(){
+                    var trial_type = jsPsych.evaluateTimelineVariable(`trial_type`)
+                    if (trial_type == "catch") {
+                        return catch_delay
+                    } else {
+                        return memory_delay
+                    }
+                },
                 record_data: false,
                 stimulus: function(){
                     var html = 
@@ -726,9 +713,11 @@
                 choices: ["left", "right"],
                 button_layout: 'grid',
                 button_html: (choice) => {
-                    var control_file = jsPsych.evaluateTimelineVariable('wm_recognition_control_file')
-                    var lure_file = jsPsych.evaluateTimelineVariable(`wm_recognition_lure_file`)
-                    var left_lure = jsPsych.evaluateTimelineVariable('left_lure') 
+                    var trial_type = jsPsych.evaluateTimelineVariable(`trial_type`)
+                    var trial_id = jsPsych.evaluateTimelineVariable(`trial_id`)
+                    var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
+                    var lure_file = jsPsych.evaluateTimelineVariable(`recognition_lure_file`)
+                    var left_lure = jsPsych.evaluateTimelineVariable(`left_lure`) 
                     
                     if (left_lure === 1) {
                         var left_image = lure_file
@@ -737,7 +726,7 @@
                         var left_image = control_file
                         var right_image = lure_file 
                     }
-                    
+                
                     left_button = 
                         `<div style="cursor: pointer; width: 130px; height: 130px; 
                                     position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
@@ -749,10 +738,7 @@
                                     position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
                         <img src="${right_image}" class="image-button"/>
                         </div>`
-
-                    console.log(left_image)
-                    console.log(right_image)
-                    
+                
                     if (choice == "left") {
                         return left_button;
                     } else {
@@ -775,25 +761,24 @@
                                     style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
                                 </div>
                             </div>
-
                         </div>`
+                    
+                    
+                    
                     return html;
                 },
 
                 on_finish: function(data) { 
-                    data.wm_trial_id = jsPsych.evaluateTimelineVariable('wm_trial_id')
+                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                     data.image_id = jsPsych.evaluateTimelineVariable('wm_id')
-                    data.lure = jsPsych.evaluateTimelineVariable('wm_recognition_lure_file')
-                    data.control = jsPsych.evaluateTimelineVariable('wm_recognition_control_file')
-                    data.stimulus = "2AFC"
+                    data.lure = jsPsych.evaluateTimelineVariable('recognition_lure_file')
+                    data.control = jsPsych.evaluateTimelineVariable('recognition_control_file')
                     data.theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                    data.wm_condition = jsPsych.evaluateTimelineVariable('wm_condition')
-                    data.wm_position = jsPsych.evaluateTimelineVariable('wm_position')
-                    // data.lm_position = jsPsych.evaluateTimelineVariable('lm_position')
+                    data.condition = jsPsych.evaluateTimelineVariable('condition')
+                    data.sample_position = jsPsych.evaluateTimelineVariable('sample_position')
                     data.left_lure = jsPsych.evaluateTimelineVariable('left_lure') 
-                    data.trial_type = "wm-recognition"
+                    data.trial_type = jsPsych.evaluateTimelineVariable('trial_type') 
                     data.timestamp = new Date().toLocaleTimeString()
-
                 }
             }
         )
@@ -803,11 +788,11 @@
                 {
                 type: jsPsychHtmlKeyboardResponse,
                 choices: "NO_KEYS",
-                trial_duration: 1000,
+                trial_duration: 1500,
                 stimulus: function() {
                     var wm_sample_file = jsPsych.evaluateTimelineVariable('wm_sample_file')
-                    var control_file = jsPsych.evaluateTimelineVariable('wm_recognition_control_file')
-                    var lure_file = jsPsych.evaluateTimelineVariable(`wm_recognition_lure_file`)
+                    var control_file = jsPsych.evaluateTimelineVariable('recognition_control_file')
+                    var lure_file = jsPsych.evaluateTimelineVariable(`recognition_lure_file`)
                     var left_lure = jsPsych.evaluateTimelineVariable(`left_lure`) 
                     
                     if (left_lure === 1) {
@@ -874,7 +859,7 @@
                 labels: slider_labels,
                 // css_classes : ["next-trial-btn"],
                 stimulus: function() {
-                    var file = jsPsych.evaluateTimelineVariable('lm_recognition_file')
+                    var file = jsPsych.evaluateTimelineVariable('recognition_file')
                     var html = 
                         `<div style="width:900px; height:50vh; position: relative;">
                             <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: -30px; left: 50%;
@@ -939,10 +924,9 @@
                     });
                 },
                 on_finish: function(data) { 
-                    data.stimulus = jsPsych.evaluateTimelineVariable('lm_recognition_file')
-                    data.image_id = jsPsych.evaluateTimelineVariable('lm_recognition')
+                    data.stimulus = jsPsych.evaluateTimelineVariable('recognition_file')
+                    data.image_id = jsPsych.evaluateTimelineVariable('recognition_id')
                     data.old = jsPsych.evaluateTimelineVariable('old')
-                    console.log(data.old)
                     data.lm_trial_id = jsPsych.evaluateTimelineVariable('lm_trial_id')
                     data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial')
                     data.trial_type = "lm-recognition";
@@ -950,7 +934,6 @@
                 }
             }
         )
-            
         return {timeline:lm_timeline, timeline_variables:timeline_variables};
     }
 
@@ -1115,7 +1098,6 @@
     // Overall timeline
     // push everything into timeline
     var experiment_timeline = [];
-
     experiment_timeline.push(consent)
     experiment_timeline.push(enter_fullscreen)
     experiment_timeline.push(demographics)
@@ -1125,13 +1107,13 @@
     experiment_timeline.push(countdown(3))
     experiment_timeline.push(createWM(practice_input_data,feedback=1))
 
-    // // WM BLOCK 1
+    // // // WM BLOCK 1
     experiment_timeline.push(start_wm)
     experiment_timeline.push(check_fullscreen)
     experiment_timeline.push(countdown(3))
     experiment_timeline.push(createWM(wm_input_data_block1,feedback=0))
 
-    // // BREAK
+    // BREAK
     experiment_timeline.push(break_trial)
     experiment_timeline.push(check_fullscreen)
     
