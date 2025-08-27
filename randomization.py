@@ -5,13 +5,13 @@ import glob
 import json
 
 start_id = 1 # if subject id is already given away
-subject_number = 50
+subject_number = 52
 practice_trials = 12
 
 wm_trials = 160 
 all_wm_trials = wm_trials + practice_trials
 lm_trials = 260
-ncatch = 8
+ncatch = 10
 
 out_dir = f"input_data/"
 load = 4 
@@ -67,7 +67,10 @@ def generate_catch_trials(ncatch):
     encoding_ids = np.vstack([np.random.choice(np.arange(1,500), load,replace=False)+9000 for _ in range(ncatch)])
     encoding_files = np.array([get_file_path(i) for i in encoding_ids.flatten()])
     encoding_files = encoding_files.reshape(encoding_ids.shape)
-    
+
+    left_lure = np.random.choice([0,1], ncatch, replace=True).astype(int)
+    correct_response = ~left_lure
+
     catch_trial_data = dict(
         wm_id = 9999,
         condition = 9999,
@@ -78,7 +81,9 @@ def generate_catch_trials(ncatch):
         recognition_control_file = encoding_files[:,0],
         recognition_lure_file = encoding_files[:,0][::-1],
         long_encoding = np.ones(ncatch),
-        left_lure = np.random.choice([0,1], ncatch, replace=True).astype(int),
+        left_lure = left_lure,
+        lure_correct = np.zeros(ncatch),
+        correct_response = correct_response,
         wm_block_id = np.repeat([1,2], int(ncatch/2))
     )
 
@@ -157,16 +162,16 @@ while counter < subject_number:
 
     # conditions and condition codes 
     conditions = ["a_semantic", "a_visual", "b_visual", "b_semantic"]
-    condition_codes = {k: i+1 for i,k in enumerate(conditions)}
+    condition_codes = {i+1: k for i,k in enumerate(conditions)}
     num_conditions = len(conditions)
     assert wm_trials%num_conditions == 0, f"Number of wm trials must be divisible by {num_conditions}"
     
     # randomize wm condition across trials
     wm_repeats = wm_trials//num_conditions
-    wm_conditions = np.array(list(condition_codes.values()) * wm_repeats)
+    wm_conditions = np.array(list(condition_codes.keys()) * wm_repeats)
     wm_random_idx = np.random.permutation(np.arange(wm_trials))
     wm_conditions_random = wm_conditions[wm_random_idx]
-    practice_conditions = np.random.permutation(list(condition_codes.values()) * (practice_trials//num_conditions))
+    practice_conditions = np.random.permutation(list(condition_codes.keys()) * (practice_trials//num_conditions))
     wm_conditions_random = np.concatenate([practice_conditions, wm_conditions_random])
 
     # randomize encoding time
@@ -185,7 +190,8 @@ while counter < subject_number:
     practice_left_lure = np.random.permutation([0,1]*(practice_trials//2))
 
     wm_left_lure = np.concatenate([practice_left_lure, wm_left_lure])
-    wm_trial_data.update(left_lure = wm_left_lure.astype(int))
+    wm_left_lure = wm_left_lure.astype(int)
+    wm_trial_data.update(left_lure = wm_left_lure)
 
     # lm stimuli
     lm_distractors = np.random.choice(np.arange(total_images-all_wm_trials + 3, 722, 2), 
@@ -220,11 +226,20 @@ while counter < subject_number:
         subject_id = counter + start_id       
         
         # working memory
-        latin_wm_codes = wm_conditions_random % num_conditions + 1
+        latin_conditions = wm_conditions_random % num_conditions + 1
         wm_conditions_random = wm_conditions_random + 1
+        
+        latin_condition_names = [condition_codes[i] for i in latin_conditions]
  
-        lure_codes = (latin_wm_codes < 3).astype(int) + 3
-        control_codes = (latin_wm_codes % 2).astype(int) * 3 + 2
+        # 1 -> (4,5), 2 -> (4,2), 3 -> (3,5), 4 -> (3,2)
+        lure_codes = (latin_conditions < 3).astype(int) + 3
+        control_codes = (latin_conditions % 2).astype(int) * 3 + 2
+        
+        # lure is correct if control image is 5
+        lure_correct = (control_codes == 5).astype(int)
+        # figure out which response is correct
+        left_correct = (lure_correct & wm_left_lure) | (~lure_correct & ~wm_left_lure)
+        correct_response = ~left_correct
 
         wm_recognition_lure = wm_ids + lure_codes * 1000
         wm_recognition_lure_files = np.array([get_file_path(i) for i in wm_recognition_lure.flatten()])
@@ -237,8 +252,11 @@ while counter < subject_number:
             recognition_lure_file = wm_recognition_lure_files,
             recognition_control_id = wm_recognition_control.astype(int),
             recognition_control_file = wm_recognition_control_files,
-            condition = latin_wm_codes,
+            condition = latin_conditions,
+            condition_name = latin_condition_names,
             subject_id = subject_id,
+            lure_correct = lure_correct, 
+            correct_response = correct_response
         )   
 
         # save 
