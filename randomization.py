@@ -4,6 +4,7 @@ import os
 import glob
 import json
 
+prefix_id = "p"
 start_id = 1 # if subject id is already given away
 subject_number = 52
 practice_trials = 12
@@ -223,7 +224,7 @@ while counter < subject_number:
 
     ## latin square randomization of conditions
     for i in range(num_conditions):  
-        subject_id = counter + start_id       
+        subject_id = prefix_id + str(counter + start_id).zfill(3)       
         
         # working memory
         latin_conditions = wm_conditions_random % num_conditions + 1
@@ -271,7 +272,7 @@ while counter < subject_number:
         
         # combine wm and lm data
         combined_json_data = wm_json_data + lm_json_data
-        combined_file_path = os.path.join(out_dir, f"input_subject_{subject_id:03d}.json")
+        combined_file_path = os.path.join(out_dir, f"input_subject_{subject_id}.json")
         with open(combined_file_path, 'w') as combined_file:
             json.dump(combined_json_data, combined_file, indent=4)
 
