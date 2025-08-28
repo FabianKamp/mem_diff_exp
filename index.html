@@ -16,12 +16,18 @@
     <script src="jspsych/plugin-html-slider-response.js"></script>
     <script src="jspsych/plugin-instructions.js"></script>
     <script src="jspsych/plugin-preload.js"></script>
-    <script src="experimentHelper.js"></script>
+    
+    <script src="tasks/lmTask.js"></script>
+    <script src="tasks/wmTask.js"></script>
+    <script src="tasks/decisionTask.js"></script>
+    <script src="tasks/distractorTask.js"></script>
+    <script src="experimentFlow.js"></script>
+    <script src="experimentSettings.js"></script>
     
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
     <link href="jspsych/survey.css" rel="stylesheet" type="text/css" />
     <link href="experiment.css" rel="stylesheet" type="text/css" />
-
+    
 </head>
   <body></body>
   <script>
@@ -59,47 +65,18 @@
 
     // TODO reset the subject ID to the original 
     // var subject_id = jsPsych.data.getURLVariable('sid')
-    var subject_id = 1
-    const load = 4; // number of enc images
-
-    // experiment parameters
-    const inter_trial_delay = 750; //ms (1000 has a good feel)
-    const memory_delay = 3000; //ms
-    const catch_delay = 1000; // delay for catch trials
-
-    const encoding_time_short = 1250;
-    const encoding_time_long = 2500;
-    const catch_encoding = 5000; // encoding time for catch trials
-
-    // radius for image presentation
-    var rx = 280; //px
-    var ry = 240; //px
-    
+    var subject_id = 'v001'
+    // var subject_id = jsPsych.data.getURLVariable('version')
+    var version = 'vision'
+       
     // add meta data
     jsPsych.data.addProperties({
         startTime : new Date().toISOString().replace('T', ' ').slice(0, 19),
         subject_id: subject_id,
         OS : window.navigator.platform,
         fullscreen_mode: true, 
-        radius_x: rx, 
-        radius_y: ry, 
-        memory_delay: memory_delay
     });
     
-    // load wm image data
-    subject_id_str = String(subject_id).padStart(3, '0')
-    var input_data = await fetch(`input_data/input_subject_${subject_id_str}.json`)
-        .then(response => response.json())
-        .catch(error => console.error(error));
-
-    var practice_input_data = input_data.filter((trial) => trial.trial_type === "practice");
-    var wm_input_data = input_data.filter((trial) => trial.trial_type === "wm" || trial.trial_type === "catch");
-    var lm_input_data = input_data.filter((trial) => trial.trial_type === "lm");
-    
-    // split into blocks
-    var wm_input_data_block1 = wm_input_data.filter((trial) => trial.wm_block_id === 1);
-    var wm_input_data_block2 = wm_input_data.filter((trial) => trial.wm_block_id === 2);
-
     // consent
     var participantConsentStatus = null;
     var check_consent = function(elem) {
@@ -129,68 +106,6 @@
                 consent_status: participantConsentStatus
             })}
         }
-
-    // fullscreen
-    var enter_fullscreen = {
-        type: jsPsychFullscreen,
-        fullscreen_mode: true,
-        choices: ['Continue'],
-        message:         
-        `
-        <p class="instruction-header"><strong>Welcome to the experiment!</strong></p>
-        <div style="height: 80vh; position: relative;">
-            <p class="instruction-paragraph">
-                We will now enter <strong>fullscreen mode</strong>.
-                <br><br>
-                To ensure the quality of the results, we'd ask you to 
-                <br>
-                <strong>remain in fullscreen mode during the entire experiment</strong>.
-                <br><br>
-                Once the experiment is over, you will be redirected to Prolific automatically. 
-                Please, don\'t close the experiment until this happens.
-                </br><br><br>
-                To enter fullscreen mode, please click <strong>Continue</strong>.
-            </p>
-        </div>`,
-    }
-
-    // check & reenter fullscreen
-    var reenter_fullscreen = {
-        type: jsPsychFullscreen,
-        fullscreen_mode: true,
-        message:        
-        `
-        <p class="instruction-header"><strong>Reenter fullscreen mode</strong></p>
-        <div style="height: 80vh; position: relative;">
-            <p class="instruction-paragraph">
-                We detected that you exited the fullscreen mode.<br><br>
-                To ensure the quality of the results, we'd kindly ask you to <strong>remain in fullscreen mode</strong> for the duration of the experiment.<br><br>
-                Once the experiment is over, you will automatically be redirected to Prolific, so please don\'t close the experiment until this happens.</br><br><br>
-                To reenter fullscreen mode and <span>continue</span>, please click <span style="font-style: italic;">Continue</span>.
-            </p>
-        </div>
-        `,
-        delay_after: 1000
-    }
-
-    var fullscreenExits = 0; 
-    var check_fullscreen = {
-        timeline: [reenter_fullscreen],
-        conditional_function: function() {
-            var interactionData = jsPsych.data.getInteractionData();
-            if (fullscreenExits < interactionData.filter({event: 'fullscreenexit'}).count()) {
-                fullscreenExits = interactionData.filter({event: 'fullscreenexit'}).count(); 
-                jsPsych.data.get().push({
-                    fullscreen_exit_detected: true,
-                    timestamp: new Date().toLocaleTimeString()
-                });
-                return true;
-            }
-            else {
-                return false; 
-            }
-        }
-    };          
 
     // demographics
     var demographics = {
@@ -233,918 +148,73 @@
                 ]
             }] 
         }};
-
-    // INSTRUCTIONS
-    function generate_instruction_angles(load) {
-        var result = [];
-        var step = (2 * Math.PI) / load;
-        var offset = Math.PI / 6; // 30 degree offset
-        for (let i = 0; i < load; i++) {
-            result.push(i * step + offset);
-        }
-        return result;
-    }
     
-    var instruction_angles = generate_instruction_angles(load)
-    var sample_pos = convert2cartesian(rx, ry, instruction_angles[1])
-    var instruction_files = ["dist1.jpg", "sample1.jpg", "dist2.jpg", "dist3.jpg", "dist4.jpg", "dist5.jpg", "dist6.jpg"]
-    var encoding_slide = `<div>`
-    for (let i = 0; i < instruction_angles.length; i++) {
-        var pos = convert2cartesian(rx,ry, instruction_angles[i])
-        encoding_slide += 
-            `<div class="image-container"> 
-                <img src="stimuli/instructions/${instruction_files[i]}" class="image-object" 
-                style="left: calc(50% - ${pos.x}px); top: calc(50% + ${pos.y}px);"/>
-            </div>`
-    }
-    encoding_slide += 
-        `<div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-            <p class="instruction-paragraph-left">
-                <strong>1. Memorize</strong><br><br> 
-                We will ask you to memorize <strong>${load} images</strong>.<br><br>
-                You have <strong>1-3 seconds</strong> to memorize all images.<br><br>
-                The trial duration will differ from trial to trial.<br><br>
-            </p>
-            <p class="continue-prompt">
-                To continue press <strong>right arrow</strong>
-            </p>
-            </div>`
-    
-    wm_recognition_slide = 
-        `<div class="square" 
-            style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
-        </div>
-            
-        <div>
-            <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-            <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
-        </div>
+    if (version == 'memory') {
+        // loading data
+        // load wm image data
+        var input_data = await fetch(`input_data/memory/input_subject_${subject_id}.json`)
+            .then(response => response.json())
+            .catch(error => console.error(error));
 
-        <p class="instruction-paragraph-left">
-            <strong>3. Which image matches the previous image better?</strong><br><br> 
-            After the delay you will see <strong>2 new images</strong>, i.e.
-            you haven't seen either of the images before.<br><br>
-            Your task is to <strong>choose the image that matches the previous image better</strong>.
-            The square indicates the position of the previous image.<br><br>
-            You can choose the image by clicking on it.
-        </p>
-
-        <p class="continue-prompt">
-            To continue press <strong>right arrow</strong>
-        </p>`
-
-    var wm_instruction = {
-        type: jsPsychInstructions,
-        key_forward: 'ArrowRight',
-        key_backward: 'ArrowLeft',
-        show_clickable_nav: false,
-        record_data: false,
-        pages: [
-            [
-            `<div>
-                <p class="instruction-header"><strong>Instructions</strong></p>
-                <p class="instruction-paragraph">
-                    During this experiment, we will ask you to memorize images that appear on your the display.
-                    <br><br>
-                    The following instructions will explain in detail how the task works.
-                    <br><br><br>
-                    <strong>The instructions are self-paced</strong>. 
-                    You can navigate back and forth through the instructions using the arrow keys on your keyboard.
-                </p>
-                
-                <p class="continue-prompt">
-                    To continue press <strong>right arrow</strong>
-                </p>
-            </div>`
-            ],
-            encoding_slide,
-            [
-            `<div>
-                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>       
-                <p class="instruction-paragraph-left">
-                    <strong>2. Delay</strong><br><br> 
-                    Afterwards there will be a short delay. <br><br>
-                    The delay will take a couple of seconds. <br><br>
-                    Please, focus on the cross on the screen.
-                </p>
-                <p class="continue-prompt">
-                    To continue press <strong>right arrow</strong>
-                </p>
-            </div>`
-            ],
-            wm_recognition_slide,
-            [
-            `<p class="instruction-header"><strong>Practice</strong></p>
-            <p class="instruction-paragraph">
-                We will continue with <strong>12 practice runs</strong>.<br><br>
-                You will get <strong>feedback</strong>: The memorized image will 
-                appear again as soon as you made your choice. So, you can check if your choice was correct.
-                <br><br>
-                Please, try to memorize the images as well as you can and
-                <strong> choose the image that matches the previous image better.</strong>
-                
-            </p>
-            <p class="continue-prompt">
-                To start the practice press <strong>right arrow</strong>
-            </p>`
-            ]
-        ]}
-    
-    // start wm experiment
-    var start_wm = {
-        type: jsPsychInstructions,
-        show_clickable_nav: false,
-        key_forward: 'Enter',
-        record_data: false,
-        post_trial_gap: 200,
-        min_viewing_time: 3000,
-        pages: [
-            [
-            `<div>
-                <p class="instruction-header">
-                    <strong>Starting the experiment</strong>
-                </p>
-                <p class="instruction-paragraph">
-                    Amazing! We will now start the experiment.
-                    The next break will be in ~15 minutes.<br><br>
-                    Attention, there will be <strong>no feedback</strong> in during the experiment.<br><br>
-                    Press <strong>enter</strong> to start.
-                </p>
-                <p class="continue-prompt">
-                    To start the experiment <strong>ENTER</strong>
-                </p>
-            </div>`
-            ]
-        ],
-    }
-    
-    // break
-    var break_trial = {
-        type: jsPsychHtmlKeyboardResponse, 
-        stimulus: 
-            `<div>
-                <p class="instruction-header"><strong>Break</strong></p>
-                <p class="instruction-paragraph"> 
-                    If you need a break, you can take one now.<br><br>
-                    Please allow yourself a maximum of <strong>2 minutes</strong>.<br>
-                    Press <strong>enter</strong> to continue.<br><br>
-                    <strong>The task will continue automatically after 2 minutes.</strong>
-                </p>
-                <p class="continue-prompt">
-                    To continue press <strong>Enter</strong>
-                </p>
-            </div>`,
-        choices: ['Enter'],
-        trial_duration: 120000, // 2 minutes
-        response_ends_trial: true,
-        on_finish: function(data) {
-            if(data.rt === null) {
-                data.break_ending = "ended by timeout after 2 minutes";
-            } 
-            else {
-                data.break_ending = "ended by participant's action after " + data.rt + " ms";
-            }
-            data.stimulus = null;
-            data.trial_type = "break";
-            data.timestamp = new Date().toLocaleTimeString()
-        }
-    }
-
-    // countdown
-    function countdown(seconds) {
-        var counter = []; 
-        for (let i = 0; i < seconds; i++) {
-            counter.push(
-            {
-                type: jsPsychHtmlKeyboardResponse,
-                choices: "NO_KEYS",
-                trial_duration: 1000,
-                record_data: false,
-                stimulus: function(){
-                    var html = 
-                        `<div style="width:250px; height:75vh;">
-                            <p style="font-family: 'Courier New', monospace; font-size: 3rem; 
-                                    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                                    text-align: center; color: #4682B4; margin: 0; line-height: 1;">
-                                <strong>${seconds-i}</strong>
-                            </p>
-                        </div>`
-                    return html;
-                }
-            })
-        }
-        return {timeline:counter}; 
-    }
-
-    const lm_base_layout = () => `
-        <div style="margin: 0 auto;">
-        <div style="width:900px; height:40vh; position: relative;">
-            <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: -140px; left: 50%;
-                    transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
-                <strong>Have you seen this image before?</strong>
-            </p>
-            <div>
-                <img src="stimuli/instructions/sample1.jpg" style="position: absolute; border-radius:10px;
-                                        height:200px; width:200px; top: 30%; left: 50%;
-                                        transform: translate(-50%, -50%);"/>
-            </div>`;
-
-    const lm_scale_labels = () => `
-            <div style="position: absolute; bottom: .6em; left: 50%; transform: translateX(-50%);
-                        width: 100px; height: 10px; display: flex; align-items: center;">
-                <div style="width: 0; height: 0; border-right: 8px solid rgba(51, 51, 51, 0.2); border-top: 5px solid transparent; border-bottom: 5px solid transparent;"></div>
-                <div style="flex: 1; height: 2px; background: linear-gradient(to right, rgba(51, 51, 51, 0.2) 0%, rgba(51, 51, 51, 0.15) 10%, rgba(51, 51, 51, 0.05) 40%, rgba(51, 51, 51, 0.01) 50%, rgba(51, 51, 51, 0.05) 60%, rgba(51, 51, 51, 0.15) 90%, rgba(51, 51, 51, 0.2) 100%);"></div>
-                <div style="width: 0; height: 0; border-left: 8px solid rgba(51, 51, 51, 0.2); border-top: 5px solid transparent; border-bottom: 5px solid transparent;"></div>
-            </div>
-            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 40%; transform: translate(-45%, 50%);">No</p>
-            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 60%; transform: translate(-50%, 50%);">Yes</p>`;
-
-    const lm_slider = () => `
-        <div> 
-        <div style="position: absolute; left: 50%; transform: translateX(-50%); width: 320px;">
-                <input type="range" class="jspsych-slider" value="50" min="5" max="95" step="15" disabled/>
-                <div>
-                    ${['certain', 'probably', 'guess', ' ', 'guess', 'probably', 'certain'].map((label, i) => 
-                        `<div style="border: 1px solid transparent; display: inline-block; position: absolute; left:calc(${i * 16.67}% - (16.67% / 2) - ${i === 1 ? '-1.25px' : i === 2 ? '-2.5px' : i === 4 ? '2.5px' : i === 5 ? '1.25px' : '0px'}); text-align: center; width: 16.67%;"><span style="text-align: center; font-size: 80%; font-family: 'Courier New', monospace; transform: rotate(-30deg); display: inline-block;">${label}</span></div>`
-                    ).join('')}
-                </div>
-            </div>
-        </div>`;
-
-    // LM recognition slides
-    lm_recognition_slide_1 = lm_base_layout() + `
-        </div>
-            <p class="instruction-paragraph-left">
-                <strong>Have you seen this image?</strong><br><br>
-                Now we would like to know if you can still remember the images from the task before. <br><br>
-                You will see images which were shown in the task before as well as some new images. <br><br>
-                Please, try to remember if you have seen the image before or not.
-            </p>
-            <p class="continue-prompt">To continue press <strong>right arrow</strong></p>
-        </div>`;
-    
-    lm_recognition_slide_2 = lm_base_layout() + lm_scale_labels() + `
-        </div>` + lm_slider() + `
-            <p class="instruction-paragraph-left">
-                <strong>Use the slider to respond</strong><br><br>
-                The <strong>right side</strong> of the slider indicates that the image has been shown before (i.e. it is <strong>old</strong>).<br><br>
-                The <strong>left side</strong>  means that has not been shown (i.e. it is <strong>new</strong>).
-            </p>
-            <p class="continue-prompt">To continue press <strong>right arrow</strong></p>
-        </div>`;
-
-    lm_recognition_slide_3 = lm_base_layout() + lm_scale_labels() + `
-        </div>` + lm_slider() + `
-            <p class="instruction-paragraph-left">
-                <strong>Use the slider to respond to indicate your confidence</strong><br><br>
-                You have three options: <strong>guess - probably - certain</strong>.<br><br>
-                Please, move the slider to the position that indicates your confidence level.
-            </p>
-            <p class="continue-prompt">To continue press <strong>right arrow</strong></p>
-        </div>`;
-
-    // instructions long term memory 
-    var lm_instructions =         
-        {
-            type: jsPsychInstructions,
-            key_forward: 'ArrowRight',
-            record_data: false,
-            pages:[[
-                `<div>
-                    <p class="instruction-header">
-                        <strong>Instructions</strong>
-                    </p>
-                    <p class="instruction-paragraph"> 
-                        <strong>Great, you are almost done!</strong>
-                        <br><br><br>
-                        In the last task we will show you again some images. We want to know if you still remember the images from the first task.
-                        <br><br>
-                        For each image we will ask if you have seen it before (i.e. during the first/second block of the experiment)
-                        <br><br><br><br>
-                        The following instructions will explain the task in detail. Press the <strong>right arrow</strong> key to continue.
-                    </p>
-                    <p class="continue-prompt">
-                        To continue press <strong>right arrow</strong>
-                    </p>
-                </div>`
-            ], 
-            lm_recognition_slide_1, 
-            lm_recognition_slide_2, 
-            lm_recognition_slide_3, 
-            ],
-        };
-    
-    // start lm
-    var start_lm = {
-        type: jsPsychInstructions,
-        show_clickable_nav: false,
-        record_data: false,
-        key_forward: 'Enter',
-        post_trial_gap: 200,
-        min_viewing_time: 3000,
-        pages: [
-            [
-            `<div">
-                <p class="instruction-header"><strong>Starting the last task</strong></p>
-                <p class="instruction-paragraph">
-                    We will now start the last task of this experiment.<br><br>
-                    There will be <strong>no practice</strong>, you will directly start the real task.<br><br>
-                    This task will take approx. <strong>10 minutes</strong>.
-                </p>
-                <p class="continue-prompt">
-                    To start, press <strong>Enter</strong> to start. 
-                </p>
-            </div>`
-            ]
-        ], 
-    }
-    // end experiment
-    var end_experiment = {
-        type: jsPsychHtmlKeyboardResponse,
-        trial_duration: 10000,
-        stimulus:
-            '<p><strong>End Of Experiment</strong></p>' + 
-            '<br>' + 
-            '<p>Thank you for participating!</p>' +
-            '<p>Press <strong>Enter</strong> to get redirected to Prolific.</p>' +
-            '<p>After 10 seconds you will be redirected automatically.</p>',
-        key_forward: 'Enter',
-        on_start: async function() {
-            jsPsych.data.addProperties({ 
-                experiment_complete: true,
-                endTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
-            });
-        },
-        on_finish: function(data){
-            data.stimulus = null
-            data.trial_type = "end-slide"
-        }
-    };
-
-    // TASK WRAPPERS
-    slider_labels = 
-        [
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">certain</span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">probably</span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">guess</span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;"> </span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">guess</span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">probably</span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">certain</span>`
-        ]
-
-    // WM TASK
-    function createWM(timeline_variables, feedback) {
-        // timeline: initial delay -> 3 encoding images (inter stimulus delay) -> memory delay -> recognition slide
-        var wm_timeline = [];
+        var practice_input_data = input_data.filter((trial) => trial.trial_type === "practice");
+        var wm_input_data = input_data.filter((trial) => trial.trial_type === "wm" || trial.trial_type === "catch");
+        var lm_input_data = input_data.filter((trial) => trial.trial_type === "lm");
         
-        // preload
-        wm_timeline.push(
-        {
-            type: jsPsychPreload,
-            record_data: false,
-            show_progress_bar: false,
-            images: function() {
-                var files = [];
-                for (let j = 0; j < load; j++) {
-                    files.push(jsPsych.evaluateTimelineVariable(`encoding_file_${j+1}`));
-                }
-                files.push(jsPsych.evaluateTimelineVariable('recognition_lure_file'))
-                files.push(jsPsych.evaluateTimelineVariable('recognition_control_file'))
-                return files;
-            }
-        })
+        // split into blocks
+        var wm_input_data_block1 = wm_input_data.filter((trial) => trial.wm_block_id === 1);
+        var wm_input_data_block2 = wm_input_data.filter((trial) => trial.wm_block_id === 2);
 
-        // inter trial delay
-        wm_timeline.push(
-        {
-            type: jsPsychHtmlKeyboardResponse,
-            choices: "NO_KEYS",
-            trial_duration: inter_trial_delay,
-            record_data: false,
-            stimulus: function(){
-                var html = 
-                `<div style="width:250px; height:75vh;">
-                    <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                </div>`
-                return html;
-            }
-        })
+        // Overall timeline
+        // push everything into timeline
+        var experiment_timeline = [];
+        // experiment_timeline.push(consent)
+        experiment_timeline.push(startingExperiment(jsPsych))
 
-        // encoding        
-        wm_timeline.push(
-            {
-                type: jsPsychHtmlKeyboardResponse,
-                choices: "NO_KEYS",
-                trial_duration: function() {
-                    var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
-                    var trial_type = jsPsych.evaluateTimelineVariable(`trial_type`)
+        // experiment_timeline.push(demographics)
 
-                    if (trial_type == `catch`) {
-                        return catch_encoding
-                    }
-                    
-                    if (long_encoding == 1) {
-                        return encoding_time_long
-                    } else {
-                        return encoding_time_short
-                    }
-                },
-                stimulus: function() {
-                    var html = `<div style="width:500px; height:75vh;">`
-                    for (let i = 0; i < load; i++) {
-                        var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
-                        var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
-                        var pos = convert2cartesian(rx, ry, theta)
-                        html +=                         
-                        `<div style="width:500px; height:75vh;">
-                            <div> 
-                                <img src="${file}" class="image-object" 
-                                style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
-                            </div>
-                        </div>`
-                    }
-                    html += 
-                    `<div class="cross">
-                        <div class="cross-vertical"></div>
-                        <div class="cross-horizontal"></div>
-                    </div></div>`
-                    return html;},
-                
-                on_finish: function(data) { 
-                    var file = []
-                    var theta = []
-                    for (let i = 0; i < load; i++) { 
-                        file.push(jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`))
-                        theta.push(jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`))
-                    }
-                    data.stimulus = file
-                    data.theta = theta
-                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                    data.trial_type = "encoding";
-                    data.timestamp = new Date().toLocaleTimeString()
-                }
-            })
+        experiment_timeline.push(createWMInstructions())
+        // experiment_timeline.push(check_fullscreen)
+        // experiment_timeline.push(countdown(3))
+        // experiment_timeline.push(createWM(practice_input_data, feedback=1, jsPsych))
 
-        // delay
-        wm_timeline.push(
-            {
-                type: jsPsychHtmlKeyboardResponse,
-                choices: "NO_KEYS",
-                trial_duration: function(){
-                    var trial_type = jsPsych.evaluateTimelineVariable(`trial_type`)
-                    if (trial_type == "catch") {
-                        return catch_delay
-                    } else {
-                        return memory_delay
-                    }
-                },
-                record_data: false,
-                stimulus: function(){
-                    var html = 
-                        `<div style="width:250px; height:75vh;">
-                            <div class="cross"><div class="cross-vertical"></div>
-                            <div class="cross-horizontal"></div></div>
-                        </div>`
-                    return html;
-                }
-            })
+        // // // // WM BLOCK 1
+        // experiment_timeline.push(start_wm)
+        // experiment_timeline.push(check_fullscreen)
+        // experiment_timeline.push(countdown(3))
+        // experiment_timeline.push(createWM(wm_input_data_block1, feedback=0, jsPsych))
+
+        // // BREAK
+        // experiment_timeline.push(break_trial)
+        // experiment_timeline.push(check_fullscreen)
         
-        wm_timeline.push(
-            {
-                type: jsPsychHtmlButtonResponse,
-                choices: ["left", "right"],
-                button_layout: 'grid',
-                button_html: (choice) => {
-                    var trial_type = jsPsych.evaluateTimelineVariable(`trial_type`)
-                    var trial_id = jsPsych.evaluateTimelineVariable(`trial_id`)
-                    var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
-                    var lure_file = jsPsych.evaluateTimelineVariable(`recognition_lure_file`)
-                    var left_lure = jsPsych.evaluateTimelineVariable(`left_lure`) 
-                    
-                    if (left_lure === 1) {
-                        var left_image = lure_file
-                        var right_image = control_file
-                    } else {
-                        var left_image = control_file
-                        var right_image = lure_file 
-                    }
-                
-                    left_button = 
-                        `<div style="cursor: pointer; width: 130px; height: 130px; 
-                                    position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
-                        <img src="${left_image}" class="image-button" />
-                        </div>`
-                    
-                    right_button = 
-                        `<div style="cursor: pointer; width: 130px; height: 130px; 
-                                    position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
-                        <img src="${right_image}" class="image-button"/>
-                        </div>`
-                
-                    if (choice == "left") {
-                        return left_button;
-                    } else {
-                        return right_button;
-                    }
-                },
+        // // WM BLOCK 2
+        // experiment_timeline.push(countdown(3))
+        // experiment_timeline.push(createWM(wm_input_data_block2, feedback=0, jsPsych))
+        // experiment_timeline.push(end_wm)
+        
+        // experiment_timeline.push(distractor_instructions)
+        // experiment_timeline.push(check_fullscreen)
+        experiment_timeline.push(countdown(3))
+        // experiment_timeline.push(createDistractorTask())
 
-                stimulus: function() {
-                    var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                    var pos = convert2cartesian(rx, ry, theta)
-                    var html = 
-                        `<div style="width:500px; height: 75vh;">
-                            <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
-                            transform: translateX(-50%); color:#4682B4; text-align: center;">
-                                <strong></strong>
-                            </p>
-                            
-                            <div> 
-                                <div class="square" 
-                                    style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
-                                </div>
-                            </div>
-                        </div>`
-                    return html;
-                },
+        experiment_timeline.push(createLMInstructions())
+        // experiment_timeline.push(start_lm)
+        // experiment_timeline.push(countdown(3))
 
-                on_finish: function(data) { 
-                    var files = [
-                        jsPsych.evaluateTimelineVariable(`recognition_lure_file`), 
-                        jsPsych.evaluateTimelineVariable(`recognition_control_file`)
-                    ]
-                    console.log(jsPsych.evaluateTimelineVariable('correct_response'))
-                    data.stimulus = files
-                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                    data.image_id = jsPsych.evaluateTimelineVariable('wm_id')
-                    data.lure = jsPsych.evaluateTimelineVariable('recognition_lure_file')
-                    data.lure_correct = jsPsych.evaluateTimelineVariable('lure_correct')
-                    data.correct_response = jsPsych.evaluateTimelineVariable('correct_response')
-                    data.control = jsPsych.evaluateTimelineVariable('recognition_control_file')
-                    data.theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                    data.condition = jsPsych.evaluateTimelineVariable('condition')
-                    data.condition_name = jsPsych.evaluateTimelineVariable('condition_name')
-                    data.sample_position = jsPsych.evaluateTimelineVariable('sample_position')
-                    data.left_lure = jsPsych.evaluateTimelineVariable('left_lure') 
-                    data.trial_type = jsPsych.evaluateTimelineVariable('trial_type') 
-                    data.timestamp = new Date().toLocaleTimeString()
-                }
-            }
-        )
+        // experiment_timeline.push(check_fullscreen)
+        experiment_timeline.push(createLM(lm_input_data, jsPsych))
+        experiment_timeline.push(endingExperiment(jsPsych))
+    } else if (version == 'vision') {
+        var input_data = await fetch(`input_data/vision/input_subject_${subject_id}.json`)
+            .then(response => response.json())
+            .catch(error => console.error(error));
+        
+        var experiment_timeline = [];
+        // experiment_timeline.push(createLMInstructions())
+        experiment_timeline.push(createDecisionTask(input_data, jsPsych))
 
-        if (feedback == 1) {
-            wm_timeline.push(
-                {
-                type: jsPsychHtmlKeyboardResponse,
-                choices: "NO_KEYS",
-                trial_duration: 2000,
-                record_data: false,
-                stimulus: function() {
-                    var wm_sample_file = jsPsych.evaluateTimelineVariable('wm_sample_file')
-                    var control_file = jsPsych.evaluateTimelineVariable('recognition_control_file')
-                    var lure_file = jsPsych.evaluateTimelineVariable(`recognition_lure_file`)
-                    var left_lure = jsPsych.evaluateTimelineVariable(`left_lure`) 
-                    
-                    if (left_lure === 1) {
-                        var left_image = lure_file
-                        var right_image = control_file
-                    } else {
-                        var left_image = control_file
-                        var right_image = lure_file 
-                    }
-
-                    var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                    var pos = convert2cartesian(rx, ry, theta)
-                    var html = 
-                        `<div style="width:500px; height: 75vh;">
-                            <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
-                            transform: translateX(-50%); color:#4682B4; text-align: center;">
-                                <strong></strong>
-                            </p>
-                            
-                            <div> 
-                                <div class="square" 
-                                    style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
-                                </div>
-                            </div>
-
-                            <div style="width:500px; height:75vh;">
-                                <div> 
-                                    <img src="${wm_sample_file}" class="image-object" 
-                                    style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
-                                </div>
-                            </div>
-
-                            <div style="cursor: pointer; width: 130px; height: 130px; 
-                                    position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
-                                    <img src="${right_image}" class="image-button"/>                           
-                            </div>
-
-                            <div style="cursor: pointer; width: 130px; height: 130px; 
-                                    position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
-                                    <img src="${left_image}" class="image-button" />
-                            </div>
-
-                        </div>`
-                    return html;
-                }
-            })    
-        }
-        return {timeline:wm_timeline, timeline_variables:timeline_variables};
+        
     }
-
-    // long term memory task
-    function createLM(timeline_variables) {
-        var lm_timeline = [];       
-        // image presentation
-        lm_timeline.push(
-            {
-                type: jsPsychHtmlSliderResponse,
-                require_movement: false, // defined later in on load
-                slider_start: 50,
-                slider_width: 320,
-                min: 5,
-                max: 95,
-                step: 15,
-                labels: slider_labels,
-                // css_classes : ["next-trial-btn"],
-                stimulus: function() {
-                    var file = jsPsych.evaluateTimelineVariable('recognition_file')
-                    var html = 
-                        `<div style="width:900px; height:50vh; position: relative;">
-                            <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: -30px; left: 50%;
-                                    transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
-                                <strong>Have you seen this image before?</strong>
-                            </p>
-
-                            <div style="position: absolute; bottom: .6em; left: 50%; transform: translateX(-50%);
-                                        width: 100px; height: 10px; display: flex; align-items: center;">
-                                <div style="width: 0; height: 0; 
-                                        border-right: 8px solid rgba(51, 51, 51, 0.2); 
-                                        border-top: 5px solid transparent; 
-                                        border-bottom: 5px solid transparent;
-                                        "></div>
-                                <div style="flex: 1; height: 2px; 
-                                        background: linear-gradient(to right, 
-                                            rgba(51, 51, 51, 0.2) 0%, 
-                                            rgba(51, 51, 51, 0.15) 10%, 
-                                            rgba(51, 51, 51, 0.05) 40%, 
-                                            rgba(51, 51, 51, 0.01) 50%, 
-                                            rgba(51, 51, 51, 0.05) 60%, 
-                                            rgba(51, 51, 51, 0.15) 90%, 
-                                            rgba(51, 51, 51, 0.2) 100%);"></div>
-                                <div style="width: 0; height: 0; 
-                                        border-left: 8px solid rgba(51, 51, 51, 0.2); 
-                                        border-top: 5px solid transparent; 
-                                        border-bottom: 5px solid transparent;
-                                        "></div>
-                            </div>
-
-                            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 40%; 
-                                transform: translate(-45%, 50%);">
-                                No
-                            </p>
-                            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 60%; 
-                                transform: translate(-50%, 50%);">
-                                Yes
-                            </p>
-                            
-                            <div>
-                                <img src="${file}" style="position: absolute; border-radius:10px;
-                                                        height:200px; width:200px; top: 50%; left: 50%;
-                                                        transform: translate(-50%, -50%);"/>
-                            </div>
-                        </div>`
-
-                    return html;
-                    },
-                on_load: () => {
-                    let moved = false;
-                    const slider = document.querySelector('input[type="range"]');
-                    const nextBtn = document.querySelector('#jspsych-html-slider-response-next');
-                    nextBtn.disabled = true;
-                    slider.addEventListener('input', () => {
-                        if (parseInt(slider.value) !== 50) {
-                        moved = true;
-                        nextBtn.disabled = false;
-                        } else {
-                        moved = false;
-                        nextBtn.disabled = true;
-                        }
-                    });
-                },
-                on_finish: function(data) { 
-                    data.stimulus = jsPsych.evaluateTimelineVariable('recognition_file')
-                    data.image_id = jsPsych.evaluateTimelineVariable('recognition_id')
-                    data.old = jsPsych.evaluateTimelineVariable('old')
-                    data.lm_trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                    data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial')
-                    data.trial_type = "lm-recognition";
-                    data.timestamp = new Date().toLocaleTimeString()
-                }
-            }
-        )
-        return {timeline:lm_timeline, timeline_variables:timeline_variables};
-    }
-
-    // distractor instructions 
-    var end_wm = {
-        type: jsPsychHtmlKeyboardResponse, 
-        stimulus: 
-            `<div>
-                <p class="instruction-paragraph"> 
-                    <strong>Great, you have successfully completed the first task!</strong><br><br>
-
-                    You are free to take a short break now before 
-                    beginning the next task (max. 2 minutes)<br><br>
-                    
-                    The following task will be much shorter.
-                    The next slide will have the detailed instructions.
-                </p>
-                <p class="continue-prompt">
-                    To continue press <strong>right arrow</strong>
-                </p>
-            </div>`,
-        choices: ['ArrowRight'],
-        trial_duration: 120000
-    }
-
-    var distractor_instructions = {
-        type: jsPsychHtmlKeyboardResponse, 
-        stimulus: 
-            `<div>
-                <p class="instruction-header">
-                    <strong>Instructions</strong>
-                </p>
-                <p class="instruction-paragraph"> 
-                    We will now ask you to do some <strong>basic mental math</strong> for ~2 minutes.<br><br>
-                    We'd ask you to sequentially <strong>substract numbers from 100</strong><br>
-                    <em>(e.g. 100-3=97 <span style="font-size:x-large;">&#8594;</span> 97-5=92 
-                        <span style="font-size:x-large;">&#8594;</span> 92-3=89 ... )</em>.
-                    <br><br>
-                    You will see each number for <strong>3 seconds</strong> and then the 
-                    task will automatically move forward to the next number.
-
-                </p>
-                <p class="continue-prompt">
-                    To continue press <strong>Enter</strong>
-                </p>
-            </div>`,
-        choices: ['Enter'],
-        trial_duration: 120000
-    }
-
-    // distractor task
-    function createDistractorTask() {  
-        var initial_number = 100; 
-        var dt_timeline = [];    
-        record_data: false; 
-        dt_timeline.push(
-            {
-            type: jsPsychHtmlKeyboardResponse, 
-            choices: "NO_KEYS",
-            record_data: false,
-            stimulus: 
-                `<div>
-                    <p class="instruction-paragraph" style="top:48%"> 
-                        The initial number is <strong>${initial_number}</strong>.
-                    </p>
-                </div>`,
-            choices: ['Enter'],
-            trial_duration: 3000,
-            response_ends_trial: true,
-            }
-        );
-        var total = initial_number;
-        for (let j = 0; j < 3; j++) {
-            for (let i = 0; i < 5; i++) {
-                // delay            
-                dt_timeline.push(
-                {
-                    type: jsPsychHtmlKeyboardResponse,
-                    choices: "NO_KEYS",
-                    trial_duration: 1000, //ms
-                    record_data: false,
-                    stimulus: function(){
-                        var html = 
-                        `<div style="width:250px; height:75vh;">
-                            <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                        </div>`
-                    return html;
-                    }
-                }); 
-                
-                let randomInteger = Math.floor(Math.random() * 5) + 2;
-                // substract number
-                dt_timeline.push(
-                {
-                    type: jsPsychHtmlKeyboardResponse,
-                    choices: "NO_KEYS",
-                    record_data: false,
-                    trial_duration: 3000, //ms
-                    stimulus: function(){
-                        total -= randomInteger;
-                        var html = 
-                        `<div>
-                            <p class="instruction-paragraph" style="top:48%"> 
-                                <strong>Substract ${randomInteger}</strong> from the previous number.</p>
-                        </div>`
-                        return html}
-                })           
-            };
-            // which is the current number?
-            dt_timeline.push(
-            {
-                type: jsPsychSurveyText,
-                questions: [{prompt: `
-                    <p style="font-family: 'Courier New', monospace; font-size: x-large; color:#4682B4; ">
-                        What is the current number?
-                    </p>
-                    `
-                }],
-                on_finish: function(data) {
-                    data.trial_type = "distractor-task";
-                    data.correct_response = total;
-                    data.stimulus = null
-                    data.timestamp = new Date().toLocaleTimeString();
-                }
-            })
-            
-            if (j == 2) {
-                continue;
-            }
-            // continue substracting
-            dt_timeline.push(
-                {
-                    type: jsPsychHtmlKeyboardResponse,
-                    choices: ['Enter'],
-                    record_data:false,
-                    trial_duration: 10000,
-                    stimulus: function(){
-                        if (parseInt(jsPsych.data.get().last(1).values()[0].response["Q0"], 10) === total) {
-                            var feedback = `Awesome, that was the correct number!`
-                        } else {
-                            var feedback = `Almost, the <strong>correct number was ${total}</strong>.`
-                        }
-
-                        var html = 
-                        `<div>
-                            <p class="instruction-paragraph"> 
-                                ${feedback}<br><br>
-                                Please, continue to substract.<br><br>
-                                <strong>Continue from ${total}</strong>.
-                            </p>
-                            <p class="continue-prompt">
-                                To continue press <strong>Enter</strong>
-                            </p>
-                        </div>`
-                        return html;
-                    }
-                })
-        };
-        return {timeline:dt_timeline};
-    }
-    
-    // Overall timeline
-    // push everything into timeline
-    var experiment_timeline = [];
-    // experiment_timeline.push(consent)
-    // experiment_timeline.push(enter_fullscreen)
-    // experiment_timeline.push(demographics)
-
-    // experiment_timeline.push(wm_instruction)
-    // experiment_timeline.push(check_fullscreen)
-    // experiment_timeline.push(countdown(3))
-    experiment_timeline.push(createWM(practice_input_data,feedback=1))
-
-    // // // // WM BLOCK 1
-    // experiment_timeline.push(start_wm)
-    // experiment_timeline.push(check_fullscreen)
-    // experiment_timeline.push(countdown(3))
-    // experiment_timeline.push(createWM(wm_input_data_block1,feedback=0))
-
-    // // BREAK
-    // experiment_timeline.push(break_trial)
-    // experiment_timeline.push(check_fullscreen)
-    
-    // // WM BLOCK 2
-    // experiment_timeline.push(countdown(3))
-    // experiment_timeline.push(createWM(wm_input_data_block2,feedback=0))
-    // experiment_timeline.push(end_wm)
-    
-    // experiment_timeline.push(distractor_instructions)
-    // experiment_timeline.push(check_fullscreen)
-    // experiment_timeline.push(countdown(3))
-    // experiment_timeline.push(createDistractorTask())
-
-    // experiment_timeline.push(lm_instructions)
-    // experiment_timeline.push(start_lm)
-    // experiment_timeline.push(countdown(3))
-
-    // experiment_timeline.push(check_fullscreen)
-    // experiment_timeline.push(createLM(lm_input_data))
-    experiment_timeline.push(end_experiment)
-
     // run
     jsPsych.run(experiment_timeline);
     } main()
