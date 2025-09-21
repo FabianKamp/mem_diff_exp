@@ -28,7 +28,7 @@ function startingExperiment(jsPsych) {
         },
         on_finish: function(data){
             data.stimulus = null
-            data.trial_type = "start-slide"
+            data.trial_type = "fullscreen-slide"
         }
     }
     return start_experiment

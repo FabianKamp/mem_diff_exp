@@ -4,34 +4,36 @@ import os
 import glob
 import json
 
-prefix_id = "p"
-start_id = 1 # if subject id is already given away
-subject_number = 52
-practice_trials = 12
+out_dir = f"input_data/"
+image_dir = "stimuli"
 
-wm_trials = 160 
+# load settings
+setting_file = "experimentSettings.json"
+with open(setting_file, "r") as file: 
+    settings = json.load(file)
+
+wave_id = settings["wave"]["wave_id"]
+subject_number = settings["wave"]["subject_number"]
+
+load = settings["memory_experiment"]["load"]
+practice_trials = settings["memory_experiment"]["practice_trials"]
+wm_trials = settings["memory_experiment"]["wm_trials"]
+lm_trials = settings["memory_experiment"]["lm_trials"]
+ncatch = settings["memory_experiment"]["ncatch"]
+
 all_wm_trials = wm_trials + practice_trials
-lm_trials = 260
-ncatch = 10
 
-out_dir = f"input_data/memory/"
-load = 4 
-
-# script start
-if subject_number%4!=0:
-    print("Subject number will be higher due to latin square randomization")
-          
 if not os.path.exists(out_dir): 
     os.mkdir(out_dir)
 
 def get_image_paths(stimuli_folder): 
     image_path = list(glob.glob(os.path.join(stimuli_folder, "**", "*.jpg"), recursive=True))
-    image_path = [os.path.join("stimuli", i.split("stimuli/", 1)[-1]) for i in image_path 
-                  if "instruction" not in i]
+    image_path = [os.path.join(stimuli_folder, i.split("stimuli/", 1)[-1]) for i in image_path 
+                  if ("instruction" not in i) & ("_archive" not in i)]
     image_id = [int(i.split("/")[-1].rstrip(".jpg")) for i in image_path]
     image_paths = pd.DataFrame(dict(image_id=image_id, image_path=image_path)).sort_values(by="image_id")
     return image_paths
-image_paths = get_image_paths("stimuli/")
+image_paths = get_image_paths(image_dir)
 
 def get_file_path(image_id):
     file_path = image_paths.loc[image_paths.image_id == image_id, "image_path"]
@@ -61,43 +63,43 @@ def generate_random_angles(n):
     random_angles = np.round(random_angles, 3)
     return random_angles
 
-def generate_catch_trials(ncatch):
-    encoding_thetas = np.vstack([generate_random_angles(load) for _ in range(ncatch)])
-    recognition_thetas = encoding_thetas[:,0]
+def generate_catch_trials(ncatch, catch_ids):   
+    encoding_thetas = np.random.rand(ncatch) * (np.pi * 2) 
+    
+    encoding_ids = catch_ids[:ncatch]
+    encoding_files = np.array([get_file_path(i) for i in encoding_ids])
+    
+    control_ids = catch_ids[ncatch:]
+    recognition_control_files = np.array([get_file_path(i) for i in control_ids])
 
-    encoding_ids = np.vstack([np.random.choice(np.arange(1,500), load,replace=False)+9000 for _ in range(ncatch)])
-    encoding_files = np.array([get_file_path(i) for i in encoding_ids.flatten()])
-    encoding_files = encoding_files.reshape(encoding_ids.shape)
-
-    left_lure = np.random.choice([0,1], ncatch, replace=True).astype(int)
-    correct_response = ~left_lure
+    left_target = np.random.choice([0,1], ncatch, replace=True).astype(int)
+    correct_response = (left_target==0).astype(int)
 
     catch_trial_data = dict(
-        wm_id = 9999,
-        condition = 9999,
+        wm_id = nan,
+        condition = nan,
         trial_id = np.arange(ncatch), 
         sample_position = 1,
-        recognition_theta = recognition_thetas,
+        recognition_theta = encoding_thetas,
         trial_type = "catch",
-        recognition_control_file = encoding_files[:,0],
-        recognition_lure_file = encoding_files[:,0][::-1],
-        long_encoding = np.ones(ncatch),
-        left_lure = left_lure,
-        lure_correct = np.zeros(ncatch),
+        recognition_control_file = recognition_control_files,
+        recognition_target_file = encoding_files,
+        long_encoding = np.zeros(ncatch),
+        left_target = left_target,
+        target_correct = np.ones(ncatch),
         correct_response = correct_response,
-        wm_block_id = np.repeat([1,2], int(ncatch/2))
+        wm_block_id = np.repeat([1,2], int(ncatch/2)),
+        condition_name = "no_catch", 
+        encoding = encoding_ids,
+        encoding_file_1 = encoding_files,
+        encoding_theta_1 = encoding_thetas,
+        n_encoding = 1,
+        subject_id = subject_id,
     )
-
-    for i in range(load):
-        catch_trial_data.update({
-            f"encoding_{i+1}": encoding_ids[:,i],
-            f"encoding_file_{i+1}": encoding_files[:,i],
-            f"encoding_theta_{i+1}": encoding_thetas[:,i],
-        })
 
     catch_trial_df = pd.DataFrame(catch_trial_data)
     catch_json_data = catch_trial_df.to_dict(orient='records')
-    catch_positions = np.linspace(practice_trials+10, wm_trials-20, ncatch).astype(int)
+    catch_positions = np.linspace(practice_trials+10, wm_trials-10, ncatch).astype(int)
 
     return catch_positions, catch_json_data
 
@@ -118,11 +120,30 @@ while counter < subject_number:
     encoding_thetas = np.vstack([generate_random_angles(load) for _ in range(all_wm_trials)])
     recognition_thetas = encoding_thetas[np.arange(all_wm_trials), sample_positions].flatten()
 
-    # randomize distractors (Attention: avoid trials with several distractors from the same category )
-    total_images = all_wm_trials * load
-    wm_distractors = np.arange(total_images - all_wm_trials) + 1
-    wm_distractors = [np.random.permutation(wm_distractors[i::5]) for i in np.random.permutation(range(5))]
-    wm_distractors = np.concat(wm_distractors).flatten() + 9000
+    # randomize distractors 
+    # distractor concepts should not overlap between wm and lm
+
+    dist_info = pd.read_csv("./stimuli/dist_stimuli/image_info.csv")
+    
+    lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials-wm_trials, replace=False)
+    lm_dist_pool = dist_info.loc[dist_info.concept.isin(lm_dist_concepts)]
+    lm_distractors = lm_dist_pool.groupby("concept")["diff_id"].first().to_numpy()
+    lm_distractors += 9000
+    
+    # Attention: No trials with several distractors from the same category
+    all_wm_images = all_wm_trials * load
+    wm_dist_pool = dist_info.loc[~dist_info.concept.isin(lm_dist_concepts)]
+    wm_dist_idx = np.arange(all_wm_images - all_wm_trials) + 1
+    wm_dist_idx = np.concat([np.random.permutation(wm_dist_idx[i::5]) for i in np.random.permutation(range(5))]).flatten() # ensures distance of 5
+    wm_dist_df = wm_dist_pool.iloc[wm_dist_idx,]
+    wm_dist_concepts = wm_dist_df.concept.unique()
+    wm_distractors = wm_dist_df.diff_id.to_numpy()
+    wm_distractors += 9000
+
+    catch_pool = dist_info.loc[~dist_info.concept.isin(wm_dist_concepts)&~dist_info.concept.isin(lm_dist_concepts)]
+    catch_ids = np.random.choice(np.arange(0, len(catch_pool)), ncatch*2, replace=False)
+    catch_ids = catch_pool.iloc[catch_ids,].diff_id.to_numpy()
+    catch_ids += 9000
 
     # get all images for encoding
     encoding_ids = np.zeros((all_wm_trials, load))
@@ -138,7 +159,7 @@ while counter < subject_number:
     # block ids 
     wm_block_ids = np.ones(wm_trials).astype(int)
     wm_block_ids[wm_trials//2:] = 2
-    wm_block_ids = np.concatenate([np.repeat(9999, practice_trials), wm_block_ids])
+    wm_block_ids = np.concatenate([np.repeat(nan, practice_trials), wm_block_ids])
     
     # trial type = practice/wm
     wm_trial_type = ["practice"]*practice_trials + ["wm"]*wm_trials
@@ -152,6 +173,7 @@ while counter < subject_number:
         recognition_theta = recognition_thetas,
         wm_block_id = wm_block_ids, 
         trial_type = wm_trial_type,
+        n_encoding = load
     )
     
     for i in range(load):
@@ -162,11 +184,14 @@ while counter < subject_number:
         })
 
     # conditions and condition codes 
-    conditions = ["a_semantic", "a_visual", "b_visual", "b_semantic"]
+    conditions = ["mixed", "semantic", "visual"]
     condition_codes = {i+1: k for i,k in enumerate(conditions)}
     num_conditions = len(conditions)
     assert wm_trials%num_conditions == 0, f"Number of wm trials must be divisible by {num_conditions}"
     
+    if subject_number%len(conditions)!=0:
+        print("Subject number will be higher due to latin square randomization")
+
     # randomize wm condition across trials
     wm_repeats = wm_trials//num_conditions
     wm_conditions = np.array(list(condition_codes.keys()) * wm_repeats)
@@ -185,19 +210,16 @@ while counter < subject_number:
     wm_trial_data.update(long_encoding = long_encoding.astype(int))
     
     # left right randomization 
-    wm_left_lure = np.zeros(wm_trials)
-    wm_left_lure[wm_trials//2:] = 1 
-    wm_left_lure = np.random.permutation(wm_left_lure)
-    practice_left_lure = np.random.permutation([0,1]*(practice_trials//2))
+    wm_left_target = np.zeros(wm_trials)
+    wm_left_target[wm_trials//2:] = 1 
+    wm_left_target = np.random.permutation(wm_left_target)
+    practice_left_target = np.random.permutation([0,1]*(practice_trials//2))
 
-    wm_left_lure = np.concatenate([practice_left_lure, wm_left_lure])
-    wm_left_lure = wm_left_lure.astype(int)
-    wm_trial_data.update(left_lure = wm_left_lure)
+    wm_left_target = np.concatenate([practice_left_target, wm_left_target])
+    wm_left_target = wm_left_target.astype(int)
+    wm_trial_data.update(left_target = wm_left_target)
 
     # lm stimuli
-    lm_distractors = np.random.choice(np.arange(total_images-all_wm_trials + 3, 722, 2), 
-                                      lm_trials-wm_trials, replace=False)
-    lm_distractors += 9000
     lm_ids = wm_ids[practice_trials::]
     
     # randomize recognition stimuli
@@ -207,7 +229,7 @@ while counter < subject_number:
     
     # get old trials and encoding trials
     old = (lm_recognition<9000).astype(int)
-    encoding_trial = np.array([np.where(wm_ids==i%1e3)[0][0] if i < 9000 else 9999 for i in lm_recognition])
+    encoding_trial = np.array([np.where(wm_ids==i%1e3)[0][0] if i < 9000 else nan for i in lm_recognition])
 
     # assemble ltm data
     lm_trial_data = dict(
@@ -219,44 +241,46 @@ while counter < subject_number:
         trial_type = "lm"
     )
 
-    # catch trials
-    catch_positions, catch_json_data = generate_catch_trials(ncatch)
-
     ## latin square randomization of conditions
     for i in range(num_conditions):  
-        subject_id = prefix_id + str(counter + start_id).zfill(3)       
-        
+        subject_id = counter+1   
+        session_id = f"M-{wave_id}-{subject_id:03d}"       
+       
         # working memory
         latin_conditions = wm_conditions_random % num_conditions + 1
         wm_conditions_random = wm_conditions_random + 1
         
         latin_condition_names = [condition_codes[i] for i in latin_conditions]
  
-        # 1 -> (4,5), 2 -> (4,2), 3 -> (3,5), 4 -> (3,2)
-        lure_codes = (latin_conditions < 3).astype(int) + 3
-        control_codes = (latin_conditions % 2).astype(int) * 3 + 2
+        #1 -> (4,3), 2 -> (4,5), 3 -> (3,5)
+        target_codes = (latin_conditions < 3).astype(int) + 3
+        control_codes = (latin_conditions > 1).astype(int) * 2 + 3
         
-        # lure is correct if control image is 5
-        lure_correct = (control_codes == 5).astype(int)
+        # target is correct if control image is 5
+        target_correct = (control_codes == 5).astype(int)
+        
         # figure out which response is correct
-        left_correct = (lure_correct & wm_left_lure) | (~lure_correct & ~wm_left_lure)
-        correct_response = ~left_correct
+        # left_correct = (target_correct & wm_left_target)
+        correct_response = (wm_left_target==0).astype(int)
 
-        wm_recognition_lure = wm_ids + lure_codes * 1000
-        wm_recognition_lure_files = np.array([get_file_path(i) for i in wm_recognition_lure.flatten()])
+        correct_response[control_codes != 5] = nan
+
+        wm_recognition_target = wm_ids + target_codes * 1000
+        wm_recognition_target_files = np.array([get_file_path(i) for i in wm_recognition_target.flatten()])
 
         wm_recognition_control = wm_ids + control_codes * 1000
         wm_recognition_control_files = np.array([get_file_path(i) for i in wm_recognition_control.flatten()])
         
         wm_trial_data.update(
-            recognition_lure_id = wm_recognition_lure.astype(int),
-            recognition_lure_file = wm_recognition_lure_files,
+            subject_id = subject_id,
+            session_id = session_id,
+            recognition_target_id = wm_recognition_target.astype(int),
+            recognition_target_file = wm_recognition_target_files,
             recognition_control_id = wm_recognition_control.astype(int),
             recognition_control_file = wm_recognition_control_files,
             condition = latin_conditions,
             condition_name = latin_condition_names,
-            subject_id = subject_id,
-            lure_correct = lure_correct, 
+            target_correct = target_correct, 
             correct_response = correct_response
         )   
 
@@ -267,12 +291,14 @@ while counter < subject_number:
         lm_json_data = lm_trial_df.to_dict(orient='records')
         
         # insert catch trials
+        catch_positions, catch_json_data = generate_catch_trials(ncatch, catch_ids)
         for p, catch_trial in zip(catch_positions, catch_json_data):
             wm_json_data.insert(p,catch_trial)
         
         # combine wm and lm data
         combined_json_data = wm_json_data + lm_json_data
-        combined_file_path = os.path.join(out_dir, f"input_subject_{subject_id}.json")
+        combined_file_path = os.path.join(out_dir, f"input_{session_id}.json")
+               
         with open(combined_file_path, 'w') as combined_file:
             json.dump(combined_json_data, combined_file, indent=4)
 

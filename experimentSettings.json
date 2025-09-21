@@ -1,0 +1,57 @@
+{
+    "wave": {
+        "version_id": "V",
+        "wave_id": "PA",
+        "subject_number": 60
+    },
+
+    "vision_experiment": {
+        "vision_trials": 177,
+        "enable_button_after": 1200,
+        "ncatch": 20
+    },
+
+    "memory_experiment": {
+        "load": 3,
+        "practice_trials": 12,
+        "wm_trials": 165,
+        "lm_trials": 250, 
+        "ncatch": 20
+    },
+
+    "timing": {
+        "inter_trial_delay": 750,
+        "memory_delay": 3000,
+        "catch_delay": 1000,
+        "encoding_time_short": 1200,
+        "encoding_time_long": 2000,
+        "catch_encoding": 5000
+    },
+    
+    "spatial": {
+        "radius_x": 280,
+        "radius_y": 240
+    },
+    
+    "break": {
+        "duration": 120000
+    },
+    
+    "countdown": {
+        "interval": 1000
+    },
+
+    "distractor": {
+        "initial_number": 100,
+        "random_min": 2,
+        "random_max": 6,
+        "delay_time": 1000,
+        "stimulus_time": 3000,
+        "feedback_timeout": 10000,
+        "rounds": 3,
+        "operations_per_round": 5
+    },
+    "feedback": {
+        "duration": 1500
+    }
+}

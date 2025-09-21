@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"></html>
+
 <html>
   <head>
     <title>Experiment</title>
@@ -21,8 +22,10 @@
     <script src="tasks/wmTask.js"></script>
     <script src="tasks/decisionTask.js"></script>
     <script src="tasks/distractorTask.js"></script>
+
+    <script src="consent/consent.js"></script>
+    <script src="surveys/demographics.js"></script>
     <script src="experimentFlow.js"></script>
-    <script src="experimentSettings.js"></script>
     
     <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
     <link href="jspsych/survey.css" rel="stylesheet" type="text/css" />
@@ -31,7 +34,12 @@
 </head>
   <body></body>
   <script>
-    async function main () {
+    const session_id = jsPsych.data.getURLVariable('sid')
+    // const session_id = "V-PA-001"
+    const version_id = session_id[0];
+    const wave_id = session_id.slice(2, 4)
+    const subject_id = parseInt(session_id.slice(-3), 10)
+    
     const jsPsych = initJsPsych({
         on_finish: function(data){            
             // Serialize the data
@@ -54,170 +62,114 @@
                             document.location = "/next";
                         } else {
                             // If error, assue local save
-                            jsPsych.data.get().localSave('json', 'mem_diff.json');
+                            jsPsych.data.get().localSave('json', 'out_data.json');
                         }
                     }
                 });
             })
             // window.location.href = "https://app.prolific.com/"
         }
-    });
+        });
 
-    // TODO reset the subject ID to the original 
-    // var subject_id = jsPsych.data.getURLVariable('sid')
-    var subject_id = 'v001'
-    // var subject_id = jsPsych.data.getURLVariable('version')
-    var version = 'vision'
-       
-    // add meta data
-    jsPsych.data.addProperties({
-        startTime : new Date().toISOString().replace('T', ' ').slice(0, 19),
-        subject_id: subject_id,
-        OS : window.navigator.platform,
-        fullscreen_mode: true, 
-    });
-    
-    // consent
-    var participantConsentStatus = null;
-    var check_consent = function(elem) {
-            if (!document.getElementById('consent_checkbox').checked && !document.getElementById('no_consent_checkbox').checked) {
-                alert("Please indicate whether you consent to participate or not.");
-                return false;
-            }
-            if (document.getElementById('no_consent_checkbox').checked) {
-                participantConsentStatus = "Participant does not consent and is redirected";
-                
-                // Redirect to Prolific or any other action for non-consenting participants
-                window.location.href = "https://app.prolific.com/";
-                return false;
-            }
-            participantConsentStatus = "Participant has read consent form and consents to study participation.";
-            return true;
-        };
+        jsPsych.data.addProperties({
+            session_id : session_id,
+            version_id : version_id,
+            wave_id : wave_id,
+            subject_id : subject_id,
+            startTime : new Date().toISOString().replace('T', ' ').slice(0, 19),
+            OS : window.navigator.platform,
+            fullscreen_mode: true, 
+        });
 
-    var consent = {
-        type: jsPsychExternalHtml,
-        url: 'consent_form/EXTERNAL_CONSENT_PAGE.HTML',
-        cont_btn: 'continue_button',
-        check_fn: check_consent,
-        on_finish: function() {
-            // Log consent status
-            jsPsych.data.get().last(1).addToAll({
-                consent_status: participantConsentStatus
-            })}
+    async function createTimeline(){        
+        // initialize the fullscree tracker
+        fullscreen_tracker = new fullscreenTracker(jsPsych);
+        
+        // load data
+        var input_data = await fetch(`input_data/input_${session_id}.json`)
+            .then(response => response.json())
+            .catch(error => console.error(error));
+        
+        if (version_id == 'M') {
+            console.log("starting memory task")
+            
+            // split data into practice, wm and lm task
+            var practice_input_data = input_data.filter((trial) => trial.trial_type === "practice");
+            var wm_input_data = input_data.filter((trial) => trial.trial_type === "wm" || trial.trial_type === "catch");
+            var lm_input_data = input_data.filter((trial) => trial.trial_type === "lm");
+
+            // split into blocks
+            var wm_input_data_block1 = wm_input_data.filter((trial) => trial.wm_block_id === 1);
+            var wm_input_data_block2 = wm_input_data.filter((trial) => trial.wm_block_id === 2);
+
+            // Overall timeline
+            // push everything into timeline
+            var experiment_timeline = [];
+
+            // STARTING 
+            experiment_timeline.push(check_consent(jsPsych))
+            experiment_timeline.push(startingExperiment(jsPsych))
+            experiment_timeline.push(createDemographics())
+
+            // WM INSTRUCTIONS
+            experiment_timeline.push(createWMInstructions())
+            experiment_timeline.push(fullscreen_tracker.check())
+            experiment_timeline.push(countdown(3))
+            experiment_timeline.push(createWM(practice_input_data, feedback=1, jsPsych))
+
+            // WM BLOCK 1
+            experiment_timeline.push(startingWM())
+            experiment_timeline.push(fullscreen_tracker.check())
+            experiment_timeline.push(countdown(3))
+            experiment_timeline.push(createWM(wm_input_data_block1, feedback=0, jsPsych))
+
+            // // BREAK
+            experiment_timeline.push(createBreak())
+            experiment_timeline.push(fullscreen_tracker.check())
+
+            // WM BLOCK 2
+            experiment_timeline.push(countdown(3))
+            experiment_timeline.push(createWM(wm_input_data_block2, feedback=0, jsPsych))
+            experiment_timeline.push(endingWM())
+
+            // DISTRACTOR
+            experiment_timeline.push(createDistractorInstructions())
+            experiment_timeline.push(fullscreen_tracker.check())
+            experiment_timeline.push(countdown(3))
+            experiment_timeline.push(createDistractorTask())
+
+            // LM INSTRTUCIONS
+            experiment_timeline.push(createLMInstructions())
+            experiment_timeline.push(startingLM())
+            experiment_timeline.push(fullscreen_tracker.check())
+
+            // // LM TASK
+            experiment_timeline.push(countdown(3))
+            experiment_timeline.push(createLM(lm_input_data, jsPsych))
+            experiment_timeline.push(endingExperiment(jsPsych))
+
+        } else if (version_id == 'V') {
+            console.log("starting vision task")
+            var experiment_timeline = [];
+            experiment_timeline.push(startingExperiment(jsPsych))
+            experiment_timeline.push(createDecisionInstructions())
+            experiment_timeline.push(fullscreen_tracker.check())
+            experiment_timeline.push(startingDecisionTask())
+
+            experiment_timeline.push(countdown(3))
+            experiment_timeline.push(createDecisionTask(input_data, jsPsych))        
         }
 
-    // demographics
-    var demographics = {
-        type: jsPsychSurvey,
-        survey_json: {
-            pages: [{
-                name: 'page1',
-                elements: [
-                {
-                    type: "html",
-                    name: "Title",
-                    html: 
-                        `<p style="font-size: x-large; color:#4682B4;">
-                            <strong>Please fill in the questions below before we start</strong>
-                        </p>`
-                },
-                {
-                    type: 'text',
-                    title: 'How old are you?', 
-                    name: 'age', 
-                    isRequired: false,
-                    inputType: 'number',
-                    min: 0,
-                    max: 100,
-                },
-                {
-                    type: 'radiogroup',
-                    title: 'Which gender do you identify with?', 
-                    choices: ['Diverse', 'Female','Male','I prefer not to say'],
-                    name: 'Gender',
-                    required: true
-                }, 
-                {
-                    type: 'text',
-                    title: 'Paste your Prolific ID below', 
-                    name: 'prolificID', 
-                    isRequired: true,
-                    inputType: 'text',
-                },
-                ]
-            }] 
-        }};
-    
-    if (version == 'memory') {
-        // loading data
-        // load wm image data
-        var input_data = await fetch(`input_data/memory/input_subject_${subject_id}.json`)
-            .then(response => response.json())
-            .catch(error => console.error(error));
-
-        var practice_input_data = input_data.filter((trial) => trial.trial_type === "practice");
-        var wm_input_data = input_data.filter((trial) => trial.trial_type === "wm" || trial.trial_type === "catch");
-        var lm_input_data = input_data.filter((trial) => trial.trial_type === "lm");
-        
-        // split into blocks
-        var wm_input_data_block1 = wm_input_data.filter((trial) => trial.wm_block_id === 1);
-        var wm_input_data_block2 = wm_input_data.filter((trial) => trial.wm_block_id === 2);
-
-        // Overall timeline
-        // push everything into timeline
-        var experiment_timeline = [];
-        // experiment_timeline.push(consent)
-        experiment_timeline.push(startingExperiment(jsPsych))
-
-        // experiment_timeline.push(demographics)
-
-        experiment_timeline.push(createWMInstructions())
-        // experiment_timeline.push(check_fullscreen)
-        // experiment_timeline.push(countdown(3))
-        // experiment_timeline.push(createWM(practice_input_data, feedback=1, jsPsych))
-
-        // // // // WM BLOCK 1
-        // experiment_timeline.push(start_wm)
-        // experiment_timeline.push(check_fullscreen)
-        // experiment_timeline.push(countdown(3))
-        // experiment_timeline.push(createWM(wm_input_data_block1, feedback=0, jsPsych))
-
-        // // BREAK
-        // experiment_timeline.push(break_trial)
-        // experiment_timeline.push(check_fullscreen)
-        
-        // // WM BLOCK 2
-        // experiment_timeline.push(countdown(3))
-        // experiment_timeline.push(createWM(wm_input_data_block2, feedback=0, jsPsych))
-        // experiment_timeline.push(end_wm)
-        
-        // experiment_timeline.push(distractor_instructions)
-        // experiment_timeline.push(check_fullscreen)
-        experiment_timeline.push(countdown(3))
-        // experiment_timeline.push(createDistractorTask())
-
-        experiment_timeline.push(createLMInstructions())
-        // experiment_timeline.push(start_lm)
-        // experiment_timeline.push(countdown(3))
-
-        // experiment_timeline.push(check_fullscreen)
-        experiment_timeline.push(createLM(lm_input_data, jsPsych))
-        experiment_timeline.push(endingExperiment(jsPsych))
-    } else if (version == 'vision') {
-        var input_data = await fetch(`input_data/vision/input_subject_${subject_id}.json`)
-            .then(response => response.json())
-            .catch(error => console.error(error));
-        
-        var experiment_timeline = [];
-        // experiment_timeline.push(createLMInstructions())
-        experiment_timeline.push(createDecisionTask(input_data, jsPsych))
-
-        
+        return experiment_timeline;
     }
+
     // run
-    jsPsych.run(experiment_timeline);
-    } main()
+    async function runExperiment() {
+        const experiment_timeline = await createTimeline();
+        jsPsych.run(experiment_timeline)
+    }
+
+    runExperiment()
 
 </script>
 </html>

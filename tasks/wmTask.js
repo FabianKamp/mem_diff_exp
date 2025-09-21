@@ -1,3 +1,10 @@
+// SETTINGS
+var experimentSettings = fetch(`experimentSettings.json`)
+    .then(response => response.json())
+    .then(data => {
+        experimentSettings = data;
+    });
+
 // INSTRUCTIONS
 function generate_instruction_angles(load) {
     var result = [];
@@ -28,36 +35,13 @@ function createWMInstructions() {
                 <strong>1. Memorize</strong><br><br> 
                 We will ask you to memorize <strong>${experimentSettings.memory_experiment.load} images</strong>.<br><br>
                 You have <strong>1-3 seconds</strong> to memorize all images.<br><br>
-                The trial duration will differ from trial to trial.<br><br>
+                The time to memorize the images will vary from trial to trial.<br><br>
             </p>
             <p class="continue-prompt">
                 To continue press <strong>right arrow</strong>
             </p>
             </div>`
     
-    wm_recognition_slide = 
-        `<div class="square" 
-            style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
-        </div>
-            
-        <div>
-            <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-            <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
-        </div>
-
-        <p class="instruction-paragraph-left">
-            <strong>3. Which image matches the previous image better?</strong><br><br> 
-            After the delay you will see <strong>2 new images</strong>, i.e.
-            you haven't seen either of the images before.<br><br>
-            Your task is to <strong>choose the image that matches the previous image better</strong>.
-            The square indicates the position of the previous image.<br><br>
-            You can choose the image by clicking on it.
-        </p>
-
-        <p class="continue-prompt">
-            To continue press <strong>right arrow</strong>
-        </p>`
-
     var wm_instruction = {
         type: jsPsychInstructions,
         key_forward: 'ArrowRight',
@@ -69,7 +53,7 @@ function createWMInstructions() {
             `<div>
                 <p class="instruction-header"><strong>Instructions</strong></p>
                 <p class="instruction-paragraph">
-                    During this experiment, we will ask you to memorize images that appear on your the display.
+                    During this experiment, we will ask you to memorize images that appear on your the screen.
                     <br><br>
                     The following instructions will explain in detail how the task works.
                     <br><br><br>
@@ -90,24 +74,63 @@ function createWMInstructions() {
                     <strong>2. Delay</strong><br><br> 
                     Afterwards there will be a short delay. <br><br>
                     The delay will take a couple of seconds. <br><br>
-                    Please, focus on the cross on the screen.
+                    Please focus on the cross on the screen.
                 </p>
                 <p class="continue-prompt">
                     To continue press <strong>right arrow</strong>
                 </p>
             </div>`
             ],
-            wm_recognition_slide,
+            [
+            `<div class="square" 
+                style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+            </div>
+                
+            <div>
+                <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+            </div>
+
+            <p class="instruction-paragraph-left">
+                <strong>3. Which image matches the original image better?</strong><br><br> 
+                After the delay you will see <strong>2 new images</strong>, i.e.
+                you haven't seen either of the images before.<br><br>
+                Your task is to <strong>choose the image that matches the original image better</strong>.<br><br>
+                The square indicates the position of the original image.
+            </p>
+            <p class="continue-prompt">
+                To continue press <strong>right arrow</strong>
+            </p>`
+            ],
+            [
+            `<div class="square" 
+                style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+            </div>
+                
+            <div>
+                <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+            </div>
+
+            <p class="instruction-paragraph-left">
+                <strong>4. Pick an image by clicking on it.</strong><br><br> 
+                You will be able choose the matching image by clicking on it.<br><br> 
+                If you don't remember the original image make your best guess.
+            </p>
+            <p class="continue-prompt">
+                To continue press <strong>right arrow</strong>
+            </p>`
+            ],
             [
             `<p class="instruction-header"><strong>Practice</strong></p>
             <p class="instruction-paragraph">
-                We will continue with <strong>12 practice runs</strong>.<br><br>
-                You will get <strong>feedback</strong>: The memorized image will 
-                appear again as soon as you made your choice. So, you can check if your choice was correct.
+                We will start with <strong>12 practice runs</strong>.<br><br>
+                During the practice runs the original image will 
+                appear again as soon as you have made your choice, 
+                so that you are able to check if you made the correct choice.
                 <br><br>
-                Please, try to memorize the images as well as you can and
+                Please try to memorize the images as well as you can and
                 <strong> choose the image that matches the previous image better.</strong>
-                
             </p>
             <p class="continue-prompt">
                 To start the practice press <strong>right arrow</strong>
@@ -160,6 +183,7 @@ function convert2cartesian(rx, ry, theta) {
 function createWM(timeline_variables, feedback, jsPsych) {
     // timeline: initial delay -> 3 encoding images (inter stimulus delay) -> memory delay -> recognition slide
     var wm_timeline = [];
+    var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
     
     // preload
     wm_timeline.push(
@@ -169,10 +193,10 @@ function createWM(timeline_variables, feedback, jsPsych) {
         show_progress_bar: false,
         images: function() {
             var files = [];
-            for (let j = 0; j < experimentSettings.memory_experiment.load; j++) {
+            for (let j = 0; j < n_encoding; j++) {
                 files.push(jsPsych.evaluateTimelineVariable(`encoding_file_${j+1}`));
             }
-            files.push(jsPsych.evaluateTimelineVariable('recognition_lure_file'))
+            files.push(jsPsych.evaluateTimelineVariable('recognition_target_file'))
             files.push(jsPsych.evaluateTimelineVariable('recognition_control_file'))
             return files;
         }
@@ -201,12 +225,6 @@ function createWM(timeline_variables, feedback, jsPsych) {
             choices: "NO_KEYS",
             trial_duration: function() {
                 var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
-                var trial_type = jsPsych.evaluateTimelineVariable(`trial_type`)
-
-                if (trial_type == `catch`) {
-                    return experimentSettings.timing.catch_encoding
-                }
-                
                 if (long_encoding == 1) {
                     return experimentSettings.timing.encoding_time_long
                 } else {
@@ -215,7 +233,9 @@ function createWM(timeline_variables, feedback, jsPsych) {
             },
             stimulus: function() {
                 var html = `<div style="width:500px; height:75vh;">`
-                for (let i = 0; i < experimentSettings.memory_experiment.load; i++) {
+                var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+
+                for (let i = 0; i < n_encoding; i++) {
                     var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
                     var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
                     var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
@@ -227,41 +247,42 @@ function createWM(timeline_variables, feedback, jsPsych) {
                         </div>
                     </div>`
                 }
+
                 html += 
                 `<div class="cross">
                     <div class="cross-vertical"></div>
                     <div class="cross-horizontal"></div>
                 </div></div>`
-                return html;},
+
+                return html;
+            },
             
             on_finish: function(data) { 
                 var file = []
                 var theta = []
-                for (let i = 0; i < experimentSettings.memory_experiment.load; i++) { 
+                var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+
+                for (let i = 0; i < n_encoding; i++) { 
                     file.push(jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`))
                     theta.push(jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`))
                 }
+
                 data.stimulus = file
                 data.theta = theta
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                data.trial_type = "encoding";
+                data.trial_type = jsPsych.evaluateTimelineVariable('trial_type');
+                data.phase = 'encoding';
                 data.timestamp = new Date().toLocaleTimeString()
             }
-        })
+        }
+    )
 
     // delay
     wm_timeline.push(
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
-            trial_duration: function(){
-                var trial_type = jsPsych.evaluateTimelineVariable(`trial_type`)
-                if (trial_type == "catch") {
-                    return experimentSettings.timing.catch_delay
-                } else {
-                    return experimentSettings.timing.memory_delay
-                }
-            },
+            trial_duration: experimentSettings.timing.memory_delay,
             record_data: false,
             stimulus: function(){
                 var html = 
@@ -271,26 +292,26 @@ function createWM(timeline_variables, feedback, jsPsych) {
                     </div>`
                 return html;
             }
-        })
+        }
+    )
     
+    // recognition
     wm_timeline.push(
         {
             type: jsPsychHtmlButtonResponse,
             choices: ["left", "right"],
             button_layout: 'grid',
             button_html: (choice) => {
-                var trial_type = jsPsych.evaluateTimelineVariable(`trial_type`)
-                var trial_id = jsPsych.evaluateTimelineVariable(`trial_id`)
                 var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
-                var lure_file = jsPsych.evaluateTimelineVariable(`recognition_lure_file`)
-                var left_lure = jsPsych.evaluateTimelineVariable(`left_lure`) 
-                
-                if (left_lure === 1) {
-                    var left_image = lure_file
+                var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
+                var left_target = jsPsych.evaluateTimelineVariable(`left_target`) 
+
+                if (left_target === 1) {
+                    var left_image = target_file
                     var right_image = control_file
                 } else {
                     var left_image = control_file
-                    var right_image = lure_file 
+                    var right_image = target_file 
                 }
             
                 left_button = 
@@ -298,7 +319,7 @@ function createWM(timeline_variables, feedback, jsPsych) {
                                 position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
                     <img src="${left_image}" class="image-button" />
                     </div>`
-                
+
                 right_button = 
                     `<div style="cursor: pointer; width: 130px; height: 130px; 
                                 position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
@@ -321,10 +342,17 @@ function createWM(timeline_variables, feedback, jsPsych) {
                         transform: translateX(-50%); color:#4682B4; text-align: center;">
                             <strong></strong>
                         </p>
-                        
+
                         <div> 
                             <div class="square" 
                                 style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
+                            </div>
+                        </div>
+
+                        <div style="width:250px; height:75vh;">
+                            <div class="cross">
+                                <div class="cross-vertical" style="background-color: rgba(0, 0, 0, 0.05);"></div>
+                                <div class="cross-horizontal" style="background-color: rgba(0, 0, 0, 0.05);"></div>
                             </div>
                         </div>
                     </div>`
@@ -333,22 +361,23 @@ function createWM(timeline_variables, feedback, jsPsych) {
 
             on_finish: function(data) { 
                 var files = [
-                    jsPsych.evaluateTimelineVariable(`recognition_lure_file`), 
+                    jsPsych.evaluateTimelineVariable(`recognition_target_file`), 
                     jsPsych.evaluateTimelineVariable(`recognition_control_file`)
                 ]
                 console.log(jsPsych.evaluateTimelineVariable('correct_response'))
                 data.stimulus = files
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                data.phase = 'recognition'
                 data.image_id = jsPsych.evaluateTimelineVariable('wm_id')
-                data.lure = jsPsych.evaluateTimelineVariable('recognition_lure_file')
-                data.lure_correct = jsPsych.evaluateTimelineVariable('lure_correct')
+                data.target = jsPsych.evaluateTimelineVariable('recognition_target_file')
+                data.target_correct = jsPsych.evaluateTimelineVariable('target_correct')
                 data.correct_response = jsPsych.evaluateTimelineVariable('correct_response')
                 data.control = jsPsych.evaluateTimelineVariable('recognition_control_file')
                 data.theta = jsPsych.evaluateTimelineVariable('recognition_theta')
                 data.condition = jsPsych.evaluateTimelineVariable('condition')
                 data.condition_name = jsPsych.evaluateTimelineVariable('condition_name')
                 data.sample_position = jsPsych.evaluateTimelineVariable('sample_position')
-                data.left_lure = jsPsych.evaluateTimelineVariable('left_lure') 
+                data.left_target = jsPsych.evaluateTimelineVariable('left_target') 
                 data.trial_type = jsPsych.evaluateTimelineVariable('trial_type') 
                 data.timestamp = new Date().toLocaleTimeString()
             }
@@ -360,20 +389,20 @@ function createWM(timeline_variables, feedback, jsPsych) {
             {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
-            trial_duration: 2000,
+            trial_duration: experimentSettings.feedback.duration,
             record_data: false,
             stimulus: function() {
                 var wm_sample_file = jsPsych.evaluateTimelineVariable('wm_sample_file')
                 var control_file = jsPsych.evaluateTimelineVariable('recognition_control_file')
-                var lure_file = jsPsych.evaluateTimelineVariable(`recognition_lure_file`)
-                var left_lure = jsPsych.evaluateTimelineVariable(`left_lure`) 
-                
-                if (left_lure === 1) {
-                    var left_image = lure_file
+                var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
+                var left_target = jsPsych.evaluateTimelineVariable(`left_target`) 
+
+                if (left_target === 1) {
+                    var left_image = target_file
                     var right_image = control_file
                 } else {
                     var left_image = control_file
-                    var right_image = lure_file 
+                    var right_image = target_file 
                 }
 
                 var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
@@ -384,7 +413,7 @@ function createWM(timeline_variables, feedback, jsPsych) {
                         transform: translateX(-50%); color:#4682B4; text-align: center;">
                             <strong></strong>
                         </p>
-                        
+
                         <div> 
                             <div class="square" 
                                 style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
@@ -393,26 +422,33 @@ function createWM(timeline_variables, feedback, jsPsych) {
 
                         <div style="width:500px; height:75vh;">
                             <div> 
-                                <img src="${wm_sample_file}" class="image-object" 
+                                <img src="${wm_sample_file}" class="image-object feedback-blink" 
                                 style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
                             </div>
                         </div>
 
-                        <div style="cursor: pointer; width: 130px; height: 130px; 
+                        <div style="cursor: pointer; width: 130px; height: 130px;
                                 position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
-                                <img src="${right_image}" class="image-button"/>                           
+                                <img src="${right_image}" class="image-button"/>
                         </div>
 
-                        <div style="cursor: pointer; width: 130px; height: 130px; 
+                        <div style="cursor: pointer; width: 130px; height: 130px;
                                 position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
                                 <img src="${left_image}" class="image-button" />
+                        </div>
+
+                        <div style="width:250px; height:75vh;">
+                            <div class="cross">
+                                <div class="cross-vertical" style="background-color: rgba(0, 0, 0, 0.05);"></div>
+                                <div class="cross-horizontal" style="background-color: rgba(0, 0, 0, 0.05);"></div>
+                            </div>
                         </div>
 
                     </div>`
                 return html;
             }
-        })    
-    }
+        }) 
+    }   
     return {timeline:wm_timeline, timeline_variables:timeline_variables};
 }
 

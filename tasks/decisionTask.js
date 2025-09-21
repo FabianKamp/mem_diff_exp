@@ -1,5 +1,12 @@
+// SETTINGS
+var experimentSettings = fetch(`experimentSettings.json`)
+    .then(response => response.json())
+    .then(data => {
+        experimentSettings = data;
+    });
+
 // INSTRUCTIONS
-function decisionInstructions() {
+function createDecisionInstructions() {
     var instructions = {
         type: jsPsychInstructions,
         key_forward: 'ArrowRight',
@@ -11,12 +18,10 @@ function decisionInstructions() {
             `<div>
                 <p class="instruction-header"><strong>Instructions</strong></p>
                 <p class="instruction-paragraph">
-                    During this experiment, we will ask you to decide which image match better to each other.
+                    During this experiment, we will ask you to <strong>compare images to each other</strong>.
                     <br><br>
-                    The following instructions will explain in detail how the task works.
-                    <br><br><br>
-                    <strong>The instructions are self-paced</strong>. 
-                    You can navigate back and forth through the instructions using the arrow keys on your keyboard.
+                    The following slide will explain in detail how the task works. 
+                    After that we will start the experiment. The experiment will take ~15 minutes.
                 </p>
                 
                 <p class="continue-prompt">
@@ -25,26 +30,48 @@ function decisionInstructions() {
             </div>`
             ],
             [
-            `<div class="square2" 
-                style="left: left: calc( 50% - 320px); top: 50%;"
-            </div>
+            `<div>
+                <p class="instruction-header"><strong>Instructions</strong></p>
 
-            <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% - 320px);"src="stimuli/instructions/sample1.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - 80);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
-            </div>
+                <div class="square2" 
+                    style="left: left: calc( 50% - 320px); top: 50%;"
+                </div>
+                
+                <div class="rectangle"></div>
 
-            <p class="instruction-paragraph-left">
-                <strong>3. Which image matches the left image better?</strong><br><br> 
-                You will see <strong>3 images</strong>, i.e. one on the left and two on the right.<br><br>
-                Your task is to <strong>choose the image that matches the left image better</strong>.
-                <br><br>
-                You can choose the image by clicking on it.
-            </p>
-            <p class="continue-prompt">
-                To continue press <strong>right arrow</strong>
-            </p>`
+                <div>
+                    <img style="position: absolute; top: 50%; left: calc( 50% - 320px);"src="stimuli/instructions/sample1.jpg" class="image-object"/>
+                    <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                    <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+                </div>
+
+                <p class="instruction-paragraph-right">
+                    <strong>Which image matches the image on the left better?</strong><br><br> 
+                    During the experiment you will see <strong>3 images</strong>.<br><br>
+                    Your task is to choose the image in the rectangle that 
+                    <strong>matches the image on the left better</strong>.<br><br>
+                    
+                    You can pick the image by clicking on it.
+                </p>
+                <p class="continue-prompt">
+                    To continue press <strong>right arrow</strong>
+                </p>
+            </div>`
+            ], 
+            [
+            `<div>
+                <p class="instruction-header"><strong>Instructions</strong></p>
+                <p class="instruction-paragraph">
+                    <strong>Important</strong>, there will be a ~1 second delay at the beginning of each 
+                    trial during which you will not be able to select an imge.   
+                    <br><br>
+                    After this delay you can pick the better matching image.
+                </p>
+                
+                <p class="continue-prompt">
+                    To continue press <strong>right arrow</strong>
+                </p>
+            </div>`
             ]
         ]
     }
@@ -68,7 +95,8 @@ function startingDecisionTask () {
                     <strong>Starting the experiment</strong>
                 </p>
                 <p class="instruction-paragraph">
-                    Amazing! We will now start the experiment.
+                    Great, we will now start the experiment. 
+                    The experiment will take ~15 minutes.<br><br>
                     Press <strong>enter</strong> to start.
                 </p>
                 <p class="continue-prompt">
@@ -83,52 +111,48 @@ function startingDecisionTask () {
 
 function createDecisionTask(timeline_variables, jsPsych) {
     task_timeline = []
-    // inter trial delay
-    task_timeline.push(
-    {
-        type: jsPsychHtmlKeyboardResponse,
-        choices: "NO_KEYS",
-        trial_duration: experimentSettings.timing.inter_trial_delay,
-        record_data: false,
-        stimulus: function(){
-            var html = 
-            `<div style="width:250px; height:75vh;">
-                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-            </div>`
-            return html;
-        }
-    })
-
     task_timeline.push(
         {
             type: jsPsychHtmlButtonResponse,
             choices: ["left", "right"],
             button_layout: 'grid',
+            enable_button_after: experimentSettings.vision_experiment.enable_button_after,
             button_html: (choice) => {
-                var trial_id = jsPsych.evaluateTimelineVariable(`trial_id`)
                 var exp_file = jsPsych.evaluateTimelineVariable(`exp_file`)
                 var context_file = jsPsych.evaluateTimelineVariable(`context_file`)
-                var exp_left = jsPsych.evaluateTimelineVariable(`exp_left`) 
+                var exp_right = jsPsych.evaluateTimelineVariable(`exp_right`) 
                 
-                if (exp_left === 1) {
+                if (exp_right === 1) {
+                    var left_image = context_file
+                    var right_image = exp_file
+                } else {
                     var left_image = exp_file
                     var right_image = context_file
-                } else {
-                    var left_image = context_file
-                    var right_image = exp_file 
                 }
             
                 left_button = 
-                    `<div style="cursor: pointer; width: 130px; height: 130px; 
-                                position: absolute; top: 50%; left: calc(50% - 80px); transform: translate(-50%, -50%);">
-                    <img src="${left_image}" class="image-button" />
-                    </div>`
+                    `<button class="image-button" style="background: none; border: none; padding: 0; cursor: pointer; width: 130px; 
+                        height: 130px; position: absolute; top: 50%; left: calc(50% - 80px);">
+                    <img src="${left_image}" style="width: 100%; height: 100%; border-radius: 10px;" />
+                    </button>`
+
+                // `<div style="cursor: pointer; width: 130px; height: 130px; 
+                //                 position: absolute; top: 50%; left: calc(50% - 80px); transform: translate(-50%, -50%);">
+                //     <img src="${left_image}" class="image-button" />
+                //     </div>`
+
+
                 
                 right_button = 
-                    `<div style="cursor: pointer; width: 130px; height: 130px; 
-                                position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
-                    <img src="${right_image}" class="image-button"/>
-                    </div>`
+                    `<button class="image-button" style="background: none; border: none; padding: 0; cursor: pointer; width: 130px; height: 130px; 
+                        position: absolute; top: 50%; left: calc(50% + 80px);">
+                    <img src="${right_image}" style="width: 100%; height: 100%; border-radius: 10px;" />
+                    </button>`
+                
+                // `<div style="cursor: pointer; width: 130px; height: 130px; 
+                //             position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
+                // <img src="${right_image}" class="image-button" />
+                // </div>`
             
                 if (choice == "left") {
                     return left_button;
@@ -139,6 +163,7 @@ function createDecisionTask(timeline_variables, jsPsych) {
 
             stimulus: function() {
                 var sample_file = jsPsych.evaluateTimelineVariable(`sample_file`)
+
                 var html = 
                     `<div style="width:300px; height: 65vh;">
                         <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; left: 50%;
@@ -147,13 +172,13 @@ function createDecisionTask(timeline_variables, jsPsych) {
                         </p>
 
                         <div> 
-                            <div class="square" 
+                            <div class="square large" 
                                 style="top: calc(50%); left: calc(50% - 320px);"
                             </div>
                         </div>
 
                         <div> 
-                            <img src="${sample_file}" class="image-object" 
+                            <img src="${sample_file}" class="image-object large" 
                             style="top: calc(50%); left: calc(50% - 320px);"/>
                         </div>
 
@@ -165,17 +190,19 @@ function createDecisionTask(timeline_variables, jsPsych) {
 
             on_finish: function(data) { 
                 var files = [
+                    jsPsych.evaluateTimelineVariable(`sample_file`),
                     jsPsych.evaluateTimelineVariable(`exp_file`), 
                     jsPsych.evaluateTimelineVariable(`context_file`)
                 ]
-                console.log(jsPsych.evaluateTimelineVariable('correct_response'))
+
                 data.stimulus = files
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.set_id = jsPsych.evaluateTimelineVariable('set_id')
+                data.sample_file = jsPsych.evaluateTimelineVariable(`sample_file`)
                 data.exp_stimulus = jsPsych.evaluateTimelineVariable('exp_file')
                 data.correct_response = jsPsych.evaluateTimelineVariable('correct_response')
                 data.context_file = jsPsych.evaluateTimelineVariable('context_file')
-                data.exp_left = jsPsych.evaluateTimelineVariable('exp_left') 
+                data.exp_right = jsPsych.evaluateTimelineVariable('exp_right') 
                 data.condition_code = jsPsych.evaluateTimelineVariable('condition_code') 
                 data.timestamp = new Date().toLocaleTimeString()
             }
@@ -184,7 +211,6 @@ function createDecisionTask(timeline_variables, jsPsych) {
     return {timeline:task_timeline, timeline_variables:timeline_variables};
 }
 
-// slide after WM
 function endingDecisionTask() {
     var end = {
         type: jsPsychHtmlKeyboardResponse, 

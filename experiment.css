@@ -49,6 +49,23 @@
     backdrop-filter: blur(10px);
 }
 
+.instruction-paragraph-right {
+    font-family: 'Courier New', monospace;
+    font-size: large; 
+    position: absolute; 
+    top: 15%; 
+    right: 8%;
+    color: black; 
+    text-align: justify;
+    width: 250px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(70, 130, 180, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+}
+
 .continue-prompt {
     position: fixed;
     bottom: 10px;
@@ -68,22 +85,33 @@
     border-radius: 10px;
 }
 
+.image-object.large {
+    width: 160px;
+    height: 160px;
+}
+
 .image-button {
     position: absolute;
-    width: 100%; 
-    height: 100%; 
+    width: 100%;
+    height: 100%;
     top: 50%;
     transform: translate(-50%, -50%);
     border-radius: 10px;
-    transition: filter 0.3s; 
+    transition: filter 0.3s;
 }
 
-.image-button:hover {
+.image-button:disabled {
+    pointer-events: none;
+    cursor: default;
+}
+
+.image-button:not(:disabled):hover {
     filter: brightness(85%);
+    transform: translate(-50%, -50%) scale(0.99);
 }
 
-.image-button:active {
-    transform: translate(-50%, -50%) scale(0.95); /* Slight shrink on click */
+.image-button:not(:disabled):active {
+    transform: translate(-50%, -50%) scale(0.98);
 }
 
 .square {
@@ -95,6 +123,11 @@
     background-color: transparent;
     border: .5px solid black;
     box-shadow: 0 4px 16px rgba(0,0,0,0.25), 0 1.5px 4px rgba(80,80,80,0.18);
+}
+
+.square.large {
+    width: 160px;
+    height: 160px;
 }
 
 .rectangle {
@@ -132,9 +165,12 @@
 
 .next-trial-btn #jspsych-html-slider-response-next {
     position: absolute;
-    top: 88%;
-    /* right: 20%; */
-    transform: translate(-50%, -50%);
+    top: 83%;
+    left: 50%;
+    margin: 0 auto;
+    display: block;
+    transform: translateX(-50%);
+    font-family: 'Courier New', monospace;
 }
 
 :root {
@@ -277,4 +313,18 @@
     &::-webkit-slider-thumb { border-color: var(--color__dark); }
     &::-moz-range-thumb     { border-color: var(--color__dark); }
     &::-ms-thumb            { border-color: var(--color__dark); }
+}
+
+@keyframes feedbackBlink {
+    0% {
+        filter: brightness(110%) saturate(110%);
+        transform: translate(-50%, -50%) scale(1.01);
+    }
+    100% {
+        filter: brightness(100%) saturate(100%);
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+.feedback-blink {
+    animation: feedbackBlink .7s ease-out forwards;
 }

@@ -148,16 +148,16 @@ function createLM(timeline_variables, jsPsych) {
             type: jsPsychHtmlSliderResponse,
             require_movement: false, // defined later in on load
             slider_start: 50,
-            slider_width: 320,
+            slider_width: 280,
             min: 5,
             max: 95,
             step: 15,
             labels: slider_labels,
-            // css_classes : ["next-trial-btn"],
+            css_classes : ["next-trial-btn"],
             stimulus: function() {
                 var file = jsPsych.evaluateTimelineVariable('recognition_file')
                 var html = 
-                    `<div style="width:900px; height:50vh; position: relative;">
+                    `<div style="width:900px; height:45vh; position: relative;">
                         <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: -30px; left: 50%;
                                 transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
                             <strong>Have you seen this image before?</strong>
@@ -222,7 +222,7 @@ function createLM(timeline_variables, jsPsych) {
             on_finish: function(data) { 
                 data.stimulus = jsPsych.evaluateTimelineVariable('recognition_file')
                 data.image_id = jsPsych.evaluateTimelineVariable('recognition_id')
-                data.old = jsPsych.evaluateTimelineVariable('old')
+                data.image_old = jsPsych.evaluateTimelineVariable('old')
                 data.lm_trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial')
                 data.trial_type = "lm-recognition";
