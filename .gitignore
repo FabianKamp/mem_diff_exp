@@ -1,6 +1,7 @@
 /_archive/
 /output_data/
 /stimuli/
+/test_stimuli/
 /stimuli.zip
 /output_check.ipynb
 /token/
