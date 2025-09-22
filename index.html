@@ -34,12 +34,6 @@
 </head>
   <body></body>
   <script>
-    const session_id = jsPsych.data.getURLVariable('sid')
-    // const session_id = "V-PA-001"
-    const version_id = session_id[0];
-    const wave_id = session_id.slice(2, 4)
-    const subject_id = parseInt(session_id.slice(-3), 10)
-    
     const jsPsych = initJsPsych({
         on_finish: function(data){            
             // Serialize the data
@@ -67,10 +61,18 @@
                     }
                 });
             })
-            // window.location.href = "https://app.prolific.com/"
         }
         });
 
+    async function createTimeline(){        
+        // load session/subject/wave id
+        const session_id = jsPsych.data.getURLVariable('sid')
+        //const session_id = "V-PA-001"
+        const version_id = session_id[0];
+        const wave_id = session_id.slice(2, 4)
+        const subject_id = parseInt(session_id.slice(-3), 10)
+
+        // add meta data 
         jsPsych.data.addProperties({
             session_id : session_id,
             version_id : version_id,
@@ -81,7 +83,6 @@
             fullscreen_mode: true, 
         });
 
-    async function createTimeline(){        
         // initialize the fullscree tracker
         fullscreen_tracker = new fullscreenTracker(jsPsych);
         
@@ -151,13 +152,23 @@
         } else if (version_id == 'V') {
             console.log("starting vision task")
             var experiment_timeline = [];
+
+            // STARTING 
+            experiment_timeline.push(check_consent(jsPsych, version_id))
             experiment_timeline.push(startingExperiment(jsPsych))
+            experiment_timeline.push(createDemographics())
+
+            // INSTRUCTIONS
             experiment_timeline.push(createDecisionInstructions())
+            
+            // DECISION TASK
             experiment_timeline.push(fullscreen_tracker.check())
             experiment_timeline.push(startingDecisionTask())
-
             experiment_timeline.push(countdown(3))
-            experiment_timeline.push(createDecisionTask(input_data, jsPsych))        
+            experiment_timeline.push(createDecisionTask(input_data, jsPsych))
+
+            // ENDING
+            experiment_timeline.push(endingExperiment(jsPsych))        
         }
 
         return experiment_timeline;

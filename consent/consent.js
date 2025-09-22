@@ -1,6 +1,6 @@
 // consent
 
-function check_consent(jsPsych) {
+function check_consent(jsPsych, version_id) {
     var participantConsentStatus = null;
     
     var check_consent_html = function(elem) {
@@ -21,7 +21,7 @@ function check_consent(jsPsych) {
 
     var consent = {
     type: jsPsychExternalHtml,
-    url: 'consent/consent_page_memory.html',
+    url: version_id === 'm' ? 'consent/consent_page_memory.html' : 'consent/consent_page_vision.html',
     cont_btn: 'continue_button',
     check_fn: check_consent_html,
     on_finish: function() {
