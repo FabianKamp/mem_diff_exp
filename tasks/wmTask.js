@@ -183,7 +183,6 @@ function convert2cartesian(rx, ry, theta) {
 function createWM(timeline_variables, feedback, jsPsych) {
     // timeline: initial delay -> 3 encoding images (inter stimulus delay) -> memory delay -> recognition slide
     var wm_timeline = [];
-    var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
     
     // preload
     wm_timeline.push(
@@ -191,10 +190,13 @@ function createWM(timeline_variables, feedback, jsPsych) {
         type: jsPsychPreload,
         record_data: false,
         show_progress_bar: false,
+        show_detailed_errors: true,
         images: function() {
+            var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
             var files = [];
-            for (let j = 0; j < n_encoding; j++) {
-                files.push(jsPsych.evaluateTimelineVariable(`encoding_file_${j+1}`));
+            for (let i = 0; i < n_encoding; i++) {
+                var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`);
+                files.push(file)
             }
             files.push(jsPsych.evaluateTimelineVariable('recognition_target_file'))
             files.push(jsPsych.evaluateTimelineVariable('recognition_control_file'))
@@ -364,7 +366,7 @@ function createWM(timeline_variables, feedback, jsPsych) {
                     jsPsych.evaluateTimelineVariable(`recognition_target_file`), 
                     jsPsych.evaluateTimelineVariable(`recognition_control_file`)
                 ]
-                console.log(jsPsych.evaluateTimelineVariable('correct_response'))
+                
                 data.stimulus = files
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.phase = 'recognition'
