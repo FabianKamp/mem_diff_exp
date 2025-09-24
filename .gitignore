@@ -7,5 +7,7 @@
 /token/
 /docs/
 /test/
+.env
+/analysis/
 /**/.DS_Store
 /.DS_Store
