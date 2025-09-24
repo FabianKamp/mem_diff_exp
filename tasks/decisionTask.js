@@ -111,6 +111,24 @@ function startingDecisionTask () {
 
 function createDecisionTask(timeline_variables, jsPsych) {
     task_timeline = []
+    
+    // preload
+    task_timeline.push(
+    {
+        type: jsPsychPreload,
+        record_data: false,
+        show_progress_bar: false,
+        show_detailed_errors: true,
+        images: function() {
+            var files = []
+            files.push(jsPsych.evaluateTimelineVariable(`exp_file`));
+            files.push(jsPsych.evaluateTimelineVariable(`context_file`));
+            files.push(jsPsych.evaluateTimelineVariable(`sample_file`));
+            return files;
+        }
+    })
+
+    // task
     task_timeline.push(
         {
             type: jsPsychHtmlButtonResponse,
@@ -140,8 +158,6 @@ function createDecisionTask(timeline_variables, jsPsych) {
                 //                 position: absolute; top: 50%; left: calc(50% - 80px); transform: translate(-50%, -50%);">
                 //     <img src="${left_image}" class="image-button" />
                 //     </div>`
-
-
                 
                 right_button = 
                     `<button class="image-button" style="background: none; border: none; padding: 0; cursor: pointer; width: 130px; height: 130px; 

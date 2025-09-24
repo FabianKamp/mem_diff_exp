@@ -4,8 +4,6 @@ import os
 import glob
 import json
 
-
-# TODO make catch trials for the vision task
 image_dir = "stimuli/"
 out_dir = f"input_data/"
 
