@@ -97,9 +97,9 @@ def generate_catch_trials(ncatch, catch_ids):
         subject_id = subject_id,
     )
 
+    catch_positions = np.linspace(practice_trials+5, wm_trials-5, ncatch).astype(int)
     catch_trial_df = pd.DataFrame(catch_trial_data)
     catch_json_data = catch_trial_df.to_dict(orient='records')
-    catch_positions = np.linspace(practice_trials+10, wm_trials-10, ncatch).astype(int)
 
     return catch_positions, catch_json_data
 
@@ -292,7 +292,7 @@ while counter < subject_number:
         
         # insert catch trials
         catch_positions, catch_json_data = generate_catch_trials(ncatch, catch_ids)
-        for p, catch_trial in zip(catch_positions, catch_json_data):
+        for p, catch_trial in zip(reversed(catch_positions), reversed(catch_json_data)):
             wm_json_data.insert(p,catch_trial)
         
         # combine wm and lm data

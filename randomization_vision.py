@@ -66,6 +66,7 @@ def generate_catch_trials(ncatch):
     catch_trial_df = pd.DataFrame(catch_trial_data)
     catch_json_data = catch_trial_df.to_dict(orient='records')
     catch_positions = np.linspace(10, vision_trials-10, ncatch).astype(int)
+    
     return catch_positions, catch_json_data
 
 
@@ -138,7 +139,7 @@ while counter < subject_number:
 
         # insert catch trials
         catch_positions, catch_json_data = generate_catch_trials(ncatch)
-        for p, catch_trial in zip(catch_positions, catch_json_data):
+        for p, catch_trial in zip(reversed(catch_positions), reversed(catch_json_data)):
             json_data.insert(p,catch_trial)
         
         file_path = os.path.join(out_dir, f"input_{session_id}.json")
