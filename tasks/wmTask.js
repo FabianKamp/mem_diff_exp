@@ -114,7 +114,7 @@ function createWMInstructions() {
 
             <p class="instruction-paragraph-left">
                 <strong>4. Pick an image by clicking on it.</strong><br><br> 
-                You will be able choose the matching image by clicking on it.<br><br> 
+                You can choose the matching image by clicking on it.<br><br> 
                 If you don't remember the original image make your best guess.
             </p>
             <p class="continue-prompt">
@@ -124,13 +124,11 @@ function createWMInstructions() {
             [
             `<p class="instruction-header"><strong>Practice</strong></p>
             <p class="instruction-paragraph">
-                We will start with <strong>12 practice runs</strong>.<br><br>
-                During the practice runs the original image will 
-                appear again as soon as you have made your choice, 
-                so that you are able to check if you made the correct choice.
+                We will start with <strong>12 practice runs</strong>.
                 <br><br>
-                Please try to memorize the images as well as you can and
-                <strong> choose the image that matches the previous image better.</strong>
+                During the practice runs the original image will 
+                appear again as soon as you have made your choice,  
+                so that you're able to compare the original image with the image you picked. 
             </p>
             <p class="continue-prompt">
                 To start the practice press <strong>right arrow</strong>
@@ -190,6 +188,10 @@ function createWM(timeline_variables, feedback, jsPsych) {
         type: jsPsychPreload,
         record_data: false,
         show_progress_bar: false,
+        message:                 
+            `<div style="width:250px; height:75vh;">
+                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
+            </div>`,
         show_detailed_errors: true,
         images: function() {
             var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
@@ -234,7 +236,7 @@ function createWM(timeline_variables, feedback, jsPsych) {
                 }
             },
             stimulus: function() {
-                var html = `<div style="width:500px; height:75vh;">`
+                var html = `<div style="width:500px; height:60vh;">`
                 var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
 
                 for (let i = 0; i < n_encoding; i++) {
@@ -267,6 +269,13 @@ function createWM(timeline_variables, feedback, jsPsych) {
                 for (let i = 0; i < n_encoding; i++) { 
                     file.push(jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`))
                     theta.push(jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`))
+                }
+
+                var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
+                if (long_encoding == 1) {
+                    data.encoding_time = experimentSettings.timing.encoding_time_long
+                } else {
+                    data.encoding_time = experimentSettings.timing.encoding_time_short
                 }
 
                 data.stimulus = file
@@ -339,7 +348,7 @@ function createWM(timeline_variables, feedback, jsPsych) {
                 var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
                 var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
                 var html = 
-                    `<div style="width:500px; height: 75vh;">
+                    `<div style="width:500px; height: 60vh;">
                         <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
                         transform: translateX(-50%); color:#4682B4; text-align: center;">
                             <strong></strong>
@@ -361,13 +370,29 @@ function createWM(timeline_variables, feedback, jsPsych) {
                 return html;
             },
 
-            on_finish: function(data) { 
-                var files = [
-                    jsPsych.evaluateTimelineVariable(`recognition_target_file`), 
-                    jsPsych.evaluateTimelineVariable(`recognition_control_file`)
-                ]
-                
-                data.stimulus = files
+            on_finish: function(data) {               
+                // stimulus
+                var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
+                var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
+                var left_target = jsPsych.evaluateTimelineVariable(`left_target`)
+
+                data.stimulus = [target_file, control_file]
+                if (left_target === 1) {
+                    data.stimulus_left = target_file
+                    data.stimulus_right = control_file
+                } else {
+                    data.stimulus_left = control_file
+                    data.stimulus_right = target_file
+                }
+
+                // encoding time
+                var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
+                if (long_encoding == 1) {
+                    data.encoding_time = experimentSettings.timing.encoding_time_long
+                } else {
+                    data.encoding_time = experimentSettings.timing.encoding_time_short
+                }
+
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.phase = 'recognition'
                 data.image_id = jsPsych.evaluateTimelineVariable('wm_id')

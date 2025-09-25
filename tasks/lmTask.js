@@ -220,6 +220,15 @@ function createLM(timeline_variables, jsPsych) {
                 });
             },
             on_finish: function(data) { 
+                // encoding time 
+                var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
+                if (long_encoding == 1) {
+                    data.encoding_time = experimentSettings.timing.encoding_time_long
+                } else {
+                    data.encoding_time = experimentSettings.timing.encoding_time_short
+                }
+                
+                // meta data
                 data.stimulus = jsPsych.evaluateTimelineVariable('recognition_file')
                 data.image_id = jsPsych.evaluateTimelineVariable('recognition_id')
                 data.image_old = jsPsych.evaluateTimelineVariable('old')

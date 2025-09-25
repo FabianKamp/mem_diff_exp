@@ -4,6 +4,7 @@
 <html>
   <head>
     <title>Experiment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <script src="jquery/jquery-3.7.1.min.js"></script>
     <script src="jspsych/jspsych.js"></script>
@@ -67,6 +68,7 @@
     async function createTimeline(){        
         // load session/subject/wave id
         // const session_id = "V-PA-001"
+        // const session_id = "M-PA-001"
         const session_id = jsPsych.data.getURLVariable('sid')
         const version_id = session_id[0];
         const wave_id = session_id.slice(2, 4)

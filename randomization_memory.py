@@ -4,6 +4,9 @@ import os
 import glob
 import json
 
+# set seed
+np.random.seed(42) 
+
 out_dir = f"input_data/"
 image_dir = "stimuli"
 
@@ -229,7 +232,8 @@ while counter < subject_number:
     
     # get old trials and encoding trials
     old = (lm_recognition<9000).astype(int)
-    encoding_trial = np.array([np.where(wm_ids==i%1e3)[0][0] if i < 9000 else nan for i in lm_recognition])
+    lm_encoding_trial = np.array([np.where(wm_ids==i%1e3)[0][0] if i < 9000 else nan for i in lm_recognition])
+    lm_long_encoding = np.array([long_encoding[t] if t!=nan else nan for t in lm_encoding_trial])
 
     # assemble ltm data
     lm_trial_data = dict(
@@ -237,7 +241,8 @@ while counter < subject_number:
         recognition_id = lm_recognition,
         recognition_file = lm_recognition_files,
         old = old,
-        encoding_trial = encoding_trial, 
+        encoding_trial = lm_encoding_trial, 
+        long_encoding = lm_long_encoding, 
         trial_type = "lm"
     )
 

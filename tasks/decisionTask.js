@@ -119,6 +119,17 @@ function createDecisionTask(timeline_variables, jsPsych) {
         record_data: false,
         show_progress_bar: false,
         show_detailed_errors: true,
+        message: 
+            `<div style="width:300px; height: 65vh;">
+                <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; left: 50%;
+                    transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
+                    <strong>Which image matches the image on the left better?</strong>
+                </p>
+
+                <div style="width:250px; height:75vh;">
+                    <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
+                </div>
+            </div>`,
         images: function() {
             var files = []
             files.push(jsPsych.evaluateTimelineVariable(`exp_file`));
