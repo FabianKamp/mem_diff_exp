@@ -8,7 +8,8 @@
     "vision_experiment": {
         "vision_trials": 177,
         "enable_button_after": 1200,
-        "ncatch": 20
+        "ncatch": 20, 
+        "inter_trial_delay": 150
     },
 
     "memory_experiment": {

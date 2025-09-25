@@ -125,10 +125,7 @@ function createDecisionTask(timeline_variables, jsPsych) {
                     transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
                     <strong>Which image matches the image on the left better?</strong>
                 </p>
-
-                <div style="width:250px; height:75vh;">
-                    <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                </div>
+                <div class="rectangle"></div>
             </div>`,
         images: function() {
             var files = []
@@ -136,6 +133,26 @@ function createDecisionTask(timeline_variables, jsPsych) {
             files.push(jsPsych.evaluateTimelineVariable(`context_file`));
             files.push(jsPsych.evaluateTimelineVariable(`sample_file`));
             return files;
+        }
+    })
+
+    // inter trial delay
+    task_timeline.push(
+    {
+        type: jsPsychHtmlKeyboardResponse,
+        choices: "NO_KEYS",
+        trial_duration: experimentSettings.vision_experiment.inter_trial_delay,
+        record_data: false,
+        stimulus: function(){
+            var html = 
+            `<div style="width:300px; height: 65vh;">
+                <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; left: 50%;
+                    transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
+                    <strong>Which image matches the image on the left better?</strong>
+                </p>
+                <div class="rectangle"></div>
+            </div>`
+            return html;
         }
     })
 
