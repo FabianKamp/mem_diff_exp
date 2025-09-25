@@ -21,7 +21,7 @@ function check_consent(jsPsych, version_id) {
 
     var consent = {
     type: jsPsychExternalHtml,
-    url: version_id === 'm' ? 'consent/consent_page_memory.html' : 'consent/consent_page_vision.html',
+    url: version_id === 'M' ? 'consent/consent_page_memory.html' : 'consent/consent_page_vision.html',
     cont_btn: 'continue_button',
     check_fn: check_consent_html,
     on_finish: function() {
