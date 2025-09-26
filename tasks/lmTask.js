@@ -224,8 +224,10 @@ function createLM(timeline_variables, jsPsych) {
                 var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
                 if (long_encoding == 1) {
                     data.encoding_time = experimentSettings.timing.encoding_time_long
-                } else {
+                } else if (long_encoding == 1){
                     data.encoding_time = experimentSettings.timing.encoding_time_short
+                } else {
+                    data.encoding_time = 9999
                 }
                 
                 // meta data
@@ -234,7 +236,8 @@ function createLM(timeline_variables, jsPsych) {
                 data.image_old = jsPsych.evaluateTimelineVariable('old')
                 data.lm_trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial')
-                data.trial_type = "lm-recognition";
+                data.trial_type = "lm"
+                data.phase = "recognition"
                 data.timestamp = new Date().toLocaleTimeString()
             }
         }

@@ -30,6 +30,5 @@ function check_consent(jsPsych, version_id) {
             consent_status: participantConsentStatus
         })}
     }
-
     return consent;
 }

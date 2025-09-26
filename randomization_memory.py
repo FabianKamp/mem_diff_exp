@@ -289,6 +289,14 @@ while counter < subject_number:
             correct_response = correct_response
         )   
 
+        # update lm (encoding) condition 
+        lm_conditions = np.array([latin_conditions[t] if t!=nan else nan for t in lm_encoding_trial])
+        lm_condition_names = np.array([latin_condition_names[t] if t!=nan else nan for t in lm_encoding_trial])
+        lm_trial_data.update(
+            condition = lm_conditions,
+            condition_name = lm_condition_names
+        ) 
+
         # save 
         wm_trial_df = pd.DataFrame(wm_trial_data)
         wm_json_data = wm_trial_df.to_dict(orient='records')
