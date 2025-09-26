@@ -8,6 +8,7 @@
 /docs/
 /test/
 .env
-/analysis/
+/analysis/*.txt
+/analysis/*.ipynb
 /**/.DS_Store
 /.DS_Store
