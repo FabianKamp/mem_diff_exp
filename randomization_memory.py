@@ -117,7 +117,8 @@ while counter < subject_number:
     wm_sample_files = np.array([get_file_path(i) for i in wm_encoding])
     
     # randomize sequential position
-    sample_positions = np.array([np.random.choice(np.arange(load), 1, replace=False)[0] for _ in range(all_wm_trials)])
+    sample_positions = np.array([np.random.choice(np.arange(load), 1, replace=False)[0] 
+                                 for _ in range(all_wm_trials)])
 
     # generate angles
     encoding_thetas = np.vstack([generate_random_angles(load) for _ in range(all_wm_trials)])
