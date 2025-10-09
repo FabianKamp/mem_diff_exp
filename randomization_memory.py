@@ -126,10 +126,10 @@ while counter < subject_number:
 
     # randomize distractors 
     # distractor concepts should not overlap between wm and lm
-
     dist_info = pd.read_csv("./stimuli/dist_stimuli/image_info.csv")
     
     # lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials-wm_trials, replace=False)
+    lm_trials = (wm_trials//3)*2
     lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials, replace=False)
     lm_dist_pool = dist_info.loc[dist_info.concept.isin(lm_dist_concepts)]
     lm_distractors = lm_dist_pool.groupby("concept")["diff_id"].first().to_numpy()
@@ -208,8 +208,11 @@ while counter < subject_number:
     # randomize encoding time
     long_encoding = np.zeros(wm_trials)
     long_encoding[wm_trials//2:] = 1
-    long_encoding = long_encoding[wm_random_idx]
-    practice_long_encoding = np.random.permutation([0,1]* (practice_trials//2))
+    long_encoding = np.random.permutation(long_encoding)
+    
+    practice_long_encoding = np.zeros(practice_trials)
+    practice_long_encoding[practice_trials//2:] = 1
+    practice_long_encoding = np.random.permutation(practice_long_encoding)
 
     long_encoding = np.concatenate([practice_long_encoding, long_encoding])
     wm_trial_data.update(long_encoding = long_encoding.astype(int))
@@ -218,18 +221,17 @@ while counter < subject_number:
     wm_left_target = np.zeros(wm_trials)
     wm_left_target[wm_trials//2:] = 1 
     wm_left_target = np.random.permutation(wm_left_target)
-    practice_left_target = np.random.permutation([0,1]*(practice_trials//2))
+    
+    practice_left_target = np.zeros(practice_trials)
+    practice_left_target[practice_trials//2:] = 1 
+    practice_left_target = np.random.permutation(practice_left_target)
 
     wm_left_target = np.concatenate([practice_left_target, wm_left_target])
     wm_left_target = wm_left_target.astype(int)
     wm_trial_data.update(left_target = wm_left_target)
 
-    # lm stimuli
-    lm_ids = wm_ids[practice_trials::]
-    
+    # prepare LM
     # randomize recognition stimuli
-    lm_recognition_target = np.random.permutation(lm_ids+1000)
-    lm_recognition_target_files = np.array([get_file_path(i) for i in lm_recognition_target])
     lm_recognition_control = np.random.permutation(lm_distractors)
     lm_recognition_control_files = np.array([get_file_path(i) for i in lm_recognition_control])
     
@@ -239,21 +241,13 @@ while counter < subject_number:
     lm_left_target = np.random.permutation(lm_left_target)
     lm_correct_response = (lm_left_target==0).astype(int)
 
-    # get encoding trials
-    lm_encoding_trial = np.array([np.where(wm_ids==i%1e3)[0][0] for i in lm_recognition_target])
-    lm_long_encoding = np.array([long_encoding[t] for t in lm_encoding_trial])
-
     # assemble lm data
     lm_trial_data = dict(
         trial_id = np.arange(lm_trials), 
-        recognition_id = lm_recognition_target.astype(int),
-        recognition_file = lm_recognition_target_files,
-        encoding_trial = lm_encoding_trial, 
         recognition_control_id = lm_recognition_control.astype(int),
         recognition_control_file = lm_recognition_control_files,
-        long_encoding = lm_long_encoding, 
-        left_target = lm_left_target,
-        lm_correct_response = lm_correct_response,
+        left_target = lm_left_target.astype(int),
+        correct_response = lm_correct_response,
         trial_type = "lm"
     )
 
@@ -262,12 +256,13 @@ while counter < subject_number:
         subject_id = counter+1   
         session_id = f"M-{wave_id}-{subject_id:03d}"       
        
-        # working memory
+        # latin randomization
         latin_conditions = wm_conditions_random % num_conditions + 1
         wm_conditions_random = wm_conditions_random + 1
-        latin_condition_names = [condition_codes[i] for i in latin_conditions]
+        latin_condition_names = np.array([condition_codes[i] for i in latin_conditions])
  
-        #conditions: 1 -> (4,3), 2 -> (4,5), 3 -> (3,5)
+        # Update WM 
+        # latin_conditions -> (target, control): 1 -> (4,3), 2 -> (4,5), 3 -> (3,5) 
         target_codes = (latin_conditions < 3).astype(int) + 3
         control_codes = (latin_conditions > 1).astype(int) * 2 + 3
         
@@ -297,13 +292,37 @@ while counter < subject_number:
             correct_response = wm_correct_response
         )   
 
-        # update lm (encoding) condition 
-        lm_conditions = np.array([latin_conditions[t] for t in lm_encoding_trial])
-        lm_condition_names = np.array([latin_condition_names[t] for t in lm_encoding_trial])
+        # update LM
+        lm_encoding_trials = np.arange(all_wm_trials)
+        lm_encoding_trials = lm_encoding_trials[(lm_encoding_trials>=practice_trials) & (latin_conditions>1)]
+        assert len(lm_encoding_trials) == lm_trials, "lm trials and encoding trials don't have the same length"
+
+        # randomize
+        lm_random_idx = np.random.permutation(np.arange(lm_trials))
+        
+        # select and mix the ids and conditions
+        lm_ids = wm_ids[lm_encoding_trials][lm_random_idx]
+        
+        lm_recognition_target = lm_ids + 1000
+        lm_recognition_target_files = np.array([get_file_path(i) for i in lm_recognition_target])
+        
+        lm_conditions = latin_conditions[lm_encoding_trials][lm_random_idx]
+        lm_condition_names = latin_condition_names[lm_encoding_trials][lm_random_idx]
+        
+        lm_long_encoding = long_encoding[lm_encoding_trials][lm_random_idx]
+        lm_sample_positions = sample_positions[lm_encoding_trials][lm_random_idx]
+
         lm_trial_data.update(
+            subject_id = subject_id,
+            session_id = session_id,
+            lm_id = lm_ids,
+            recognition_target_id = lm_recognition_target.astype(int),
+            recognition_target_file = lm_recognition_target_files,
             condition = lm_conditions,
-            condition_name = lm_condition_names
-        ) 
+            condition_name = lm_condition_names, 
+            long_encoding = lm_long_encoding,
+            sample_position = lm_sample_positions,
+            )
 
         # save 
         wm_trial_df = pd.DataFrame(wm_trial_data)

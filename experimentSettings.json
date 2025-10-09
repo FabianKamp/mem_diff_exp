@@ -21,7 +21,8 @@
     },
 
     "timing": {
-        "inter_trial_delay": 750,
+        "wm_inter_trial_delay": 1000,
+        "lm_inter_trial_delay": 250,
         "memory_delay": 3000,
         "catch_delay": 1000,
         "encoding_time_short": 1200,

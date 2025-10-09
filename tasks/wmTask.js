@@ -221,7 +221,7 @@ function createWM(timeline_variables, feedback, jsPsych) {
     {
         type: jsPsychHtmlKeyboardResponse,
         choices: "NO_KEYS",
-        trial_duration: experimentSettings.timing.inter_trial_delay,
+        trial_duration: experimentSettings.timing.wm_inter_trial_delay,
         record_data: false,
         stimulus: function(){
             var html = 
