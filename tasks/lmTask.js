@@ -44,7 +44,6 @@ function createLMInstructions() {
                 You will see images which were shown in the task before as well as some new images. <br><br>
                 Please, try to remember if you have seen the image before or not.
             </p>
-            <p class="continue-prompt">To continue press <strong>right arrow</strong></p>
         </div>`;
     
     lm_recognition_slide_2 = lm_base_layout() + lm_scale_labels() + `
@@ -54,7 +53,6 @@ function createLMInstructions() {
                 The <strong>right side</strong> of the slider indicates that the image has been shown before (i.e. it is <strong>old</strong>).<br><br>
                 The <strong>left side</strong>  means that has not been shown (i.e. it is <strong>new</strong>).
             </p>
-            <p class="continue-prompt">To continue press <strong>right arrow</strong></p>
         </div>`;
 
     lm_recognition_slide_3 = lm_base_layout() + lm_scale_labels() + `
@@ -64,7 +62,6 @@ function createLMInstructions() {
                 You have three options: <strong>guess - probably - certain</strong>.<br><br>
                 Please, move the slider to the position that indicates your confidence level.
             </p>
-            <p class="continue-prompt">To continue press <strong>right arrow</strong></p>
         </div>`;
 
     // instructions long term memory 
@@ -72,6 +69,7 @@ function createLMInstructions() {
         {
             type: jsPsychInstructions,
             key_forward: 'ArrowRight',
+            show_clickable_nav: true,
             record_data: false,
             pages:[[
                 `<div>
@@ -85,10 +83,7 @@ function createLMInstructions() {
                         <br><br>
                         For each image we will ask if you have seen it before (i.e. during the first/second block of the experiment)
                         <br><br><br><br>
-                        The following instructions will explain the task in detail. Press the <strong>right arrow</strong> key to continue.
-                    </p>
-                    <p class="continue-prompt">
-                        To continue press <strong>right arrow</strong>
+                        The following instructions will explain the task in detail.
                     </p>
                 </div>`
             ], 

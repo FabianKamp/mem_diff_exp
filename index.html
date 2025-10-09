@@ -68,8 +68,8 @@
     async function createTimeline(){        
         // load session/subject/wave id
         // const session_id = "V-PA-001"
-        // const session_id = "M-PA-001"
-        const session_id = jsPsych.data.getURLVariable('sid')
+        const session_id = "M-PA-001"
+        // const session_id = jsPsych.data.getURLVariable('sid')
         const version_id = session_id[0];
         const wave_id = session_id.slice(2, 4)
         const subject_id = parseInt(session_id.slice(-3), 10)
@@ -116,6 +116,7 @@
 
             // WM INSTRUCTIONS
             experiment_timeline.push(createWMInstructions())
+            experiment_timeline.push(startingWMPractice())
             experiment_timeline.push(fullscreen_tracker.check())
             experiment_timeline.push(countdown(3))
             experiment_timeline.push(createWM(practice_input_data, feedback=1, jsPsych))
@@ -135,7 +136,7 @@
             experiment_timeline.push(createWM(wm_input_data_block2, feedback=0, jsPsych))
             experiment_timeline.push(endingWM())
 
-            // DISTRACTOR
+            DISTRACTOR
             experiment_timeline.push(createDistractorInstructions())
             experiment_timeline.push(fullscreen_tracker.check())
             experiment_timeline.push(countdown(3))

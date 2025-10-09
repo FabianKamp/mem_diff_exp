@@ -19,7 +19,7 @@ function createDistractorInstructions() {
 
                 </p>
                 <p class="continue-prompt">
-                    To continue press <strong>Enter</strong>
+                    To start press <strong>Enter</strong>
                 </p>
             </div>`,
         choices: ['Enter'],
@@ -40,7 +40,7 @@ function createDistractorTask() {
         record_data: false,
         stimulus: 
             `<div>
-                <p class="instruction-paragraph" style="top:48%"> 
+                <p class="instruction-paragraph" style="top:48%; text-align: center;"> 
                     The initial number is <strong>${initial_number}</strong>.
                 </p>
             </div>`,
@@ -50,8 +50,9 @@ function createDistractorTask() {
         }
     );
     var total = initial_number;
-    for (let j = 0; j < 3; j++) {
-        for (let i = 0; i < 5; i++) {
+    for (let j = 0; j < 4; j++) {
+        var rounds = j == 0 ? 3 : 5;
+        for (let i = 0; i < rounds; i++) {
             // delay            
             dt_timeline.push(
             {
@@ -80,7 +81,7 @@ function createDistractorTask() {
                     total -= randomInteger;
                     var html = 
                     `<div>
-                        <p class="instruction-paragraph" style="top:48%"> 
+                        <p class="instruction-paragraph" style="top:48%; text-align: center"> 
                             <strong>Substract ${randomInteger}</strong> from the previous number.</p>
                     </div>`
                     return html}
@@ -94,7 +95,8 @@ function createDistractorTask() {
                 <p style="font-family: 'Courier New', monospace; font-size: x-large; color:#4682B4; ">
                     What is the current number?
                 </p>
-                `
+                `, 
+                required: true
             }],
             on_finish: function(data) {
                 data.trial_type = "distractor-task";
@@ -118,15 +120,14 @@ function createDistractorTask() {
                     if (parseInt(jsPsych.data.get().last(1).values()[0].response["Q0"], 10) === total) {
                         var feedback = `Awesome, that was the correct number!`
                     } else {
-                        var feedback = `Almost, the <strong>correct number was ${total}</strong>.`
+                        var feedback = `Almost, the correct number was <strong>${total}</strong>.`
                     }
 
                     var html = 
                     `<div>
                         <p class="instruction-paragraph"> 
                             ${feedback}<br><br>
-                            Please, continue to substract.<br><br>
-                            <strong>Continue from ${total}</strong>.
+                            <strong>Please continue from ${total}</strong>.
                         </p>
                         <p class="continue-prompt">
                             To continue press <strong>Enter</strong>

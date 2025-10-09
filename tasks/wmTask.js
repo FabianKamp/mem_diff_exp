@@ -37,16 +37,13 @@ function createWMInstructions() {
                 You have <strong>1-3 seconds</strong> to memorize all images.<br><br>
                 The time to memorize the images will vary from trial to trial.<br><br>
             </p>
-            <p class="continue-prompt">
-                To continue press <strong>right arrow</strong>
-            </p>
             </div>`
     
     var wm_instruction = {
         type: jsPsychInstructions,
         key_forward: 'ArrowRight',
         key_backward: 'ArrowLeft',
-        show_clickable_nav: false,
+        show_clickable_nav: true,
         record_data: false,
         pages: [
             [
@@ -58,12 +55,10 @@ function createWMInstructions() {
                     The following instructions will explain in detail how the task works.
                     <br><br><br>
                     <strong>The instructions are self-paced</strong>. 
-                    You can navigate back and forth through the instructions using the arrow keys on your keyboard.
+                    You can navigate back and forth through the instructions using the buttons below 
+                    or using the arrow keys on your keyboard.
                 </p>
                 
-                <p class="continue-prompt">
-                    To continue press <strong>right arrow</strong>
-                </p>
             </div>`
             ],
             encoding_slide,
@@ -75,9 +70,6 @@ function createWMInstructions() {
                     Afterwards there will be a short delay. <br><br>
                     The delay will take a couple of seconds. <br><br>
                     Please focus on the cross on the screen.
-                </p>
-                <p class="continue-prompt">
-                    To continue press <strong>right arrow</strong>
                 </p>
             </div>`
             ],
@@ -98,9 +90,7 @@ function createWMInstructions() {
                 Your task is to <strong>choose the image that matches the original image better</strong>.<br><br>
                 The square indicates the position of the original image.
             </p>
-            <p class="continue-prompt">
-                To continue press <strong>right arrow</strong>
-            </p>`
+            `
             ],
             [
             `<div class="square" 
@@ -117,28 +107,47 @@ function createWMInstructions() {
                 You can choose the matching image by clicking on it.<br><br> 
                 If you don't remember the original image make your best guess.
             </p>
-            <p class="continue-prompt">
-                To continue press <strong>right arrow</strong>
-            </p>`
+            `
             ],
-            [
-            `<p class="instruction-header"><strong>Practice</strong></p>
-            <p class="instruction-paragraph">
-                We will start with <strong>12 practice runs</strong>.
-                <br><br>
-                During the practice runs the original image will 
-                appear again as soon as you have made your choice,  
-                so that you're able to compare the original image with the image you picked. 
-            </p>
-            <p class="continue-prompt">
-                To start the practice press <strong>right arrow</strong>
-            </p>`
-            ]
         ]
     }
     return wm_instruction
 }
 
+// STARTING PRACTICE
+function startingWMPractice(){
+    var start_practice = {
+        type: jsPsychInstructions,
+        show_clickable_nav: false,
+        key_forward: 'Enter',
+        record_data: false,
+        post_trial_gap: 200,
+        min_viewing_time: 3000,
+        pages: [
+            [
+            `<div>
+                <p class="instruction-header">
+                    <strong>Starting practice runs</strong>
+                </p>
+                <p class="instruction-paragraph">
+                    We will start with <strong>12 practice runs</strong>.
+                    <br><br>
+                    During the practice runs the original image will 
+                    appear again as soon as you have made your choice,  
+                    so that you're able to compare the original image with the image you picked. 
+                    <br><br>
+                    Press <strong>enter</strong> to start.
+                </p>
+                <p class="continue-prompt">
+                    To start press <strong>Enter</strong>
+                </p>
+            </div>
+            `
+            ]
+        ],
+    }
+    return start_practice
+}
 // STARTING SCREEN
 function startingWM () {
     // start wm experiment
@@ -162,9 +171,10 @@ function startingWM () {
                     Press <strong>enter</strong> to start.
                 </p>
                 <p class="continue-prompt">
-                    To start the experiment <strong>ENTER</strong>
+                    To continue press <strong>Enter</strong>
                 </p>
-            </div>`
+            </div>
+            `
             ]
         ],
     }
@@ -495,10 +505,10 @@ function endingWM() {
                     The next slide will have the detailed instructions.
                 </p>
                 <p class="continue-prompt">
-                    To continue press <strong>right arrow</strong>
+                    To continue press <strong>Enter</strong>
                 </p>
             </div>`,
-        choices: ['ArrowRight'],
+        choices: ['Enter'],
         trial_duration: 120000
     }
     return end_wm
