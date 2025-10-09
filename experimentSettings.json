@@ -1,8 +1,8 @@
 {
     "wave": {
-        "version_id": "V",
-        "wave_id": "PA",
-        "subject_number": 60
+        "version_id": "M",
+        "wave_id": "PB",
+        "subject_number": 3
     },
 
     "vision_experiment": {
@@ -14,9 +14,9 @@
 
     "memory_experiment": {
         "load": 3,
-        "practice_trials": 12,
+        "practice_trials": 9,
         "wm_trials": 165,
-        "lm_trials": 250, 
+        "lm_trials": 110, 
         "ncatch": 18
     },
 

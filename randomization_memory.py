@@ -129,7 +129,8 @@ while counter < subject_number:
 
     dist_info = pd.read_csv("./stimuli/dist_stimuli/image_info.csv")
     
-    lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials-wm_trials, replace=False)
+    # lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials-wm_trials, replace=False)
+    lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials, replace=False)
     lm_dist_pool = dist_info.loc[dist_info.concept.isin(lm_dist_concepts)]
     lm_distractors = lm_dist_pool.groupby("concept")["diff_id"].first().to_numpy()
     lm_distractors += 9000
@@ -227,23 +228,32 @@ while counter < subject_number:
     lm_ids = wm_ids[practice_trials::]
     
     # randomize recognition stimuli
-    lm_recognition = np.concatenate([lm_ids + 1000, lm_distractors])
-    lm_recognition = np.random.permutation(lm_recognition)
-    lm_recognition_files = np.array([get_file_path(i) for i in lm_recognition])
+    lm_recognition_target = np.random.permutation(lm_ids+1000)
+    lm_recognition_target_files = np.array([get_file_path(i) for i in lm_recognition_target])
+    lm_recognition_control = np.random.permutation(lm_distractors)
+    lm_recognition_control_files = np.array([get_file_path(i) for i in lm_recognition_control])
     
-    # get old trials and encoding trials
-    old = (lm_recognition<9000).astype(int)
-    lm_encoding_trial = np.array([np.where(wm_ids==i%1e3)[0][0] if i < 9000 else nan for i in lm_recognition])
-    lm_long_encoding = np.array([long_encoding[t] if t!=nan else nan for t in lm_encoding_trial])
+    # left right randomization for lm
+    lm_left_target = np.zeros(lm_trials)
+    lm_left_target[lm_trials//2:] = 1 
+    lm_left_target = np.random.permutation(lm_left_target)
+    lm_correct_response = (lm_left_target==0).astype(int)
 
-    # assemble ltm data
+    # get encoding trials
+    lm_encoding_trial = np.array([np.where(wm_ids==i%1e3)[0][0] for i in lm_recognition_target])
+    lm_long_encoding = np.array([long_encoding[t] for t in lm_encoding_trial])
+
+    # assemble lm data
     lm_trial_data = dict(
         trial_id = np.arange(lm_trials), 
-        recognition_id = lm_recognition,
-        recognition_file = lm_recognition_files,
-        old = old,
+        recognition_id = lm_recognition_target.astype(int),
+        recognition_file = lm_recognition_target_files,
         encoding_trial = lm_encoding_trial, 
+        recognition_control_id = lm_recognition_control.astype(int),
+        recognition_control_file = lm_recognition_control_files,
         long_encoding = lm_long_encoding, 
+        left_target = lm_left_target,
+        lm_correct_response = lm_correct_response,
         trial_type = "lm"
     )
 
@@ -255,21 +265,18 @@ while counter < subject_number:
         # working memory
         latin_conditions = wm_conditions_random % num_conditions + 1
         wm_conditions_random = wm_conditions_random + 1
-        
         latin_condition_names = [condition_codes[i] for i in latin_conditions]
  
-        #1 -> (4,3), 2 -> (4,5), 3 -> (3,5)
+        #conditions: 1 -> (4,3), 2 -> (4,5), 3 -> (3,5)
         target_codes = (latin_conditions < 3).astype(int) + 3
         control_codes = (latin_conditions > 1).astype(int) * 2 + 3
         
         # target is correct if control image is 5
         target_correct = (control_codes == 5).astype(int)
         
-        # figure out which response is correct
-        # left_correct = (target_correct & wm_left_target)
-        correct_response = (wm_left_target==0).astype(int)
-
-        correct_response[control_codes != 5] = nan
+        # assign correct response
+        wm_correct_response = (wm_left_target==0).astype(int)
+        wm_correct_response[control_codes != 5] = nan
 
         wm_recognition_target = wm_ids + target_codes * 1000
         wm_recognition_target_files = np.array([get_file_path(i) for i in wm_recognition_target.flatten()])
@@ -287,12 +294,12 @@ while counter < subject_number:
             condition = latin_conditions,
             condition_name = latin_condition_names,
             target_correct = target_correct, 
-            correct_response = correct_response
+            correct_response = wm_correct_response
         )   
 
         # update lm (encoding) condition 
-        lm_conditions = np.array([latin_conditions[t] if t!=nan else nan for t in lm_encoding_trial])
-        lm_condition_names = np.array([latin_condition_names[t] if t!=nan else nan for t in lm_encoding_trial])
+        lm_conditions = np.array([latin_conditions[t] for t in lm_encoding_trial])
+        lm_condition_names = np.array([latin_condition_names[t] for t in lm_encoding_trial])
         lm_trial_data.update(
             condition = lm_conditions,
             condition_name = lm_condition_names
@@ -304,7 +311,7 @@ while counter < subject_number:
         lm_trial_df = pd.DataFrame(lm_trial_data)    
         lm_json_data = lm_trial_df.to_dict(orient='records')
         
-        # insert catch trials
+        # insert catch trials, this has to be done reverse order os the indexed don't get shifted
         catch_positions, catch_json_data = generate_catch_trials(ncatch, catch_ids)
         for p, catch_trial in zip(reversed(catch_positions), reversed(catch_json_data)):
             wm_json_data.insert(p,catch_trial)
