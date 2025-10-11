@@ -80,7 +80,7 @@ function endingExperiment(jsPsych) {
             `<p><strong>End Of Experiment</strong></p><br>
             <p>Thank you for participating!</p>
             <p>Press <strong>Enter</strong> to continue to the last slide. 
-            From there you will be redirected automatically to Prolific.</p>`, 
+            From there you will be automatically redirected to Prolific.</p>`, 
         key_forward: 'Enter',
         on_start: async function() {
             jsPsych.data.addProperties({ 
