@@ -77,11 +77,10 @@ function endingExperiment(jsPsych) {
         type: jsPsychHtmlKeyboardResponse,
         trial_duration: 10000,
         stimulus:
-            '<p><strong>End Of Experiment</strong></p>' + 
-            '<br>' + 
-            '<p>Thank you for participating!</p>' +
-            '<p>Press <strong>Enter</strong> to get redirected to Prolific.</p>' +
-            '<p>After 10 seconds you will be redirected automatically.</p>',
+            `<p><strong>End Of Experiment</strong></p><br>
+            <p>Thank you for participating!</p>
+            <p>Press <strong>Enter</strong> to continue to the last slide. 
+            From there you will be redirected automatically to Prolific.</p>`, 
         key_forward: 'Enter',
         on_start: async function() {
             jsPsych.data.addProperties({ 
