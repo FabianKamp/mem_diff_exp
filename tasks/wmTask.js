@@ -232,71 +232,155 @@ function createWM(timeline_variables, feedback, jsPsych) {
         }
     })
 
-    // encoding        
-    wm_timeline.push(
-        {
-            type: jsPsychHtmlKeyboardResponse,
-            choices: "NO_KEYS",
-            trial_duration: function() {
-                var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
-                if (long_encoding == 1) {
-                    return experimentSettings.timing.encoding_time_long
-                } else {
-                    return experimentSettings.timing.encoding_time_short
+    // encoding
+    if (experimentSettings.memory_experiment.serial == 0){
+        wm_timeline.push(
+            {
+                type: jsPsychHtmlKeyboardResponse,
+                choices: "NO_KEYS",
+                trial_duration: function() {
+                    var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
+                    if (long_encoding == 1) {
+                        return experimentSettings.timing.encoding_time_long
+                    } else {
+                        return experimentSettings.timing.encoding_time_short
+                    }
+                },
+                stimulus: function() {
+                    var html = `<div style="width:500px; height:60vh;">`
+                    var load = experimentSettings.memory_experiment.load
+                    var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+                    
+                    for (let i = 0; i < load; i++) {
+                        if (i >= n_encoding) break; 
+                        var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
+                        var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
+                        var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
+                        html +=                         
+                        `<div style="width:500px; height:75vh;">
+                            <div> 
+                                <img src="${file}" class="image-object" 
+                                style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
+                            </div>
+                        </div>`
+                    }
+
+                    html += 
+                    `<div class="cross">
+                        <div class="cross-vertical"></div>
+                        <div class="cross-horizontal"></div>
+                    </div></div>`
+
+                    return html;
+                },
+
+                on_finish: function(data) { 
+                    var file = []
+                    var theta = []
+                    var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+
+                    for (let i = 0; i < n_encoding; i++) { 
+                        file.push(jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`))
+                        theta.push(jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`))
+                    }
+
+                    var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
+                    if (long_encoding == 1) {
+                        data.encoding_time = experimentSettings.timing.encoding_time_long
+                    } else {
+                        data.encoding_time = experimentSettings.timing.encoding_time_short
+                    }
+
+                    data.stimulus = file
+                    data.theta = theta
+                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                    data.trial_type = jsPsych.evaluateTimelineVariable('trial_type');
+                    data.phase = 'encoding';
+                    data.timestamp = new Date().toLocaleTimeString()
                 }
-            },
-            stimulus: function() {
-                var html = `<div style="width:500px; height:60vh;">`
-                var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
-
-                for (let i = 0; i < n_encoding; i++) {
-                    var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
-                    var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
-                    var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
-                    html +=                         
-                    `<div style="width:500px; height:75vh;">
-                        <div> 
-                            <img src="${file}" class="image-object" 
-                            style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
-                        </div>
-                    </div>`
-                }
-
-                html += 
-                `<div class="cross">
-                    <div class="cross-vertical"></div>
-                    <div class="cross-horizontal"></div>
-                </div></div>`
-
-                return html;
-            },
-            
-            on_finish: function(data) { 
-                var file = []
-                var theta = []
-                var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
-
-                for (let i = 0; i < n_encoding; i++) { 
-                    file.push(jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`))
-                    theta.push(jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`))
-                }
-
-                var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
-                if (long_encoding == 1) {
-                    data.encoding_time = experimentSettings.timing.encoding_time_long
-                } else {
-                    data.encoding_time = experimentSettings.timing.encoding_time_short
-                }
-
-                data.stimulus = file
-                data.theta = theta
-                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                data.trial_type = jsPsych.evaluateTimelineVariable('trial_type');
-                data.phase = 'encoding';
-                data.timestamp = new Date().toLocaleTimeString()
             }
+        )
+    
+    } else {
+        // SERIAL ENCODING
+        var load = experimentSettings.memory_experiment.load
+        for (let i = 0; i < load; i++) {
+            wm_timeline.push({
+                timeline: [{
+                    type: jsPsychHtmlKeyboardResponse,
+                    choices: "NO_KEYS",
+                    trial_duration: function() {
+                        var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
+                        var n_encoding = jsPsych.evaluateTimelineVariable(`n_encoding`)
+                        if (long_encoding == 1) {
+                            return experimentSettings.timing.encoding_time_long/n_encoding
+                        } else {
+                            return experimentSettings.timing.encoding_time_short/n_encoding
+                        }
+                    },
+                    stimulus: function() {
+                        var html = `<div style="width:500px; height:60vh;">`
+                        var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
+                        var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
+                        var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
+                        console.log(file)
+                        html +=                         
+                        `<div style="width:500px; height:75vh;">
+                            <div> 
+                                <img src="${file}" class="image-object" 
+                                style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
+                            </div>
+                        </div>`
+                        html += 
+                        `<div class="cross">
+                            <div class="cross-vertical"></div>
+                            <div class="cross-horizontal"></div>
+                        </div></div>`
+                        return html;
+                    },
+                    on_finish: function(data) { 
+                        var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
+                        var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
+                        var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+                        var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
+                        if (long_encoding == 1) {
+                            data.encoding_time = experimentSettings.timing.encoding_time_long/n_encoding
+                        } else {
+                            data.encoding_time = experimentSettings.timing.encoding_time_short/n_encoding
+                        }
+                        data.stimulus = file
+                        data.theta = theta
+                        data.n_encoding = n_encoding
+                        data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                        data.trial_type = jsPsych.evaluateTimelineVariable('trial_type');
+                        data.phase = 'encoding';
+                        data.encoding_position = i+1;
+                        data.timestamp = new Date().toLocaleTimeString()
+                    }
+                }],
+                conditional_function: function() {
+                    var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+                    return i < n_encoding
+                }
+            })
+            
+            // ISI
+            wm_timeline.push(
+            {
+                type: jsPsychHtmlKeyboardResponse,
+                choices: "NO_KEYS",
+                trial_duration: experimentSettings.timing.wm_isi,
+                record_data: false,
+                stimulus: function(){
+                    var html = 
+                    `<div style="width:250px; height:75vh;">
+                        <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
+                    </div>`
+                    return html;
+                }
+            })
         }
-    )
+    }
 
     // delay
     wm_timeline.push(

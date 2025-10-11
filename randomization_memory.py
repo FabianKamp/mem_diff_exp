@@ -23,9 +23,10 @@ practice_trials = settings["memory_experiment"]["practice_trials"]
 wm_trials = settings["memory_experiment"]["wm_trials"]
 lm_trials = settings["memory_experiment"]["lm_trials"]
 ncatch = settings["memory_experiment"]["ncatch"]
+position_weights = settings["memory_experiment"]["position_weights"]
+
 
 all_wm_trials = wm_trials + practice_trials
-
 if not os.path.exists(out_dir): 
     os.mkdir(out_dir)
 
@@ -117,8 +118,14 @@ while counter < subject_number:
     wm_sample_files = np.array([get_file_path(i) for i in wm_encoding])
     
     # randomize sequential position
-    sample_positions = np.array([np.random.choice(np.arange(load), 1, replace=False)[0] 
-                                 for _ in range(all_wm_trials)])
+    assert len(position_weights) == load, "Position weights must match load"
+    
+    sample_positions = np.random.choice(
+        np.arange(load), 
+        size=all_wm_trials, 
+        p=position_weights,
+        replace=True
+        )
 
     # generate angles
     encoding_thetas = np.vstack([generate_random_angles(load) for _ in range(all_wm_trials)])
