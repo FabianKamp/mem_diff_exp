@@ -15,7 +15,7 @@
     "memory_experiment": {
         "load": 3,
         "practice_trials": 9,
-        "wm_trials": 165,
+        "wm_trials": 162,
         "lm_trials": 110, 
         "ncatch": 18, 
         "serial": 1, 

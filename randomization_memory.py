@@ -116,16 +116,43 @@ while counter < subject_number:
     wm_ids = np.random.permutation(np.arange(all_wm_trials) +   1)
     wm_encoding = wm_ids + 1000
     wm_sample_files = np.array([get_file_path(i) for i in wm_encoding])
+
+    # conditions and condition codes 
+    conditions = ["mixed", "semantic", "visual"]
+    condition_codes = {i+1: k for i,k in enumerate(conditions)}
+    num_conditions = len(conditions)
+    assert wm_trials%(num_conditions*2) == 0, f"Number of wm trials must be divisible by {num_conditions*2}"
+
+    if subject_number%len(conditions)!=0:
+        print("Subject number will be higher due to latin square randomization")
+
+    # randomize wm condition across trials
+    condition_repeats = wm_trials//num_conditions
+    wm_conditions = np.repeat(list(condition_codes.keys()), condition_repeats)
+    wm_random_idx = np.random.permutation(np.arange(wm_trials))
+    wm_conditions_random = wm_conditions[wm_random_idx]
+    
+    practice_conditions = np.random.permutation(list(condition_codes.keys()) * (practice_trials//num_conditions))
+    wm_conditions_random = np.concatenate([practice_conditions, wm_conditions_random])
     
     # randomize sequential position
     assert len(position_weights) == load, "Position weights must match load"
-    
-    sample_positions = np.random.choice(
+    sample_positions = np.concatenate([np.random.choice(
         np.arange(load), 
-        size=all_wm_trials, 
+        size=condition_repeats, 
         p=position_weights,
         replace=True
-        )
+        ) 
+        for _ in range(num_conditions)])
+    sample_positions = sample_positions[wm_random_idx]
+
+    practice_positions = np.random.choice(
+        np.arange(load), 
+        size=practice_trials, 
+        p=position_weights,
+        replace=True
+    )
+    sample_positions = np.concatenate([practice_positions,sample_positions])
 
     # generate angles
     encoding_thetas = np.vstack([generate_random_angles(load) for _ in range(all_wm_trials)])
@@ -165,9 +192,6 @@ while counter < subject_number:
     encoding_files = np.array([get_file_path(i) for i in encoding_ids.flatten()])
     encoding_files = encoding_files.reshape(encoding_ids.shape)
 
-    # positions start at 1
-    sample_positions += 1 
-
     # block ids 
     wm_block_ids = np.ones(wm_trials).astype(int)
     wm_block_ids[wm_trials//2:] = 2
@@ -175,6 +199,9 @@ while counter < subject_number:
     
     # trial type = practice/wm
     wm_trial_type = ["practice"]*practice_trials + ["wm"]*wm_trials
+
+    # positions start at 1
+    sample_positions += 1 
 
     # assemble together
     wm_trial_data = dict(
@@ -195,27 +222,12 @@ while counter < subject_number:
             f"encoding_theta_{i+1}": encoding_thetas[:,i],
         })
 
-    # conditions and condition codes 
-    conditions = ["mixed", "semantic", "visual"]
-    condition_codes = {i+1: k for i,k in enumerate(conditions)}
-    num_conditions = len(conditions)
-    assert wm_trials%num_conditions == 0, f"Number of wm trials must be divisible by {num_conditions}"
-    
-    if subject_number%len(conditions)!=0:
-        print("Subject number will be higher due to latin square randomization")
-
-    # randomize wm condition across trials
-    wm_repeats = wm_trials//num_conditions
-    wm_conditions = np.array(list(condition_codes.keys()) * wm_repeats)
-    wm_random_idx = np.random.permutation(np.arange(wm_trials))
-    wm_conditions_random = wm_conditions[wm_random_idx]
-    practice_conditions = np.random.permutation(list(condition_codes.keys()) * (practice_trials//num_conditions))
-    wm_conditions_random = np.concatenate([practice_conditions, wm_conditions_random])
-
     # randomize encoding time
-    long_encoding = np.zeros(wm_trials)
-    long_encoding[wm_trials//2:] = 1
-    long_encoding = np.random.permutation(long_encoding)
+    long_encoding = np.concatenate([
+        np.random.permutation(np.repeat([0,1], condition_repeats//2))
+        for _ in range(num_conditions)
+    ])
+    long_encoding = long_encoding[wm_random_idx]
     
     practice_long_encoding = np.zeros(practice_trials)
     practice_long_encoding[practice_trials//2:] = 1
