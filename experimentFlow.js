@@ -122,6 +122,43 @@ function countdown(seconds) {
     return {timeline:counter}; 
 }
 
+// KEYBOARD SHORTCUTS FOR TESTING
+function setupShortcuts(jsPsych) {
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.shiftKey && e.key === 'N') {
+            e.preventDefault();
+            jsPsych.data.get().push({
+                event: 'trial_skipped',
+                timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19)
+            });
+            jsPsych.finishTrial();
+            console.log("Trial skipped with keyboard shortcut")
+        }
+
+        if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+            e.preventDefault();
+            jsPsych.data.get().push({
+                event: 'timeline_skipped',
+                timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19)
+            });
+            jsPsych.abortCurrentTimeline();
+            console.log("Section skipped with keyboard shortcut")
+        }
+
+        if (e.ctrlKey && e.altKey && e.shiftKey && e.key === 'E') {
+            e.preventDefault();
+            jsPsych.data.addProperties({
+                experiment_aborted: true,
+                abort_time: new Date().toISOString().replace('T', ' ').slice(0, 19)
+            });
+            jsPsych.finishTrial();
+            jsPsych.abortExperiment('Experiment ended by keyboard shortcut');
+            console.log("Experiment ended by keyboard shortcut")
+
+        }
+    });
+}
+
 // FULLSCREEN Tracker
 class fullscreenTracker {
     constructor(jsPsych) {

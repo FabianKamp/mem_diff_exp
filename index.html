@@ -65,6 +65,9 @@
         }
         });
 
+    // shortcuts
+    setupShortcuts(jsPsych);
+
     async function createTimeline(){        
         // load session/subject/wave id
         // const session_id = "V-PA-001"
@@ -106,74 +109,146 @@
             var wm_input_data_block2 = wm_input_data.filter((trial) => trial.wm_block_id === 2);
 
             // Overall timeline
-            // push everything into timeline
             var experiment_timeline = [];
 
-            // STARTING 
-            experiment_timeline.push(check_consent(jsPsych, version_id))
-            experiment_timeline.push(startingExperiment(jsPsych))
-            experiment_timeline.push(createDemographics())
+            // starting 
+            experiment_timeline.push({
+                timeline: [
+                    check_consent(jsPsych, version_id),
+                    startingExperiment(jsPsych),
+                    createDemographics(),
+                ], 
+                name: 'exp_start'        
+            })
 
-            // WM INSTRUCTIONS
-            experiment_timeline.push(createWMInstructions())
-            experiment_timeline.push(startingWMPractice())
-            experiment_timeline.push(fullscreen_tracker.check())
-            experiment_timeline.push(countdown(3))
-            experiment_timeline.push(createWM(practice_input_data, feedback=1, jsPsych))
+            // WM instructions
+            experiment_timeline.push({
+                timeline: [
+                    createWMInstructions()
+                ], 
+                name: 'wm_instructions'
+            })
+            
+            // WM practice
+            experiment_timeline.push({
+                timeline: [
+                    startingWMPractice(),
+                    fullscreen_tracker.check(),
+                    countdown(3),
+                    createWM(practice_input_data, feedback=1, jsPsych)
+                ], 
+                name: 'wm_practice'
+            })
 
-            // WM BLOCK 1
-            experiment_timeline.push(startingWM())
-            experiment_timeline.push(fullscreen_tracker.check())
-            experiment_timeline.push(countdown(3))
-            experiment_timeline.push(createWM(wm_input_data_block1, feedback=0, jsPsych))
+            // WM block 1
+            experiment_timeline.push({
+                timeline: [
+                    startingWM(),
+                    fullscreen_tracker.check(),
+                    countdown(3),
+                    createWM(wm_input_data_block1, feedback=0, jsPsych)
+                ], 
+                name: "wm_block_1"
+            })
 
-            // // BREAK
-            experiment_timeline.push(createBreak())
-            experiment_timeline.push(fullscreen_tracker.check())
+            // WM break 
+            experiment_timeline.push({
+                timeline: [
+                    createBreak()
+                ], 
+                name: "wm_break"
+            })
 
-            // WM BLOCK 2
-            experiment_timeline.push(countdown(3))
-            experiment_timeline.push(createWM(wm_input_data_block2, feedback=0, jsPsych))
-            experiment_timeline.push(endingWM())
+            // WM block 2
+            experiment_timeline.push({
+                timeline: [
+                    fullscreen_tracker.check(),
+                    countdown(3),
+                    createWM(wm_input_data_block2, feedback=0, jsPsych), 
+                    endingWM()
+                ], 
+                name: "wm_block_2"
+            })
 
-            // DISTRACTOR
-            experiment_timeline.push(createDistractorInstructions())
-            experiment_timeline.push(fullscreen_tracker.check())
-            experiment_timeline.push(countdown(3))
-            experiment_timeline.push(createDistractorTask())
+            // distractor task
+            experiment_timeline.push({
+                timeline: [
+                    createDistractorInstructions(),
+                    fullscreen_tracker.check(),
+                    countdown(3),
+                    createDistractorTask()
+                ],
+                name: "distractor_task"
+            })
 
             // LM INSTRTUCIONS
-            experiment_timeline.push(createLMInstructions())
-            experiment_timeline.push(startingLM())
-            experiment_timeline.push(fullscreen_tracker.check())
+            experiment_timeline.push({
+                timeline: [
+                    createLMInstructions(),
+                ],
+                name: "lm_instructions"
+            })
 
-            // // LM TASK
-            experiment_timeline.push(countdown(3))
-            experiment_timeline.push(createLM(lm_input_data, jsPsych))
-            experiment_timeline.push(endingExperiment(jsPsych))
+            // LM TASK
+            experiment_timeline.push({
+                timeline: [
+                    startingLM(),
+                    fullscreen_tracker.check(),
+                    countdown(3),
+                    createLM(lm_input_data, jsPsych),
+                ], 
+                name: "lm_task"
+            })
+
+            // Ending experiment 
+            experiment_timeline.push({
+                timeline: [
+                    endingExperiment(jsPsych),
+                ], 
+                name: "exp_end"
+            })
 
         } else if (version_id == 'V') {
             console.log("starting vision task")
             var experiment_timeline = [];
 
-            // STARTING 
-            experiment_timeline.push(check_consent(jsPsych, version_id))
-            experiment_timeline.push(startingExperiment(jsPsych))
-            experiment_timeline.push(createDemographics())
+            // starting 
+            experiment_timeline.push({
+                timeline: [
+                    check_consent(jsPsych, version_id),
+                    startingExperiment(jsPsych),
+                    createDemographics(),
+                ], 
+                name: 'exp_start'        
+            })
 
             // INSTRUCTIONS
-            experiment_timeline.push(createDecisionInstructions())
+            experiment_timeline.push({
+                timeline: [
+                    createDecisionInstructions(),
+                ], 
+                name: 'instructions'        
+            })
             
-            // DECISION TASK
-            experiment_timeline.push(fullscreen_tracker.check())
-            experiment_timeline.push(startingDecisionTask())
-            experiment_timeline.push(countdown(3))
-            experiment_timeline.push(createDecisionTask(input_data, jsPsych))
+            // vision task
+            experiment_timeline.push({
+                timeline: [
+                    startingDecisionTask(),
+                    fullscreen_tracker.check(),
+                    countdown(3),
+                    createDecisionTask(input_data, jsPsych),
+                ], 
+                name: 'vision_task'        
+            })
 
             // ENDING
-            experiment_timeline.push(endingExperiment(jsPsych))        
+            experiment_timeline.push({
+                timeline: [
+                    endingExperiment(jsPsych),
+                ], 
+                name: 'exp_ending'        
+            })      
         }
-
         return experiment_timeline;
     }
 
