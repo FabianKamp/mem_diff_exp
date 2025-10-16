@@ -125,23 +125,18 @@ function countdown(seconds) {
 // KEYBOARD SHORTCUTS FOR TESTING
 function setupShortcuts(jsPsych) {
     document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.shiftKey && e.key === 'N') {
-            e.preventDefault();
-            jsPsych.data.get().push({
-                event: 'trial_skipped',
-                timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19)
-            });
-            jsPsych.finishTrial();
-            console.log("Trial skipped with keyboard shortcut")
-        }
-
         if (e.ctrlKey && e.shiftKey && e.key === 'S') {
             e.preventDefault();
             jsPsych.data.get().push({
                 event: 'timeline_skipped',
                 timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19)
             });
-            jsPsych.abortCurrentTimeline();
+            // First finish the current trial to clean up properly, then abort timeline
+            jsPsych.finishTrial();
+            // Use setTimeout to ensure finishTrial completes before aborting
+            setTimeout(() => {
+                jsPsych.abortCurrentTimeline();
+            }, 0);
             console.log("Section skipped with keyboard shortcut")
         }
 

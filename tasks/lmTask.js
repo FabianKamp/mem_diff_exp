@@ -1,17 +1,15 @@
 // LM INSTRUCTIONS
 function createLMInstructions() {
     const lm_base_layout = () => `
-        <div style="margin: 0 auto;">
-        <div style="width:900px; height:40vh; position: relative;">
+        <div style="width:900px; height:40vh; position: relative; margin: 0 auto;">
             <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: -140px; left: 50%;
                     transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
                 <strong>Have you seen this image before?</strong>
             </p>
-            <div>
-                <img src="stimuli/instructions/sample1.jpg" style="position: absolute; border-radius:10px;
-                                        height:200px; width:200px; top: 30%; left: 50%;
-                                        transform: translate(-50%, -50%);"/>
-            </div>`;
+            <img src="stimuli/instructions/sample1.jpg" style="position: absolute; border-radius:10px;
+                                    height:200px; width:200px; top: 30%; left: 50%;
+                                    transform: translate(-50%, -50%);"/>
+            `;
 
     const lm_scale_labels = () => `
             <div style="position: absolute; bottom: .6em; left: 50%; transform: translateX(-50%);
@@ -151,8 +149,8 @@ function createLM(timeline_variables, jsPsych) {
             css_classes : ["next-trial-btn"],
             stimulus: function() {
                 var file = jsPsych.evaluateTimelineVariable('recognition_file')
-                var html = 
-                    `<div style="width:900px; height:45vh; position: relative;">
+                var html =
+                    `<div style="width:900px; height:45vh; position: relative; margin: 0 auto;">
                         <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: -30px; left: 50%;
                                 transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
                             <strong>Have you seen this image before?</strong>
@@ -185,16 +183,14 @@ function createLM(timeline_variables, jsPsych) {
                             transform: translate(-45%, 50%);">
                             No
                         </p>
-                        <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 60%; 
+                        <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 60%;
                             transform: translate(-50%, 50%);">
                             Yes
                         </p>
-                        
-                        <div>
-                            <img src="${file}" style="position: absolute; border-radius:10px;
-                                                    height:200px; width:200px; top: 50%; left: 50%;
-                                                    transform: translate(-50%, -50%);"/>
-                        </div>
+
+                        <img src="${file}" style="position: absolute; border-radius:10px;
+                                                height:200px; width:200px; top: 50%; left: 50%;
+                                                transform: translate(-50%, -50%);"/>
                     </div>`
 
                 return html;
