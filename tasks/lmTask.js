@@ -215,7 +215,7 @@ function createLM(timeline_variables, jsPsych) {
                 var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
                 if (long_encoding == 1) {
                     data.encoding_time = experimentSettings.timing.encoding_time_long
-                } else if (long_encoding == 1){
+                } else if (long_encoding == 0){
                     data.encoding_time = experimentSettings.timing.encoding_time_short
                 } else {
                     data.encoding_time = 9999
