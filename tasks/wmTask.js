@@ -190,50 +190,46 @@ function convert2cartesian(rx, ry, theta) {
 
 function createWM(timeline_variables, feedback, jsPsych) {
     // timeline: initial delay -> 3 encoding images (inter stimulus delay) -> memory delay -> recognition slide
-    var wm_timeline = [];
-    
-    // preload
-    wm_timeline.push(
-    {
-        type: jsPsychPreload,
-        record_data: false,
-        show_progress_bar: false,
-        message:                 
-            `<div style="width:250px; height:75vh;">
-                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-            </div>`,
-        show_detailed_errors: true,
-        images: function() {
-            var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
-            var files = [];
-            for (let i = 0; i < n_encoding; i++) {
-                var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`);
-                files.push(file)
+    var wm_timeline = [{timeline:[
+        // preload
+        {
+            type: jsPsychPreload,
+            record_data: false,
+            show_progress_bar: false,
+            message:                 
+                `<div style="width:250px; height:75vh;">
+                    <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
+                </div>`,
+            show_detailed_errors: true,
+            images: function() {
+                var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+                var files = [];
+                for (let i = 0; i < n_encoding; i++) {
+                    var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`);
+                    files.push(file)
+                }
+                files.push(jsPsych.evaluateTimelineVariable('recognition_target_file'))
+                files.push(jsPsych.evaluateTimelineVariable('recognition_control_file'))
+                return files;
             }
-            files.push(jsPsych.evaluateTimelineVariable('recognition_target_file'))
-            files.push(jsPsych.evaluateTimelineVariable('recognition_control_file'))
-            return files;
-        }
-    })
-
-    // inter trial delay
-    wm_timeline.push(
-    {
-        type: jsPsychHtmlKeyboardResponse,
-        choices: "NO_KEYS",
-        trial_duration: experimentSettings.timing.inter_trial_delay,
-        record_data: false,
-        stimulus: function(){
-            var html = 
-            `<div style="width:250px; height:75vh;">
-                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-            </div>`
-            return html;
-        }
-    })
-
-    // encoding        
-    wm_timeline.push(
+        },
+        
+        // inter trial delay
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            choices: "NO_KEYS",
+            trial_duration: experimentSettings.timing.inter_trial_delay,
+            record_data: false,
+            stimulus: function(){
+                var html = 
+                `<div style="width:250px; height:75vh;">
+                    <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
+                </div>`
+                return html;
+            }
+        },
+        
+        // encoding        
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
@@ -295,11 +291,9 @@ function createWM(timeline_variables, feedback, jsPsych) {
                 data.phase = 'encoding';
                 data.timestamp = new Date().toLocaleTimeString()
             }
-        }
-    )
+        },
 
-    // delay
-    wm_timeline.push(
+        // delay
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
@@ -313,15 +307,51 @@ function createWM(timeline_variables, feedback, jsPsych) {
                     </div>`
                 return html;
             }
-        }
-    )
-    
-    // recognition
-    wm_timeline.push(
+        },
+        // recognition
         {
             type: jsPsychHtmlButtonResponse,
             choices: ["left", "right"],
             button_layout: 'grid',
+            trial_duration: 20000,
+
+            on_load: function() {
+                const warningTime = 15000;
+                setTimeout(() => {
+                    const oldCountdown = document.getElementById('countdown');
+                    if (oldCountdown) {
+                        oldCountdown.remove();
+                    }
+
+                    const countdown = document.createElement('div');
+                    const r = 5;
+
+                    countdown.id = 'countdown';
+                    countdown.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);';
+                    countdown.innerHTML = 
+                    `
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="${r}" fill="none" stroke="white" stroke-width="10"/>
+                            <circle id="countdown-circle" cx="50" cy="50" r="${r}" fill="none"
+                                    stroke="#4682B4" stroke-width="10"
+                                    stroke-dasharray="${2 * Math.PI * r}"
+                                    stroke-dashoffset="0"
+                                    transform="rotate(-90 50 50)"
+                                    style="transition: stroke-dashoffset 5s linear;"/>
+                        </svg>
+                    `;
+
+                    document.querySelector('.jspsych-content').appendChild(countdown);
+
+                    const circle = document.getElementById('countdown-circle');
+                    const circumference = 2 * Math.PI * r; 
+
+                    setTimeout(() => {
+                        circle.style.strokeDashoffset = circumference;
+                    }, 10);
+                }, warningTime);
+            },
+
             button_html: (choice) => {
                 var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
                 var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
@@ -416,76 +446,102 @@ function createWM(timeline_variables, feedback, jsPsych) {
                 data.sample_position = jsPsych.evaluateTimelineVariable('sample_position')
                 data.left_target = jsPsych.evaluateTimelineVariable('left_target') 
                 data.trial_type = jsPsych.evaluateTimelineVariable('trial_type') 
+                data.timed_out = (data.response === null);
                 data.timestamp = new Date().toLocaleTimeString()
             }
-        }
-    )
-
-    if (feedback == 1) {
-        wm_timeline.push(
-            {
-            type: jsPsychHtmlKeyboardResponse,
-            choices: "NO_KEYS",
-            trial_duration: experimentSettings.feedback.duration,
-            record_data: false,
-            stimulus: function() {
-                var wm_sample_file = jsPsych.evaluateTimelineVariable('wm_sample_file')
-                var control_file = jsPsych.evaluateTimelineVariable('recognition_control_file')
-                var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
-                var left_target = jsPsych.evaluateTimelineVariable(`left_target`) 
-
-                if (left_target === 1) {
-                    var left_image = target_file
-                    var right_image = control_file
-                } else {
-                    var left_image = control_file
-                    var right_image = target_file 
-                }
-
-                var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
-                var html = 
-                    `<div style="width:500px; height: 75vh;">
-                        <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
-                        transform: translateX(-50%); color:#4682B4; text-align: center;">
-                            <strong></strong>
+        },
+        {
+            timeline: [{
+                type: jsPsychHtmlKeyboardResponse, 
+                stimulus: 
+                    `<div>
+                        <p class="instruction-header">
+                            <strong>Time out</strong>
                         </p>
-
-                        <div> 
-                            <div class="square" 
-                                style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
-                            </div>
-                        </div>
-
-                        <div style="width:500px; height:75vh;">
-                            <div> 
-                                <img src="${wm_sample_file}" class="image-object feedback-blink" 
-                                style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
-                            </div>
-                        </div>
-
-                        <div style="cursor: pointer; width: 130px; height: 130px;
-                                position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
-                                <img src="${right_image}" class="image-button"/>
-                        </div>
-
-                        <div style="cursor: pointer; width: 130px; height: 130px;
-                                position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
-                                <img src="${left_image}" class="image-button" />
-                        </div>
-
-                        <div style="width:250px; height:75vh;">
-                            <div class="cross">
-                                <div class="cross-vertical" style="background-color: rgba(0, 0, 0, 0.05);"></div>
-                                <div class="cross-horizontal" style="background-color: rgba(0, 0, 0, 0.05);"></div>
-                            </div>
-                        </div>
-
-                    </div>`
-                return html;
+                        <p class="instruction-paragraph"> 
+                            You did not respond in the the last trial.<br><br>
+                            <strong>Please respond within max. 15 seconds after stimulus presentation.</strong><br><br>
+                            As soon as this task finishes there will be a short break.
+                        </p>
+                        <p class="continue-prompt">
+                            To continue press <strong>Enter</strong>
+                        </p>
+                    </div>`,
+                choices: ['Enter'],
+            }],
+            conditional_function: function() {
+                return jsPsych.data.get().last(1).values()[0].timed_out;
             }
-        }) 
-    }   
+        }, 
+        {
+            timeline: [{
+                type: jsPsychHtmlKeyboardResponse,
+                choices: "NO_KEYS",
+                trial_duration: experimentSettings.feedback.duration,
+                record_data: false,
+                stimulus: function() {
+                    var wm_sample_file = jsPsych.evaluateTimelineVariable('wm_sample_file')
+                    var control_file = jsPsych.evaluateTimelineVariable('recognition_control_file')
+                    var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
+                    var left_target = jsPsych.evaluateTimelineVariable(`left_target`) 
+
+                    if (left_target === 1) {
+                        var left_image = target_file
+                        var right_image = control_file
+                    } else {
+                        var left_image = control_file
+                        var right_image = target_file 
+                    }
+
+                    var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
+                    var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
+                    var html = 
+                        `<div style="width:500px; height: 75vh;">
+                            <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
+                            transform: translateX(-50%); color:#4682B4; text-align: center;">
+                                <strong></strong>
+                            </p>
+
+                            <div> 
+                                <div class="square" 
+                                    style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
+                                </div>
+                            </div>
+
+                            <div style="width:500px; height:75vh;">
+                                <div> 
+                                    <img src="${wm_sample_file}" class="image-object feedback-blink" 
+                                    style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
+                                </div>
+                            </div>
+
+                            <div style="cursor: pointer; width: 130px; height: 130px;
+                                    position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
+                                    <img src="${right_image}" class="image-button"/>
+                            </div>
+
+                            <div style="cursor: pointer; width: 130px; height: 130px;
+                                    position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
+                                    <img src="${left_image}" class="image-button" />
+                            </div>
+
+                            <div style="width:250px; height:75vh;">
+                                <div class="cross">
+                                    <div class="cross-vertical" style="background-color: rgba(0, 0, 0, 0.05);"></div>
+                                    <div class="cross-horizontal" style="background-color: rgba(0, 0, 0, 0.05);"></div>
+                                </div>
+                            </div>
+
+                        </div>`
+                    return html;
+                }
+            }], 
+            conditional_function: function() {
+                return jsPsych.evaluateTimelineVariable("trial_type")==="practice" && !jsPsych.data.get().last(2).values()[0].timed_out;
+            }
+
+        }
+    ]}]
     return {timeline:wm_timeline, timeline_variables:timeline_variables};
 }
 
