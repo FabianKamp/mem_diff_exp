@@ -188,7 +188,7 @@ function convert2cartesian(rx, ry, theta) {
     return {x:x,y:y};
 }
 
-function createWM(timeline_variables, feedback, jsPsych) {
+function createWM(timeline_variables, jsPsych) {
     // timeline: initial delay -> 3 encoding images (inter stimulus delay) -> memory delay -> recognition slide
     var wm_timeline = [{timeline:[
         // preload
