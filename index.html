@@ -21,7 +21,7 @@
     
     <script src="tasks/lmTask.js"></script>
     <script src="tasks/wmTask.js"></script>
-    <script src="tasks/decisionTask.js"></script>
+    <script src="tasks/visionTask.js"></script>
     <script src="tasks/distractorTask.js"></script>
 
     <script src="consent/consent.js"></script>
@@ -71,7 +71,7 @@
     async function createTimeline(){        
         // load session/subject/wave id
         // const session_id = "V-PA-001"
-        // const session_id = "M-PA-059"
+        // const session_id = "M-PB-059"
         const session_id = jsPsych.data.getURLVariable('sid')
         const version_id = session_id[0];
         const wave_id = session_id.slice(2, 4)

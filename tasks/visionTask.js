@@ -6,7 +6,7 @@ var experimentSettings = fetch(`experimentSettings.json`)
     });
 
 // INSTRUCTIONS
-function createDecisionInstructions() {
+function createVisionInstructions() {
     var instructions = {
         type: jsPsychInstructions,
         key_forward: 'ArrowRight',
@@ -79,7 +79,7 @@ function createDecisionInstructions() {
 }
 
 // STARTING SCREEN
-function startingDecisionTask () {
+function startingVisionTask () {
     // start wm experiment
     var start = {
         type: jsPsychInstructions,
@@ -109,7 +109,7 @@ function startingDecisionTask () {
     return start
 }
 
-function createDecisionTask(timeline_variables, jsPsych) {
+function createVisionTask(timeline_variables, jsPsych) {
     task_timeline = []
     
     // preload
@@ -255,7 +255,7 @@ function createDecisionTask(timeline_variables, jsPsych) {
     return {timeline:task_timeline, timeline_variables:timeline_variables};
 }
 
-function endingDecisionTask() {
+function endingVisionTask() {
     var end = {
         type: jsPsychHtmlKeyboardResponse, 
         stimulus: 

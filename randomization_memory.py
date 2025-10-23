@@ -23,9 +23,10 @@ practice_trials = settings["memory_experiment"]["practice_trials"]
 wm_trials = settings["memory_experiment"]["wm_trials"]
 lm_trials = settings["memory_experiment"]["lm_trials"]
 ncatch = settings["memory_experiment"]["ncatch"]
+position_weights = settings["memory_experiment"]["position_weights"]
+
 
 all_wm_trials = wm_trials + practice_trials
-
 if not os.path.exists(out_dir): 
     os.mkdir(out_dir)
 
@@ -115,10 +116,43 @@ while counter < subject_number:
     wm_ids = np.random.permutation(np.arange(all_wm_trials) +   1)
     wm_encoding = wm_ids + 1000
     wm_sample_files = np.array([get_file_path(i) for i in wm_encoding])
+
+    # conditions and condition codes 
+    conditions = ["mixed", "semantic", "visual"]
+    condition_codes = {i+1: k for i,k in enumerate(conditions)}
+    num_conditions = len(conditions)
+    assert wm_trials%(num_conditions*2) == 0, f"Number of wm trials must be divisible by {num_conditions*2}"
+
+    if subject_number%len(conditions)!=0:
+        print("Subject number will be higher due to latin square randomization")
+
+    # randomize wm condition across trials
+    condition_repeats = wm_trials//num_conditions
+    wm_conditions = np.repeat(list(condition_codes.keys()), condition_repeats)
+    wm_random_idx = np.random.permutation(np.arange(wm_trials))
+    wm_conditions_random = wm_conditions[wm_random_idx]
+    
+    practice_conditions = np.random.permutation(list(condition_codes.keys()) * (practice_trials//num_conditions))
+    wm_conditions_random = np.concatenate([practice_conditions, wm_conditions_random])
     
     # randomize sequential position
-    sample_positions = np.array([np.random.choice(np.arange(load), 1, replace=False)[0] 
-                                 for _ in range(all_wm_trials)])
+    assert len(position_weights) == load, "Position weights must match load"
+    sample_positions = np.concatenate([np.random.choice(
+        np.arange(load), 
+        size=condition_repeats, 
+        p=position_weights,
+        replace=True
+        ) 
+        for _ in range(num_conditions)])
+    sample_positions = sample_positions[wm_random_idx]
+
+    practice_positions = np.random.choice(
+        np.arange(load), 
+        size=practice_trials, 
+        p=position_weights,
+        replace=True
+    )
+    sample_positions = np.concatenate([practice_positions,sample_positions])
 
     # generate angles
     encoding_thetas = np.vstack([generate_random_angles(load) for _ in range(all_wm_trials)])
@@ -126,10 +160,11 @@ while counter < subject_number:
 
     # randomize distractors 
     # distractor concepts should not overlap between wm and lm
-
     dist_info = pd.read_csv("./stimuli/dist_stimuli/image_info.csv")
     
-    lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials-wm_trials, replace=False)
+    # lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials-wm_trials, replace=False)
+    lm_trials = (wm_trials//3)*2
+    lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials, replace=False)
     lm_dist_pool = dist_info.loc[dist_info.concept.isin(lm_dist_concepts)]
     lm_distractors = lm_dist_pool.groupby("concept")["diff_id"].first().to_numpy()
     lm_distractors += 9000
@@ -157,9 +192,6 @@ while counter < subject_number:
     encoding_files = np.array([get_file_path(i) for i in encoding_ids.flatten()])
     encoding_files = encoding_files.reshape(encoding_ids.shape)
 
-    # positions start at 1
-    sample_positions += 1 
-
     # block ids 
     wm_block_ids = np.ones(wm_trials).astype(int)
     wm_block_ids[wm_trials//2:] = 2
@@ -167,6 +199,9 @@ while counter < subject_number:
     
     # trial type = practice/wm
     wm_trial_type = ["practice"]*practice_trials + ["wm"]*wm_trials
+
+    # positions start at 1
+    sample_positions += 1 
 
     # assemble together
     wm_trial_data = dict(
@@ -187,28 +222,16 @@ while counter < subject_number:
             f"encoding_theta_{i+1}": encoding_thetas[:,i],
         })
 
-    # conditions and condition codes 
-    conditions = ["mixed", "semantic", "visual"]
-    condition_codes = {i+1: k for i,k in enumerate(conditions)}
-    num_conditions = len(conditions)
-    assert wm_trials%num_conditions == 0, f"Number of wm trials must be divisible by {num_conditions}"
-    
-    if subject_number%len(conditions)!=0:
-        print("Subject number will be higher due to latin square randomization")
-
-    # randomize wm condition across trials
-    wm_repeats = wm_trials//num_conditions
-    wm_conditions = np.array(list(condition_codes.keys()) * wm_repeats)
-    wm_random_idx = np.random.permutation(np.arange(wm_trials))
-    wm_conditions_random = wm_conditions[wm_random_idx]
-    practice_conditions = np.random.permutation(list(condition_codes.keys()) * (practice_trials//num_conditions))
-    wm_conditions_random = np.concatenate([practice_conditions, wm_conditions_random])
-
     # randomize encoding time
-    long_encoding = np.zeros(wm_trials)
-    long_encoding[wm_trials//2:] = 1
+    long_encoding = np.concatenate([
+        np.random.permutation(np.repeat([0,1], condition_repeats//2))
+        for _ in range(num_conditions)
+    ])
     long_encoding = long_encoding[wm_random_idx]
-    practice_long_encoding = np.random.permutation([0,1]* (practice_trials//2))
+    
+    practice_long_encoding = np.zeros(practice_trials)
+    practice_long_encoding[practice_trials//2:] = 1
+    practice_long_encoding = np.random.permutation(practice_long_encoding)
 
     long_encoding = np.concatenate([practice_long_encoding, long_encoding])
     wm_trial_data.update(long_encoding = long_encoding.astype(int))
@@ -217,33 +240,33 @@ while counter < subject_number:
     wm_left_target = np.zeros(wm_trials)
     wm_left_target[wm_trials//2:] = 1 
     wm_left_target = np.random.permutation(wm_left_target)
-    practice_left_target = np.random.permutation([0,1]*(practice_trials//2))
+    
+    practice_left_target = np.zeros(practice_trials)
+    practice_left_target[practice_trials//2:] = 1 
+    practice_left_target = np.random.permutation(practice_left_target)
 
     wm_left_target = np.concatenate([practice_left_target, wm_left_target])
     wm_left_target = wm_left_target.astype(int)
     wm_trial_data.update(left_target = wm_left_target)
 
-    # lm stimuli
-    lm_ids = wm_ids[practice_trials::]
-    
+    # prepare LM
     # randomize recognition stimuli
-    lm_recognition = np.concatenate([lm_ids + 1000, lm_distractors])
-    lm_recognition = np.random.permutation(lm_recognition)
-    lm_recognition_files = np.array([get_file_path(i) for i in lm_recognition])
+    lm_recognition_control = np.random.permutation(lm_distractors)
+    lm_recognition_control_files = np.array([get_file_path(i) for i in lm_recognition_control])
     
-    # get old trials and encoding trials
-    old = (lm_recognition<9000).astype(int)
-    lm_encoding_trial = np.array([np.where(wm_ids==i%1e3)[0][0] if i < 9000 else nan for i in lm_recognition])
-    lm_long_encoding = np.array([long_encoding[t] if t!=nan else nan for t in lm_encoding_trial])
+    # left right randomization for lm
+    lm_left_target = np.zeros(lm_trials)
+    lm_left_target[lm_trials//2:] = 1 
+    lm_left_target = np.random.permutation(lm_left_target)
+    lm_correct_response = (lm_left_target==0).astype(int)
 
-    # assemble ltm data
+    # assemble lm data
     lm_trial_data = dict(
         trial_id = np.arange(lm_trials), 
-        recognition_id = lm_recognition,
-        recognition_file = lm_recognition_files,
-        old = old,
-        encoding_trial = lm_encoding_trial, 
-        long_encoding = lm_long_encoding, 
+        recognition_control_id = lm_recognition_control.astype(int),
+        recognition_control_file = lm_recognition_control_files,
+        left_target = lm_left_target.astype(int),
+        correct_response = lm_correct_response,
         trial_type = "lm"
     )
 
@@ -252,24 +275,22 @@ while counter < subject_number:
         subject_id = counter+1   
         session_id = f"M-{wave_id}-{subject_id:03d}"       
        
-        # working memory
+        # latin randomization
         latin_conditions = wm_conditions_random % num_conditions + 1
         wm_conditions_random = wm_conditions_random + 1
-        
-        latin_condition_names = [condition_codes[i] for i in latin_conditions]
+        latin_condition_names = np.array([condition_codes[i] for i in latin_conditions])
  
-        #1 -> (4,3), 2 -> (4,5), 3 -> (3,5)
+        # Update WM 
+        # latin_conditions -> (target, control): 1 -> (4,3), 2 -> (4,5), 3 -> (3,5) 
         target_codes = (latin_conditions < 3).astype(int) + 3
         control_codes = (latin_conditions > 1).astype(int) * 2 + 3
         
         # target is correct if control image is 5
         target_correct = (control_codes == 5).astype(int)
         
-        # figure out which response is correct
-        # left_correct = (target_correct & wm_left_target)
-        correct_response = (wm_left_target==0).astype(int)
-
-        correct_response[control_codes != 5] = nan
+        # assign correct response
+        wm_correct_response = (wm_left_target==0).astype(int)
+        wm_correct_response[control_codes != 5] = nan
 
         wm_recognition_target = wm_ids + target_codes * 1000
         wm_recognition_target_files = np.array([get_file_path(i) for i in wm_recognition_target.flatten()])
@@ -287,16 +308,40 @@ while counter < subject_number:
             condition = latin_conditions,
             condition_name = latin_condition_names,
             target_correct = target_correct, 
-            correct_response = correct_response
+            correct_response = wm_correct_response
         )   
 
-        # update lm (encoding) condition 
-        lm_conditions = np.array([latin_conditions[t] if t!=nan else nan for t in lm_encoding_trial])
-        lm_condition_names = np.array([latin_condition_names[t] if t!=nan else nan for t in lm_encoding_trial])
+        # update LM
+        lm_encoding_trials = np.arange(all_wm_trials)
+        lm_encoding_trials = lm_encoding_trials[(lm_encoding_trials>=practice_trials) & (latin_conditions>1)]
+        assert len(lm_encoding_trials) == lm_trials, "lm trials and encoding trials don't have the same length"
+
+        # randomize
+        lm_random_idx = np.random.permutation(np.arange(lm_trials))
+        
+        # select and mix the ids and conditions
+        lm_ids = wm_ids[lm_encoding_trials][lm_random_idx]
+        
+        lm_recognition_target = lm_ids + 1000
+        lm_recognition_target_files = np.array([get_file_path(i) for i in lm_recognition_target])
+        
+        lm_conditions = latin_conditions[lm_encoding_trials][lm_random_idx]
+        lm_condition_names = latin_condition_names[lm_encoding_trials][lm_random_idx]
+        
+        lm_long_encoding = long_encoding[lm_encoding_trials][lm_random_idx]
+        lm_sample_positions = sample_positions[lm_encoding_trials][lm_random_idx]
+
         lm_trial_data.update(
+            subject_id = subject_id,
+            session_id = session_id,
+            lm_id = lm_ids,
+            recognition_target_id = lm_recognition_target.astype(int),
+            recognition_target_file = lm_recognition_target_files,
             condition = lm_conditions,
-            condition_name = lm_condition_names
-        ) 
+            condition_name = lm_condition_names, 
+            long_encoding = lm_long_encoding,
+            sample_position = lm_sample_positions,
+            )
 
         # save 
         wm_trial_df = pd.DataFrame(wm_trial_data)
@@ -304,7 +349,7 @@ while counter < subject_number:
         lm_trial_df = pd.DataFrame(lm_trial_data)    
         lm_json_data = lm_trial_df.to_dict(orient='records')
         
-        # insert catch trials
+        # insert catch trials, this has to be done reverse order os the indexed don't get shifted
         catch_positions, catch_json_data = generate_catch_trials(ncatch, catch_ids)
         for p, catch_trial in zip(reversed(catch_positions), reversed(catch_json_data)):
             wm_json_data.insert(p,catch_trial)
