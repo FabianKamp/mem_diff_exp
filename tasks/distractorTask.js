@@ -91,6 +91,7 @@ function createDistractorTask() {
         dt_timeline.push(
         {
             type: jsPsychSurveyText,
+            trial_duration: 20000, 
             questions: [{prompt: `
                 <p style="font-family: 'Courier New', monospace; font-size: x-large; color:#4682B4; ">
                     What is the current number?

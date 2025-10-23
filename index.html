@@ -10,6 +10,7 @@
     <script src="jspsych/jspsych.js"></script>
     <script src="jspsych/plugin-external-html.js"></script>
     <script src="jspsych/plugin-fullscreen.js"></script>
+    <script src="jspsych/plugin-browser-check.js"></script>
     <script src="jspsych/plugin-survey.js"></script>
     <script src="jspsych/plugin-survey-html-form.js"></script>
     <script src="jspsych/plugin-survey-text.js"></script>
@@ -135,7 +136,7 @@
                     startingWMPractice(),
                     fullscreen_tracker.check(),
                     countdown(3),
-                    createWM(practice_input_data, feedback=1, jsPsych)
+                    createWM(practice_input_data, jsPsych)
                 ], 
                 name: 'wm_practice'
             })
@@ -146,7 +147,7 @@
                     startingWM(),
                     fullscreen_tracker.check(),
                     countdown(3),
-                    createWM(wm_input_data_block1, feedback=0, jsPsych)
+                    createWM(wm_input_data_block1, jsPsych)
                 ], 
                 name: "wm_block_1"
             })
@@ -164,7 +165,7 @@
                 timeline: [
                     fullscreen_tracker.check(),
                     countdown(3),
-                    createWM(wm_input_data_block2, feedback=0, jsPsych), 
+                    createWM(wm_input_data_block2, jsPsych), 
                     endingWM()
                 ], 
                 name: "wm_block_2"
