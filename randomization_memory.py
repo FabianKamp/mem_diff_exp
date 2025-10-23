@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import glob
 import json
+from generate_token import generate_token
 
 # set seed
 np.random.seed(42) 
@@ -362,7 +363,6 @@ while counter < subject_number:
             json.dump(combined_json_data, combined_file, indent=4)
 
         counter += 1
-        
-        
-    
-            
+
+# Generate tokens 
+generate_token()

@@ -323,7 +323,7 @@ function createWM(timeline_variables, feedback, jsPsych) {
                         var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
                         var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
                         var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
-                        console.log(file)
+
                         html +=                         
                         `<div style="width:500px; height:75vh;">
                             <div> 
@@ -338,6 +338,7 @@ function createWM(timeline_variables, feedback, jsPsych) {
                         </div></div>`
                         return html;
                     },
+                    
                     on_finish: function(data) { 
                         var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
                         var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)

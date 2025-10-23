@@ -5,16 +5,16 @@ import numpy as np
 from datetime import datetime
 import json
 
-# load settings
-setting_file = "experimentSettings.json"
-with open(setting_file, "r") as file: 
-    settings = json.load(file)
-
-version_id = settings["wave"]["version_id"]
-wave_id = settings["wave"]["wave_id"]
-input_dir = f"input_data/"
-
 def generate_token(session_ids=None):
+    # load settings
+    setting_file = "experimentSettings.json"
+    with open(setting_file, "r") as file: 
+        settings = json.load(file)
+
+    version_id = settings["wave"]["version_id"]
+    wave_id = settings["wave"]["wave_id"]
+    input_dir = f"input_data/"
+
     if session_ids is None:
         session_ids = [i.rstrip(".json").split("_")[1] for i in os.listdir(input_dir) if i.endswith(".json")]
         session_ids = sorted(session_ids)
@@ -37,5 +37,6 @@ def generate_token(session_ids=None):
         c += 1
     
     token_df.to_csv(token_csv, index=False)
-    
-generate_token()
+
+if __name__ == "__main__":
+    generate_token()

@@ -71,8 +71,8 @@
     async function createTimeline(){        
         // load session/subject/wave id
         // const session_id = "V-PA-001"
-        // const session_id = "M-PB-059"
-        const session_id = jsPsych.data.getURLVariable('sid')
+        const session_id = "M-PB-001"
+        // const session_id = jsPsych.data.getURLVariable('sid')
         const version_id = session_id[0];
         const wave_id = session_id.slice(2, 4)
         const subject_id = parseInt(session_id.slice(-3), 10)
@@ -225,7 +225,7 @@
             // INSTRUCTIONS
             experiment_timeline.push({
                 timeline: [
-                    createDecisionInstructions(),
+                    createVisionInstructions(),
                 ], 
                 name: 'instructions'        
             })
@@ -233,10 +233,10 @@
             // vision task
             experiment_timeline.push({
                 timeline: [
-                    startingDecisionTask(),
+                    startingVisionTask(),
                     fullscreen_tracker.check(),
                     countdown(3),
-                    createDecisionTask(input_data, jsPsych),
+                    createVisionTask(input_data, jsPsych),
                 ], 
                 name: 'vision_task'        
             })
