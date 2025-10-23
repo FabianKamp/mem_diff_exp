@@ -1,36 +1,42 @@
 // STARTING EXPERIMENT
 function startingExperiment(jsPsych) {
-    var start_experiment = {
-        type: jsPsychFullscreen,
-        fullscreen_mode: true,
-        choices: ['Continue'],
-        message:         
-        `
-        <p class="instruction-header"><strong>Welcome to the experiment!</strong></p>
-        <div style="height: 80vh; position: relative;">
-            <p class="instruction-paragraph">
-                We will now enter <strong>fullscreen mode</strong>.
-                <br><br>
-                To ensure the quality of the results, we'd ask you to 
-                <br>
-                <strong>remain in fullscreen mode during the entire experiment</strong>.
-                <br><br>
-                Once the experiment is over, you will be redirected to Prolific automatically. 
-                Please, don\'t close the experiment until this happens.
-                </br><br><br>
-                To enter fullscreen mode, please click <strong>Continue</strong>.
-            </p>
-        </div>`,
-        on_start: async function() {
-            jsPsych.data.addProperties({ 
-                startTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
-            });
+    var start_experiment = {timeline:[
+        {
+            type: jsPsychFullscreen,
+            fullscreen_mode: true,
+            choices: ['Continue'],
+            message:         
+            `
+            <p class="instruction-header"><strong>Welcome to the experiment!</strong></p>
+            <div style="height: 80vh; position: relative;">
+                <p class="instruction-paragraph">
+                    We will now enter <strong>fullscreen mode</strong>.
+                    <br><br>
+                    To ensure the quality of the results, we'd ask you to 
+                    <br>
+                    <strong>remain in fullscreen mode during the entire experiment</strong>.
+                    <br><br>
+                    Once the experiment is over, you will be redirected to Prolific automatically. 
+                    Please, don\'t close the experiment until this happens.
+                    </br><br><br>
+                    To enter fullscreen mode, please click <strong>Continue</strong>.
+                </p>
+            </div>
+            `,
+            on_start: async function() {
+                jsPsych.data.addProperties({ 
+                    startTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                });
+            },
+            on_finish: function(data){
+                data.stimulus = null
+                data.trial_type = "fullscreen-slide"
+            }
         },
-        on_finish: function(data){
-            data.stimulus = null
-            data.trial_type = "fullscreen-slide"
+        {
+            type: jsPsychBrowserCheck
         }
-    }
+    ]}
     return start_experiment
 }
 

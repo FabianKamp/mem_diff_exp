@@ -10,6 +10,7 @@
     <script src="jspsych/jspsych.js"></script>
     <script src="jspsych/plugin-external-html.js"></script>
     <script src="jspsych/plugin-fullscreen.js"></script>
+    <script src="jspsych/plugin-browser-check.js"></script>
     <script src="jspsych/plugin-survey.js"></script>
     <script src="jspsych/plugin-survey-html-form.js"></script>
     <script src="jspsych/plugin-survey-text.js"></script>
@@ -112,14 +113,14 @@
             var experiment_timeline = [];
 
             // starting 
-            // experiment_timeline.push({
-            //     timeline: [
-            //         check_consent(jsPsych, version_id),
-            //         startingExperiment(jsPsych),
-            //         createDemographics(),
-            //     ], 
-            //     name: 'exp_start'        
-            // })
+            experiment_timeline.push({
+                timeline: [
+                    check_consent(jsPsych, version_id),
+                    startingExperiment(jsPsych),
+                    createDemographics(),
+                ], 
+                name: 'exp_start'        
+            })
 
             // WM instructions
             // experiment_timeline.push({
