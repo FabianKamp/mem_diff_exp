@@ -229,6 +229,7 @@ function createWM(timeline_variables, jsPsych) {
             }
         },
         
+        // not serial
         {timeline: [{
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
@@ -294,14 +295,14 @@ function createWM(timeline_variables, jsPsych) {
                 return experimentSettings.memory_experiment.serial == 0;
             }
         }, 
-
+        
+        // serial
         {
             timeline: (() => {
-                // Build all possible encoding slides upfront (for max load)
                 var encoding_slides = [];
-                const maxLoad = experimentSettings.memory_experiment.load;
+                const load = experimentSettings.memory_experiment.load;
 
-                for (let i = 0; i < maxLoad; i++) {
+                for (let i = 0; i < load; i++) {
                     const encodingIndex = i + 1;
 
                     // Encoding trial
@@ -404,6 +405,7 @@ function createWM(timeline_variables, jsPsych) {
                 return html;
             }
         },
+
         // recognition
         {
             type: jsPsychHtmlButtonResponse,
@@ -638,7 +640,8 @@ function createWM(timeline_variables, jsPsych) {
 
         }
     ]}]
-    return {timeline:wm_timeline, timeline_variables:timeline_variables};
+    return {timeline:wm_timeline, 
+            timeline_variables:timeline_variables};
 }
 
 // slide after WM
