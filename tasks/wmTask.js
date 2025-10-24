@@ -463,40 +463,7 @@ function createWM(timeline_variables, jsPsych) {
             trial_duration: 20000,
 
             on_load: function() {
-                const warningTime = 15000;
-                setTimeout(() => {
-                    const oldCountdown = document.getElementById('countdown');
-                    if (oldCountdown) {
-                        oldCountdown.remove();
-                    }
-
-                    const countdown = document.createElement('div');
-                    const r = 5;
-
-                    countdown.id = 'countdown';
-                    countdown.style.cssText = 'position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);';
-                    countdown.innerHTML = 
-                    `
-                        <svg width="100" height="100" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="${r}" fill="none" stroke="white" stroke-width="10"/>
-                            <circle id="countdown-circle" cx="50" cy="50" r="${r}" fill="none"
-                                    stroke="#4682B4" stroke-width="10"
-                                    stroke-dasharray="${2 * Math.PI * r}"
-                                    stroke-dashoffset="0"
-                                    transform="rotate(-90 50 50)"
-                                    style="transition: stroke-dashoffset 5s linear;"/>
-                        </svg>
-                    `;
-
-                    document.querySelector('.jspsych-content').appendChild(countdown);
-
-                    const circle = document.getElementById('countdown-circle');
-                    const circumference = 2 * Math.PI * r; 
-
-                    setTimeout(() => {
-                        circle.style.strokeDashoffset = circumference;
-                    }, 10);
-                }, warningTime);
+                startTimer();
             },
 
             button_html: (choice) => {
@@ -557,7 +524,9 @@ function createWM(timeline_variables, jsPsych) {
                 return html;
             },
 
-            on_finish: function(data) {               
+            on_finish: function(data) {
+                resetTimer();
+
                 // stimulus
                 var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
                 var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
@@ -591,8 +560,8 @@ function createWM(timeline_variables, jsPsych) {
                 data.condition = jsPsych.evaluateTimelineVariable('condition')
                 data.condition_name = jsPsych.evaluateTimelineVariable('condition_name')
                 data.sample_position = jsPsych.evaluateTimelineVariable('sample_position')
-                data.left_target = jsPsych.evaluateTimelineVariable('left_target') 
-                data.trial_type = jsPsych.evaluateTimelineVariable('trial_type') 
+                data.left_target = jsPsych.evaluateTimelineVariable('left_target')
+                data.trial_type = jsPsych.evaluateTimelineVariable('trial_type')
                 data.timed_out = (data.response === null);
                 data.timestamp = new Date().toLocaleTimeString()
             }
