@@ -35,7 +35,7 @@
     
     "spatial": {
         "radius_x": 280,
-        "radius_y": 240
+        "radius_y": 200
     },
     
     "break": {
