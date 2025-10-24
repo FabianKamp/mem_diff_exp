@@ -5,6 +5,13 @@ var experimentSettings = fetch(`experimentSettings.json`)
         experimentSettings = data;
     });
 
+// helper function 
+function convert2cartesian(rx, ry, theta) {
+    const x = rx * Math.cos(theta);
+    const y = ry * Math.sin(theta);
+    return {x:x,y:y};
+}
+
 // INSTRUCTIONS
 function generate_instruction_angles(load) {
     var result = [];
@@ -181,15 +188,33 @@ function startingWM () {
     return start_wm
 }
 
-// WM TASK
-function convert2cartesian(rx, ry, theta) {
-    const x = rx * Math.cos(theta);
-    const y = ry * Math.sin(theta);
-    return {x:x,y:y};
+// Ending WM
+function endingWM() {
+    var end_wm = {
+        type: jsPsychHtmlKeyboardResponse, 
+        stimulus: 
+            `<div>
+                <p class="instruction-paragraph"> 
+                    <strong>Great, you have successfully completed the first task!</strong><br><br>
+
+                    You are free to take a short break now before 
+                    beginning the next task (max. 2 minutes)<br><br>
+                    
+                    The following task will be much shorter.
+                    The next slide will have the detailed instructions.
+                </p>
+                <p class="continue-prompt">
+                    To continue press <strong>Enter</strong>
+                </p>
+            </div>`,
+        choices: ['Enter'],
+        trial_duration: 120000
+    }
+    return end_wm
 }
 
+// WM TASK
 function createWM(timeline_variables, jsPsych) {
-    // timeline: initial delay -> 3 encoding images (inter stimulus delay) -> memory delay -> recognition slide
     var wm_timeline = [{timeline: [
         // preload
         {
@@ -548,6 +573,8 @@ function createWM(timeline_variables, jsPsych) {
                 data.timestamp = new Date().toLocaleTimeString()
             }
         },
+        
+        // time out
         {
             timeline: [{
                 type: jsPsychHtmlKeyboardResponse, 
@@ -571,6 +598,8 @@ function createWM(timeline_variables, jsPsych) {
                 return jsPsych.data.get().last(1).values()[0].timed_out;
             }
         }, 
+        
+        // Feedback
         {
             timeline: [{
                 type: jsPsychHtmlKeyboardResponse,
@@ -642,30 +671,5 @@ function createWM(timeline_variables, jsPsych) {
     ]}]
     return {timeline:wm_timeline, 
             timeline_variables:timeline_variables};
-}
-
-// slide after WM
-function endingWM() {
-    var end_wm = {
-        type: jsPsychHtmlKeyboardResponse, 
-        stimulus: 
-            `<div>
-                <p class="instruction-paragraph"> 
-                    <strong>Great, you have successfully completed the first task!</strong><br><br>
-
-                    You are free to take a short break now before 
-                    beginning the next task (max. 2 minutes)<br><br>
-                    
-                    The following task will be much shorter.
-                    The next slide will have the detailed instructions.
-                </p>
-                <p class="continue-prompt">
-                    To continue press <strong>Enter</strong>
-                </p>
-            </div>`,
-        choices: ['Enter'],
-        trial_duration: 120000
-    }
-    return end_wm
 }
 
