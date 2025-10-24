@@ -44,8 +44,14 @@ function startingExperiment(jsPsych) {
 function createBreak() {
     // break
     var break_trial = {
-        type: jsPsychHtmlKeyboardResponse, 
-        stimulus: 
+        type: jsPsychInstructions,
+        show_clickable_nav: false,
+        key_forward: 'Enter',
+        post_trial_gap: 200,
+        trial_duration: 120000,
+        min_viewing_time: 3000,
+        pages:[
+            [
             `<div>
                 <p class="instruction-header"><strong>Break</strong></p>
                 <p class="instruction-paragraph"> 
@@ -57,10 +63,9 @@ function createBreak() {
                 <p class="continue-prompt">
                     To continue press <strong>Enter</strong>
                 </p>
-            </div>`,
-        choices: ['Enter'],
-        trial_duration: 120000, // 2 minutes
-        response_ends_trial: true,
+            </div>`
+            ]
+        ],
         on_finish: function(data) {
             if(data.rt === null) {
                 data.break_ending = "ended by timeout after 2 minutes";
@@ -139,10 +144,11 @@ function setupShortcuts(jsPsych) {
             });
             // First finish the current trial to clean up properly, then abort timeline
             jsPsych.finishTrial();
+            
             // Use setTimeout to ensure finishTrial completes before aborting
             setTimeout(() => {
                 jsPsych.abortCurrentTimeline();
-            }, 0);
+            }, 1);
             console.log("Section skipped with keyboard shortcut")
         }
 
