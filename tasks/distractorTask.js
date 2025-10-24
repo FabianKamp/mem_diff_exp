@@ -2,8 +2,14 @@
 function createDistractorInstructions() {
     // distractor instructions 
     var distractor_instructions = {
-        type: jsPsychHtmlKeyboardResponse, 
-        stimulus: 
+        type: jsPsychInstructions,
+        show_clickable_nav: false,
+        key_forward: 'Enter',
+        record_data: false,
+        post_trial_gap: 200,
+        trial_duration: 120000,
+        min_viewing_time: 3000, 
+        pages:[[
             `<div>
                 <p class="instruction-header">
                     <strong>Instructions</strong>
@@ -21,9 +27,8 @@ function createDistractorInstructions() {
                 <p class="continue-prompt">
                     To start press <strong>Enter</strong>
                 </p>
-            </div>`,
-        choices: ['Enter'],
-        trial_duration: 120000
+            </div>`
+        ]],
     }
     return distractor_instructions
 }
@@ -32,7 +37,6 @@ function createDistractorInstructions() {
 function createDistractorTask() {  
     var initial_number = 100; 
     var dt_timeline = [];    
-    record_data: false; 
     dt_timeline.push(
         {
         type: jsPsychHtmlKeyboardResponse, 
