@@ -1,41 +1,38 @@
 // LM INSTRUCTIONS
 function createLMInstructions() {
     const lm_base_layout = () => `
-        <div style="width:900px; height:40vh; position: relative; margin: 0 auto;">
-            <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: -140px; left: 50%;
-                    transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
+        <div>
+            <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 50px; left: 50%;
+                    transform: translateX(-50%); color:#4682B4; text-align: center;">
                 <strong>Have you seen this image before?</strong>
             </p>
             <img src="stimuli/instructions/sample1.jpg" style="position: absolute; border-radius:10px;
-                                    height:200px; width:200px; top: 30%; left: 50%;
+                                    height:200px; width:200px; top: 45%; left: 50%;
                                     transform: translate(-50%, -50%);"/>
             `;
 
     const lm_scale_labels = () => `
-            <div style="position: absolute; bottom: .6em; left: 50%; transform: translateX(-50%);
+            <div style="position: absolute; top: 68%; left: 50%; transform: translateX(-50%);
                         width: 100px; height: 10px; display: flex; align-items: center;">
                 <div style="width: 0; height: 0; border-right: 8px solid rgba(51, 51, 51, 0.2); border-top: 5px solid transparent; border-bottom: 5px solid transparent;"></div>
                 <div style="flex: 1; height: 2px; background: linear-gradient(to right, rgba(51, 51, 51, 0.2) 0%, rgba(51, 51, 51, 0.15) 10%, rgba(51, 51, 51, 0.05) 40%, rgba(51, 51, 51, 0.01) 50%, rgba(51, 51, 51, 0.05) 60%, rgba(51, 51, 51, 0.15) 90%, rgba(51, 51, 51, 0.2) 100%);"></div>
                 <div style="width: 0; height: 0; border-left: 8px solid rgba(51, 51, 51, 0.2); border-top: 5px solid transparent; border-bottom: 5px solid transparent;"></div>
             </div>
-            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 40%; transform: translate(-45%, 50%);">No</p>
-            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 60%; transform: translate(-50%, 50%);">Yes</p>`;
+            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; top: 65%; left: 40%; transform: translateX(-50%);">No</p>
+            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; top: 65%; left: 60%; transform: translateX(-50%);">Yes</p>`;
 
     const lm_slider = () => `
-        <div> 
-        <div style="position: absolute; left: 50%; transform: translateX(-50%); width: 320px;">
+        <div style="position: absolute; top: 70%; left: 50%; transform: translateX(-50%); width: 320px;">
                 <input type="range" class="jspsych-slider" value="50" min="5" max="95" step="15" disabled/>
                 <div>
-                    ${['certain', 'probably', 'guess', ' ', 'guess', 'probably', 'certain'].map((label, i) => 
+                    ${['certain', 'probably', 'guess', ' ', 'guess', 'probably', 'certain'].map((label, i) =>
                         `<div style="border: 1px solid transparent; display: inline-block; position: absolute; left:calc(${i * 16.67}% - (16.67% / 2) - ${i === 1 ? '-1.25px' : i === 2 ? '-2.5px' : i === 4 ? '2.5px' : i === 5 ? '1.25px' : '0px'}); text-align: center; width: 16.67%;"><span style="text-align: center; font-size: 80%; font-family: 'Courier New', monospace; transform: rotate(-30deg); display: inline-block;">${label}</span></div>`
                     ).join('')}
                 </div>
-            </div>
-        </div>`;
+            </div>`;
 
     // LM recognition slides
     lm_recognition_slide_1 = lm_base_layout() + `
-        </div>
             <p class="instruction-paragraph-left">
                 <strong>Have you seen this image?</strong><br><br>
                 Now we would like to know if you can still remember the images from the task before. <br><br>
@@ -44,8 +41,7 @@ function createLMInstructions() {
             </p>
         </div>`;
     
-    lm_recognition_slide_2 = lm_base_layout() + lm_scale_labels() + `
-        </div>` + lm_slider() + `
+    lm_recognition_slide_2 = lm_base_layout() + lm_scale_labels() + lm_slider() + `
             <p class="instruction-paragraph-left">
                 <strong>Use the slider to respond</strong><br><br>
                 The <strong>right side</strong> of the slider indicates that the image has been shown before (i.e. it is <strong>old</strong>).<br><br>
@@ -53,8 +49,7 @@ function createLMInstructions() {
             </p>
         </div>`;
 
-    lm_recognition_slide_3 = lm_base_layout() + lm_scale_labels() + `
-        </div>` + lm_slider() + `
+    lm_recognition_slide_3 = lm_base_layout() + lm_scale_labels() + lm_slider() + `
             <p class="instruction-paragraph-left">
                 <strong>Use the slider to respond to indicate your confidence</strong><br><br>
                 You have three options: <strong>guess - probably - certain</strong>.<br><br>
@@ -105,7 +100,7 @@ function startingLM() {
         min_viewing_time: 3000,
         pages: [
             [
-            `<div">
+            `<div>
                 <p class="instruction-header"><strong>Starting the last task</strong></p>
                 <p class="instruction-paragraph">
                     We will now start the last task of this experiment.<br><br>
@@ -124,120 +119,6 @@ function startingLM() {
 
 // LM TASK
 function createLM(timeline_variables, jsPsych) {
-    slider_labels = 
-        [
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">certain</span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">probably</span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">guess</span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;"> </span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">guess</span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">probably</span>`,
-            `<span style="font-family: 'Courier New', monospace; font-size: x-small; transform: rotate(-30deg); display: inline-block;">certain</span>`
-        ];
-    var lm_timeline = [];       
-    // image presentation
-    lm_timeline.push(
-        {
-            type: jsPsychHtmlSliderResponse,
-            require_movement: false, // defined later in on load
-            slider_start: 50,
-            slider_width: 280,
-            min: 5,
-            max: 95,
-            step: 15,
-            labels: slider_labels,
-            css_classes : ["next-trial-btn"],
-            stimulus: function() {
-                var file = jsPsych.evaluateTimelineVariable('recognition_file')
-                var html =
-                    `<div style="width:900px; height:45vh; position: relative; margin: 0 auto;">
-                        <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: -30px; left: 50%;
-                                transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
-                            <strong>Have you seen this image before?</strong>
-                        </p>
-
-                        <div style="position: absolute; bottom: .6em; left: 50%; transform: translateX(-50%);
-                                    width: 100px; height: 10px; display: flex; align-items: center;">
-                            <div style="width: 0; height: 0; 
-                                    border-right: 8px solid rgba(51, 51, 51, 0.2); 
-                                    border-top: 5px solid transparent; 
-                                    border-bottom: 5px solid transparent;
-                                    "></div>
-                            <div style="flex: 1; height: 2px; 
-                                    background: linear-gradient(to right, 
-                                        rgba(51, 51, 51, 0.2) 0%, 
-                                        rgba(51, 51, 51, 0.15) 10%, 
-                                        rgba(51, 51, 51, 0.05) 40%, 
-                                        rgba(51, 51, 51, 0.01) 50%, 
-                                        rgba(51, 51, 51, 0.05) 60%, 
-                                        rgba(51, 51, 51, 0.15) 90%, 
-                                        rgba(51, 51, 51, 0.2) 100%);"></div>
-                            <div style="width: 0; height: 0; 
-                                    border-left: 8px solid rgba(51, 51, 51, 0.2); 
-                                    border-top: 5px solid transparent; 
-                                    border-bottom: 5px solid transparent;
-                                    "></div>
-                        </div>
-
-                        <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 40%; 
-                            transform: translate(-45%, 50%);">
-                            No
-                        </p>
-                        <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; bottom: 0px; left: 60%;
-                            transform: translate(-50%, 50%);">
-                            Yes
-                        </p>
-
-                        <img src="${file}" style="position: absolute; border-radius:10px;
-                                                height:200px; width:200px; top: 50%; left: 50%;
-                                                transform: translate(-50%, -50%);"/>
-                    </div>`
-
-                return html;
-                },
-            on_load: () => {
-                let moved = false;
-                const slider = document.querySelector('input[type="range"]');
-                const nextBtn = document.querySelector('#jspsych-html-slider-response-next');
-                nextBtn.disabled = true;
-                slider.addEventListener('input', () => {
-                    if (parseInt(slider.value) !== 50) {
-                    moved = true;
-                    nextBtn.disabled = false;
-                    } else {
-                    moved = false;
-                    nextBtn.disabled = true;
-                    }
-                });
-            },
-            on_finish: function(data) { 
-                // encoding time 
-                var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
-                if (long_encoding == 1) {
-                    data.encoding_time = experimentSettings.timing.encoding_time_long
-                } else if (long_encoding == 0){
-                    data.encoding_time = experimentSettings.timing.encoding_time_short
-                } else {
-                    data.encoding_time = 9999
-                }
-                
-                // meta data
-                data.stimulus = jsPsych.evaluateTimelineVariable('recognition_file')
-                data.image_id = jsPsych.evaluateTimelineVariable('recognition_id')
-                data.image_old = jsPsych.evaluateTimelineVariable('old')
-                data.lm_trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial')
-                data.trial_type = "lm"
-                data.phase = "recognition"
-                data.timestamp = new Date().toLocaleTimeString()
-            }
-        }
-    )
-    return {timeline:lm_timeline, timeline_variables:timeline_variables};
-}
-
-// LM TASK
-function createLM2AFC(timeline_variables, jsPsych) {
     var lm_timeline = [];  
     
     // preload
@@ -247,10 +128,10 @@ function createLM2AFC(timeline_variables, jsPsych) {
         record_data: false,
         show_progress_bar: false,
         show_detailed_errors: true,
-        message: 
+        message:
             `<div style="width:500px; height: 60vh;">
-                <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; left: 50%;
-                    transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
+                <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 20%; left: 50%;
+                    transform: translateX(-50%); color:#4682B4; text-align: center;">
                     <strong>Which image do you remember from the previous task?</strong>
                 </p>
                 <div style="width:250px; height:75vh;">
@@ -279,10 +160,10 @@ function createLM2AFC(timeline_variables, jsPsych) {
         trial_duration: experimentSettings.timing.lm_inter_trial_delay,
         record_data: false,
         stimulus: function(){
-            var html = 
+            var html =
             `<div style="width:500px; height: 60vh;">
-                <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; left: 50%;
-                    transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
+                <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 20%; left: 50%;
+                    transform: translateX(-50%); color:#4682B4; text-align: center;">
                     <strong>Which image do you remember from the previous task?</strong>
                 </p>
                 <div style="width:250px; height:75vh;">
@@ -336,10 +217,10 @@ function createLM2AFC(timeline_variables, jsPsych) {
             },
 
             stimulus: function() {
-                var html = 
+                var html =
                     `<div style="width:500px; height: 60vh;">
-                    <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; left: 50%;
-                        transform: translate(-50%, -50%); color:#4682B4; text-align: center;">
+                    <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 20%; left: 50%;
+                        transform: translateX(-50%); color:#4682B4; text-align: center;">
                         <strong>Which image do you remember from the previous task?</strong>
                     </p>
 
@@ -377,7 +258,6 @@ function createLM2AFC(timeline_variables, jsPsych) {
                     data.encoding_time = experimentSettings.timing.encoding_time_short
                 }
 
-                console.log(jsPsych.evaluateTimelineVariable('correct_response'))
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.phase = 'recognition'
                 data.image_id = jsPsych.evaluateTimelineVariable('lm_id')
