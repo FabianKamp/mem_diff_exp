@@ -166,6 +166,7 @@ function startingWMPractice(){
     }
     return start_practice
 }
+
 // STARTING SCREEN
 function startingWM () {
     // start wm experiment
@@ -175,7 +176,6 @@ function startingWM () {
         key_forward: 'Enter',
         record_data: false,
         post_trial_gap: 200,
-        trial_duration: 120000,
         min_viewing_time: 3000,
         pages: [
             [
@@ -184,7 +184,7 @@ function startingWM () {
                     <strong>Starting the experiment</strong>
                 </p>
                 <p class="instruction-paragraph">
-                    Amazing! We will now start the experiment.
+                    Great! We will now start the experiment.
                     The next break will be in ~15 minutes.<br><br>
                     Attention, there will be <strong>no feedback</strong> in during the experiment.<br><br>
                     Press <strong>enter</strong> to start.
@@ -204,6 +204,7 @@ function startingWM () {
 function endingWM() {
     var end_wm = {
         type: jsPsychHtmlKeyboardResponse, 
+        trial_duration: 120000,
         stimulus: 
             `<div>
                 <p class="instruction-paragraph"> 
@@ -220,7 +221,6 @@ function endingWM() {
                 </p>
             </div>`,
         choices: ['Enter'],
-        trial_duration: 120000
     }
     return end_wm
 }
@@ -463,7 +463,12 @@ function createWM(timeline_variables, jsPsych) {
             trial_duration: 20000,
 
             on_load: function() {
-                startTimer();
+                startTimer(
+                    radius=5,
+                    delay=15000,
+                    duration=5000, 
+                    top=50
+                );
             },
 
             button_html: (choice) => {
@@ -511,13 +516,6 @@ function createWM(timeline_variables, jsPsych) {
                         <div> 
                             <div class="square" 
                                 style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
-                            </div>
-                        </div>
-
-                        <div style="width:250px; height:75vh;">
-                            <div class="cross">
-                                <div class="cross-vertical" style="background-color: rgba(0, 0, 0, 0.05);"></div>
-                                <div class="cross-horizontal" style="background-color: rgba(0, 0, 0, 0.05);"></div>
                             </div>
                         </div>
                     </div>`

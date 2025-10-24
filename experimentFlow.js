@@ -44,15 +44,15 @@ function startingExperiment(jsPsych) {
 function createBreak() {
     // break
     var break_trial = {
-        type: jsPsychInstructions,
-        show_clickable_nav: false,
-        key_forward: 'Enter',
+        type: jsPsychHtmlKeyboardResponse,
+        trial_duration: 121000,
+        choices: ['Enter'],
         post_trial_gap: 200,
-        trial_duration: 120000,
-        min_viewing_time: 3000,
-        pages:[
-            [
-            `<div>
+        min_viewing_time: 10000,
+        stimulus: function() {
+            html = 
+            `
+            <div>
                 <p class="instruction-header"><strong>Break</strong></p>
                 <p class="instruction-paragraph"> 
                     If you need a break, you can take one now.<br><br>
@@ -63,10 +63,23 @@ function createBreak() {
                 <p class="continue-prompt">
                     To continue press <strong>Enter</strong>
                 </p>
-            </div>`
-            ]
-        ],
+            </div>
+            `
+            return html
+        },
+        
+        on_load: function() {
+            startTimer(
+                radius=20,
+                delay=1000,
+                duration=120000, 
+                top=80
+            );
+        },
+        
         on_finish: function(data) {
+            resetTimer();
+
             if(data.rt === null) {
                 data.break_ending = "ended by timeout after 2 minutes";
             } 

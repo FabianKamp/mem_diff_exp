@@ -223,14 +223,7 @@ function createLM(timeline_variables, jsPsych) {
                         transform: translateX(-50%); color:#4682B4; text-align: center;">
                         <strong>Which image do you remember from the previous task?</strong>
                     </p>
-
-                        <div style="width:250px; height:75vh;">
-                            <div class="cross">
-                                <div class="cross-vertical" style="background-color: rgba(0, 0, 0, 0.05);"></div>
-                                <div class="cross-horizontal" style="background-color: rgba(0, 0, 0, 0.05);"></div>
-                            </div>
-                        </div>
-                        <div class="rectangle"></div>
+                    <div class="rectangle"></div>
                     </div>`
                 return html;
             },
