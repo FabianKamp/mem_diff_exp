@@ -5,11 +5,22 @@ var experimentSettings = fetch(`experimentSettings.json`)
         experimentSettings = data;
     });
 
-// helper function 
-function convert2cartesian(rx, ry, theta) {
-    const x = rx * Math.cos(theta);
-    const y = ry * Math.sin(theta);
-    return {x:x,y:y};
+// helper function
+// function convert2cartesian(rx, ry, theta) {
+//     const x = rx * Math.cos(theta);
+//     const y = ry * Math.sin(theta);
+//     return {x:x,y:y};
+// }
+
+// superellipse version with n=3 for rounder edges
+function convert2cartesian(rx, ry, theta, n=3) {
+    const cos_t = Math.cos(theta);
+    const sin_t = Math.sin(theta);
+
+    const x = rx * Math.sign(cos_t) * Math.pow(Math.abs(cos_t), 2/n);
+    const y = ry * Math.sign(sin_t) * Math.pow(Math.abs(sin_t), 2/n);
+
+    return {x:x, y:y};
 }
 
 // INSTRUCTIONS
@@ -164,6 +175,7 @@ function startingWM () {
         key_forward: 'Enter',
         record_data: false,
         post_trial_gap: 200,
+        trial_duration: 120000,
         min_viewing_time: 3000,
         pages: [
             [
@@ -215,8 +227,10 @@ function endingWM() {
 
 // WM TASK
 function createWM(timeline_variables, jsPsych) {
-    var wm_timeline = [{timeline: [
-        // preload
+    var wm_timeline = []
+    
+    // Preload
+    wm_timeline.push(
         {
             type: jsPsychPreload,
             record_data: false,
@@ -237,9 +251,11 @@ function createWM(timeline_variables, jsPsych) {
                 files.push(jsPsych.evaluateTimelineVariable('recognition_control_file'))
                 return files;
             }
-        },
-        
-        // inter trial delay
+        }
+    )
+    
+    // inter trial delay
+    wm_timeline.push(    
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
@@ -252,9 +268,11 @@ function createWM(timeline_variables, jsPsych) {
                 </div>`
                 return html;
             }
-        },
-        
-        // not serial
+        }
+    )
+
+    // Parallel encoding
+    wm_timeline.push(
         {timeline: [{
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
@@ -319,9 +337,11 @@ function createWM(timeline_variables, jsPsych) {
             conditional_function: function() {
                 return experimentSettings.memory_experiment.serial == 0;
             }
-        }, 
-        
-        // serial
+        }
+    )
+
+    // Serial encoding
+    wm_timeline.push(    
         {
             timeline: (() => {
                 var encoding_slides = [];
@@ -413,9 +433,11 @@ function createWM(timeline_variables, jsPsych) {
             conditional_function: function() {
                 return experimentSettings.memory_experiment.serial == 1;
             }
-        },
+        }
+    )
 
-        // delay
+    // delay
+    wm_timeline.push(
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
@@ -429,9 +451,11 @@ function createWM(timeline_variables, jsPsych) {
                     </div>`
                 return html;
             }
-        },
+        }
+    )
 
-        // recognition
+    // Recognition
+    wm_timeline.push(
         {
             type: jsPsychHtmlButtonResponse,
             choices: ["left", "right"],
@@ -572,9 +596,11 @@ function createWM(timeline_variables, jsPsych) {
                 data.timed_out = (data.response === null);
                 data.timestamp = new Date().toLocaleTimeString()
             }
-        },
-        
-        // time out
+        }
+    )
+    
+    // Time-out
+    wm_timeline.push(    
         {
             timeline: [{
                 type: jsPsychHtmlKeyboardResponse, 
@@ -597,9 +623,11 @@ function createWM(timeline_variables, jsPsych) {
             conditional_function: function() {
                 return jsPsych.data.get().last(1).values()[0].timed_out;
             }
-        }, 
-        
-        // Feedback
+        }
+    ) 
+
+    // Feedback
+    wm_timeline.push(    
         {
             timeline: [{
                 type: jsPsychHtmlKeyboardResponse,
@@ -666,9 +694,9 @@ function createWM(timeline_variables, jsPsych) {
             conditional_function: function() {
                 return jsPsych.evaluateTimelineVariable("trial_type")==="practice" && !jsPsych.data.get().last(2).values()[0].timed_out;
             }
-
         }
-    ]}]
+    )
+
     return {timeline:wm_timeline, 
             timeline_variables:timeline_variables};
 }
