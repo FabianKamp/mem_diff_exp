@@ -226,9 +226,10 @@ function endingWM() {
 }
 
 // WM TASK
+var wm_trial_counter = 0;
+
 function createWM(timeline_variables, jsPsych) {
     var wm_timeline = []
-    
     // Preload
     wm_timeline.push(
         {
@@ -458,10 +459,11 @@ function createWM(timeline_variables, jsPsych) {
 
             on_load: function() {
                 startTimer(
-                    radius=5,
+                    radius=4,
                     delay=15000,
                     duration=5000, 
-                    top=50
+                    top=50, 
+                    color="#00000021"
                 );
             },
 
@@ -480,13 +482,13 @@ function createWM(timeline_variables, jsPsych) {
             
                 left_button = 
                     `<div style="cursor: pointer; width: 130px; height: 130px; 
-                                position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
+                                position: absolute; top: 50%; left: calc( 50% - 75px); transform: translate(-50%, -50%);">
                     <img src="${left_image}" class="image-button" />
                     </div>`
 
                 right_button = 
                     `<div style="cursor: pointer; width: 130px; height: 130px; 
-                                position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
+                                position: absolute; top: 50%; left: calc( 50% + 75px); transform: translate(-50%, -50%);">
                     <img src="${right_image}" class="image-button"/>
                     </div>`
             
@@ -500,19 +502,40 @@ function createWM(timeline_variables, jsPsych) {
             stimulus: function() {
                 var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
                 var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
-                var html = 
+
+                var html =
                     `<div style="width:500px; height: 75vh;">
-                        <div> 
-                            <div class="square" 
+                        <div>
+                            <div class="square"
                                 style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
                             </div>
                         </div>
-                    </div>`
+                    </div>
+                    `
+
+                // Progress bar using global counter
+                var total_trials =
+                    experimentSettings.memory_experiment.wm_trials +
+                    experimentSettings.memory_experiment.ncatch +
+                    experimentSettings.memory_experiment.practice_trials
+
+                var progress_percent = (wm_trial_counter / total_trials) * 100
+                var progress_bar = `
+                    <div class="progress-bar">
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
+                        </div>
+                    </div>
+                `
+                html += progress_bar
                 return html;
             },
 
             on_finish: function(data) {
                 resetTimer();
+
+                // Increment global trial counter
+                wm_trial_counter++;
 
                 // stimulus
                 var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
