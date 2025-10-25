@@ -31,12 +31,12 @@ def generate_token(session_ids=None):
 
     # saving
     token_csv = os.path.join(os.getcwd(), "token", f"token_{version_id}-{wave_id}.csv")
-    c = 2
-    while os.path.isfile(token_csv): 
-        token_csv = os.path.join(os.getcwd(), "token", f"token_{version_id}-{wave_id}_{c}.csv")
-        c += 1
-    
-    token_df.to_csv(token_csv, index=False)
+    if os.path.isfile(token_csv): 
+        key = input(f"{token_csv} exists already.Overwrite existing file?[y/n]")
+        if key=="y":
+            token_df.to_csv(token_csv, index=False)
+        else:
+            return
 
 if __name__ == "__main__":
     generate_token()
