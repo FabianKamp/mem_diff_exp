@@ -30,12 +30,12 @@
         "catch_delay": 1000,
         "encoding_time_short": 1200,
         "encoding_time_long": 2000,
-        "catch_encoding": 5000
+        "encoding_time_catch": 3000
     },
     
     "spatial": {
         "radius_x": 260,
-        "radius_y": 220
+        "radius_y": 200
     },
     
     "break": {
@@ -56,7 +56,8 @@
         "rounds": 3,
         "operations_per_round": 5
     },
+
     "feedback": {
-        "duration": 1500
+        "duration": 5000
     }
 }
