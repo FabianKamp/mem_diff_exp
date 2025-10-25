@@ -8,6 +8,8 @@
 /token/
 /docs/
 /test/
+/.claude/
+/__pycache__/
 .env
 /analysis/*.txt
 /analysis/*.ipynb
