@@ -590,8 +590,8 @@ function createWM(timeline_variables, jsPsych) {
                         </p>
                         <p class="instruction-paragraph"> 
                             You did not respond in the the last trial.<br><br>
-                            <strong>Please respond within max. 15 seconds after stimulus presentation.</strong><br><br>
-                            As soon as this task finishes there will be a short break.
+                            <strong>Please respond within max. 20 seconds after stimulus presentation.</strong><br><br>
+                            There are two 2 minute breaks during the task. Please, try to keep focused until the next break.
                         </p>
                         <p class="continue-prompt">
                             To continue press <strong>Enter</strong>
