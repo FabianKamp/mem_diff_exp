@@ -4,30 +4,40 @@ function setupShortcuts(jsPsych) {
     document.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.shiftKey && e.key === 'S') {
             e.preventDefault();
+
+            let currentNode = jsPsych.timeline?.getLatestNode();
+            let topLevelNamedTimeline = null;
+
+            while (currentNode) {
+                if (currentNode.description?.name) {
+                    topLevelNamedTimeline = currentNode.description.name;
+                }
+                currentNode = currentNode.parent;
+            }
+
             jsPsych.data.get().push({
                 event: 'timeline_skipped',
+                skipped_timeline: topLevelNamedTimeline,
                 timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19)
             });
-            // First finish the current trial to clean up properly, then abort timeline
-            jsPsych.finishTrial();
-            
-            // Use setTimeout to ensure finishTrial completes before aborting
-            setTimeout(() => {
-                jsPsych.abortCurrentTimeline();
-            }, 0);
-            console.log("Section skipped with keyboard shortcut")
-        }
 
-        if (e.ctrlKey && e.altKey && e.shiftKey && e.key === 'E') {
+            if (topLevelNamedTimeline) {
+                // Cancel any pending responses/timeouts, abort timeline, then finish trial
+                jsPsych.pluginAPI.cancelAllKeyboardResponses();
+                jsPsych.pluginAPI.clearAllTimeouts();
+                jsPsych.abortTimelineByName(topLevelNamedTimeline);
+                jsPsych.finishTrial();
+                console.log(`Skipped timeline: ${topLevelNamedTimeline}`);
+            } 
+        }
+        if (e.ctrlKey && e.shiftKey && e.key === 'E') {
             e.preventDefault();
             jsPsych.data.addProperties({
                 experiment_aborted: true,
                 abort_time: new Date().toISOString().replace('T', ' ').slice(0, 19)
             });
-            jsPsych.finishTrial();
             jsPsych.abortExperiment('Experiment ended by keyboard shortcut');
             console.log("Experiment ended by keyboard shortcut")
-
         }
     });
 }
