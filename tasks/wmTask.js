@@ -236,7 +236,7 @@ function createWM(timeline_variables, jsPsych) {
             record_data: false,
             show_progress_bar: false,
             message:                 
-                `<div style="width:250px; height:75vh;">
+                `<div style="width:250px; height:80vh;">
                     <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
                 </div>`,
             show_detailed_errors: true,
@@ -263,7 +263,7 @@ function createWM(timeline_variables, jsPsych) {
             record_data: false,
             stimulus: function(){
                 var html = 
-                `<div style="width:250px; height:75vh;">
+                `<div style="width:250px; height:80vh;">
                     <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
                 </div>`
                 return html;
@@ -277,55 +277,47 @@ function createWM(timeline_variables, jsPsych) {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
             trial_duration: function() {
-                var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
-                if (long_encoding == 1) {
-                    return experimentSettings.timing.encoding_time_long
-                } else {
-                    return experimentSettings.timing.encoding_time_short
-                }
+                var encoding_time = jsPsych.evaluateTimelineVariable(`encoding_time`)
+                return encoding_time
             },
             stimulus: function() {
-                var html = `<div style="width:500px; height:60vh;">`
                 var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+                html = `<div style="width:500px; height:80vh;">`
                 for (let i = 0; i < n_encoding; i++) {
                     if (i >= n_encoding) break; 
                     var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
                     var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
                     var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
                     html +=                         
-                    `<div style="width:500px; height:75vh;">
-                        <div> 
-                            <img src="${file}" class="image-object" 
-                            style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
-                        </div>
+                    `<div> 
+                        <img src="${file}" class="image-object" 
+                        style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
                     </div>`
                 }
-
-                    html += 
-                    `<div class="cross">
-                        <div class="cross-vertical"></div>
-                        <div class="cross-horizontal"></div>
-                    </div></div>`
-
-                    return html;
+                html += 
+                `<div class="cross">
+                    <div class="cross-vertical"></div>
+                    <div class="cross-horizontal"></div>
+                </div>
+                </div>`
+                
+                return html;
                 },
 
                 on_finish: function(data) { 
                     var file = []
                     var theta = []
                     var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
-
+                    var long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
+                    var encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
+                    
                     for (let i = 0; i < n_encoding; i++) { 
                         file.push(jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`))
                         theta.push(jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`))
                     }
-
-                    var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
-                    if (long_encoding == 1) {
-                        data.encoding_time = experimentSettings.timing.encoding_time_long
-                    } else {
-                        data.encoding_time = experimentSettings.timing.encoding_time_short
-                    }
+                    
+                    data.long_encoding = long_encoding
+                    data.encoding_time = encoding_time
                     data.stimulus = file
                     data.theta = theta
                     data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
@@ -355,32 +347,28 @@ function createWM(timeline_variables, jsPsych) {
                         type: jsPsychHtmlKeyboardResponse,
                         choices: "NO_KEYS",
                         trial_duration: function() {
-                            var long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
+                            var encoding_time = jsPsych.evaluateTimelineVariable(`encoding_time`)
                             var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
-                            if (long_encoding == 1) {
-                                return experimentSettings.timing.encoding_time_long/n_encoding
-                            } else {
-                                return experimentSettings.timing.encoding_time_short/n_encoding
-                            }
+                            return encoding_time/n_encoding
                         },
                         stimulus: function() {
-                            var html = `<div style="width:500px; height:60vh;">`
                             var file = jsPsych.evaluateTimelineVariable(`encoding_file_${encodingIndex}`)
                             var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${encodingIndex}`)
                             var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
 
-                            html +=
-                            `<div style="width:500px; height:75vh;">
+                            html =
+                            `<div style="width:500px; height:80vh;">
                                 <div>
                                     <img src="${file}" class="image-object"
                                     style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
                                 </div>
-                            </div>`
+                            `
                             html +=
                             `<div class="cross">
                                 <div class="cross-vertical"></div>
                                 <div class="cross-horizontal"></div>
-                            </div></div>`
+                            </div>
+                            </div>`
                             return html;
                         },
 
@@ -389,11 +377,10 @@ function createWM(timeline_variables, jsPsych) {
                             var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${encodingIndex}`)
                             var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
                             var long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
-                            if (long_encoding == 1) {
-                                data.encoding_time = experimentSettings.timing.encoding_time_long/n_encoding
-                            } else {
-                                data.encoding_time = experimentSettings.timing.encoding_time_short/n_encoding
-                            }
+                            var encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
+                            
+                            data.long_encoding = long_encoding
+                            data.encoding_time = encoding_time/n_encoding
                             data.stimulus = file
                             data.theta = theta
                             data.n_encoding = n_encoding
@@ -417,7 +404,7 @@ function createWM(timeline_variables, jsPsych) {
                         record_data: false,
                         stimulus: function(){
                             var html =
-                            `<div style="width:250px; height:75vh;">
+                            `<div style="width:250px; height:80vh;">
                                 <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
                             </div>`
                             return html;
@@ -441,11 +428,18 @@ function createWM(timeline_variables, jsPsych) {
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
-            trial_duration: experimentSettings.timing.memory_delay,
+            trial_duration: function() {
+                var trial_type = jsPsych.evaluateTimelineVariable(`trial_type`)
+                if (trial_type=="catch") {
+                    return experimentSettings.timing.catch_delay
+                } else {
+                    return experimentSettings.timing.memory_delay
+                }
+            },
             record_data: false,
             stimulus: function(){
                 var html = 
-                    `<div style="width:250px; height:75vh;">
+                    `<div style="width:250px; height:80vh;">
                         <div class="cross"><div class="cross-vertical"></div>
                         <div class="cross-horizontal"></div></div>
                     </div>`
@@ -507,12 +501,7 @@ function createWM(timeline_variables, jsPsych) {
                 var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
                 var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
                 var html = 
-                    `<div style="width:500px; height: 60vh;">
-                        <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
-                        transform: translateX(-50%); color:#4682B4; text-align: center;">
-                            <strong></strong>
-                        </p>
-
+                    `<div style="width:500px; height: 75vh;">
                         <div> 
                             <div class="square" 
                                 style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
@@ -597,8 +586,10 @@ function createWM(timeline_variables, jsPsych) {
     wm_timeline.push(    
         {
             timeline: [{
-                type: jsPsychHtmlKeyboardResponse,
-                choices: "NO_KEYS",
+                // type: jsPsychHtmlKeyboardResponse,
+                type: jsPsychHtmlButtonResponse,
+                // choices: "Enter",
+                choices: ["Next Trial"],
                 trial_duration: experimentSettings.feedback.duration,
                 record_data: false,
                 stimulus: function() {
@@ -618,7 +609,7 @@ function createWM(timeline_variables, jsPsych) {
                     var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
                     var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
                     var html = 
-                        `<div style="width:500px; height: 75vh;">
+                        `<div style="width:500px; height: 80vh;">
                             <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
                             transform: translateX(-50%); color:#4682B4; text-align: center;">
                                 <strong></strong>
@@ -630,11 +621,9 @@ function createWM(timeline_variables, jsPsych) {
                                 </div>
                             </div>
 
-                            <div style="width:500px; height:75vh;">
-                                <div> 
-                                    <img src="${wm_sample_file}" class="image-object feedback-blink" 
-                                    style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
-                                </div>
+                            <div> 
+                                <img src="${wm_sample_file}" class="image-object feedback-blink" 
+                                style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
                             </div>
 
                             <div style="cursor: pointer; width: 130px; height: 130px;
@@ -646,14 +635,6 @@ function createWM(timeline_variables, jsPsych) {
                                     position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
                                     <img src="${left_image}" class="image-button" />
                             </div>
-
-                            <div style="width:250px; height:75vh;">
-                                <div class="cross">
-                                    <div class="cross-vertical" style="background-color: rgba(0, 0, 0, 0.05);"></div>
-                                    <div class="cross-horizontal" style="background-color: rgba(0, 0, 0, 0.05);"></div>
-                                </div>
-                            </div>
-
                         </div>`
                     return html;
                 }
