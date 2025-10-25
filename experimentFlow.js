@@ -70,10 +70,11 @@ function createBreak(label) {
         
         on_load: function() {
             startTimer(
-                radius=20,
-                delay=1000,
+                radius=12,
+                delay=100,
                 duration=120000, 
-                top=80
+                top=80, 
+                color="#00000021"
             );
         },
         

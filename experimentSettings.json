@@ -27,7 +27,7 @@
         "lm_inter_trial_delay": 250,
         "wm_isi": 200,
         "memory_delay": 3000,
-        "catch_delay": 1000,
+        "catch_delay": 500,
         "encoding_time_short": 1200,
         "encoding_time_long": 2000,
         "encoding_time_catch": 3000

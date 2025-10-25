@@ -95,7 +95,7 @@ class fullscreenTracker {
 // TIMER animation
 let delayID = null;
 let timerId = null;
-function startTimer(radius,delay,duration,top) {
+function startTimer(radius,delay,duration,top,color) {
     delayID = setTimeout(() => {
         const oldCountdown = document.getElementById('countdown');
         if (oldCountdown) oldCountdown.remove();
@@ -108,7 +108,7 @@ function startTimer(radius,delay,duration,top) {
             <svg width="100" height="100" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="${radius}" fill="none" stroke="white" stroke-width="${radius*2}"/>
                 <circle id="countdown-circle" cx="50" cy="50" r="${radius}" fill="none"
-                        stroke="#00000021" stroke-width="${radius*2}" stroke-dasharray="${circumference}"
+                        stroke="${color}" stroke-width="${radius*2}" stroke-dasharray="${circumference}"
                         stroke-dashoffset="0" transform="rotate(-90 50 50) scale(1, -1) translate(0, -100)"
                         style="transition: stroke-dashoffset ${duration}ms linear;"/>
             </svg>
