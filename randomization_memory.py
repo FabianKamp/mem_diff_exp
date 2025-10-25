@@ -16,18 +16,30 @@ setting_file = "experimentSettings.json"
 with open(setting_file, "r") as file: 
     settings = json.load(file)
 
+# ids
 wave_id = settings["wave"]["wave_id"]
 subject_number = settings["wave"]["subject_number"]
 
-load = settings["memory_experiment"]["load"]
+# trial numbers
 practice_trials = settings["memory_experiment"]["practice_trials"]
 wm_trials = settings["memory_experiment"]["wm_trials"]
 lm_trials = settings["memory_experiment"]["lm_trials"]
 ncatch = settings["memory_experiment"]["ncatch"]
-position_weights = settings["memory_experiment"]["position_weights"]
 
+num_blocks = 3
 
 all_wm_trials = wm_trials + practice_trials
+
+# weightings for sequential presentation
+position_weights = settings["memory_experiment"]["position_weights"]
+
+# load and encoding time 
+load = settings["memory_experiment"]["load"]
+encoding_time_short = settings["timing"]["encoding_time_short"]
+encoding_time_long = settings["timing"]["encoding_time_long"]
+encoding_time_catch = settings["timing"]["encoding_time_catch"]
+
+# checks
 if not os.path.exists(out_dir): 
     os.mkdir(out_dir)
 
@@ -80,6 +92,9 @@ def generate_catch_trials(ncatch, catch_ids):
     left_target = np.random.choice([0,1], ncatch, replace=True).astype(int)
     correct_response = (left_target==0).astype(int)
 
+    n_per_block = ncatch // num_blocks
+    catch_block_ids = np.repeat(np.arange(num_blocks)+1, [n_per_block, n_per_block, ncatch - 2*n_per_block])
+
     catch_trial_data = dict(
         wm_id = nan,
         condition = nan,
@@ -93,11 +108,12 @@ def generate_catch_trials(ncatch, catch_ids):
         left_target = left_target,
         target_correct = np.ones(ncatch),
         correct_response = correct_response,
-        wm_block_id = np.repeat([1,2], int(ncatch/2)),
+        wm_block_id = catch_block_ids,
         condition_name = "no_catch", 
         encoding = encoding_ids,
         encoding_file_1 = encoding_files,
         encoding_theta_1 = encoding_thetas,
+        encoding_time = encoding_time_catch,
         n_encoding = 1,
         subject_id = subject_id,
     )
@@ -193,9 +209,9 @@ while counter < subject_number:
     encoding_files = np.array([get_file_path(i) for i in encoding_ids.flatten()])
     encoding_files = encoding_files.reshape(encoding_ids.shape)
 
-    # block ids 
-    wm_block_ids = np.ones(wm_trials).astype(int)
-    wm_block_ids[wm_trials//2:] = 2
+    # block ids - divide trials into 3 equal blocks
+    block_size = wm_trials // num_blocks
+    wm_block_ids = np.repeat(np.arange(num_blocks)+1, [block_size, block_size, wm_trials - 2*block_size])
     wm_block_ids = np.concatenate([np.repeat(nan, practice_trials), wm_block_ids])
     
     # trial type = practice/wm
@@ -235,7 +251,12 @@ while counter < subject_number:
     practice_long_encoding = np.random.permutation(practice_long_encoding)
 
     long_encoding = np.concatenate([practice_long_encoding, long_encoding])
-    wm_trial_data.update(long_encoding = long_encoding.astype(int))
+    encoding_times = np.array([encoding_time_long if t==1 else encoding_time_short for t in long_encoding])
+    
+    wm_trial_data.update(
+        long_encoding = long_encoding.astype(int),
+        encoding_time = encoding_times.astype(int)
+        )
     
     # left right randomization 
     wm_left_target = np.zeros(wm_trials)
