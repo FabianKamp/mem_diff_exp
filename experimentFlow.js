@@ -41,7 +41,7 @@ function startingExperiment(jsPsych) {
 }
 
 // BREAK TRIAL
-function createBreak() {
+function createBreak(label) {
     // break
     var break_trial = {
         type: jsPsychHtmlKeyboardResponse,
@@ -53,7 +53,7 @@ function createBreak() {
             html = 
             `
             <div>
-                <p class="instruction-header"><strong>Break</strong></p>
+                <p class="instruction-header"><strong>Break #${label}</strong></p>
                 <p class="instruction-paragraph"> 
                     If you need a break, you can take one now.<br><br>
                     Please allow yourself a maximum of <strong>2 minutes</strong>.<br>
