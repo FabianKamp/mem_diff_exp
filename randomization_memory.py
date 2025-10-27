@@ -301,10 +301,15 @@ while counter < subject_number:
         wm_conditions_random = wm_conditions_random + 1
         latin_condition_names = np.array([condition_codes[i] for i in latin_conditions])
  
-        # Update WM 
-        # latin_conditions -> (target, control): 1 -> (4,3), 2 -> (4,5), 3 -> (3,5) 
-        target_codes = (latin_conditions < 3).astype(int) + 3
-        control_codes = (latin_conditions > 1).astype(int) * 2 + 3
+        # Update WM
+        # latin_conditions -> (target, control): 1 -> (4,3), 2 -> (4,5), 3 -> (3,5)
+        condition_mapping = {
+            1: (4, 3),
+            2: (4, 5),
+            3: (3, 5)
+        }
+        target_codes = np.array([condition_mapping[c][0] for c in latin_conditions])
+        control_codes = np.array([condition_mapping[c][1] for c in latin_conditions])
         
         # target is correct if control image is 5
         target_correct = (control_codes == 5).astype(int)
