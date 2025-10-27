@@ -18,13 +18,13 @@
         "wm_trials": 162,
         "lm_trials": 110, 
         "ncatch": 18, 
-        "serial": 0, 
+        "serial": 1, 
         "position_weights": [0.45, 0.45, 0.10]
     },
 
     "timing": {
         "wm_inter_trial_delay": 1250,
-        "lm_inter_trial_delay": 250,
+        "lm_inter_trial_delay": 750,
         "wm_isi": 200,
         "memory_delay": 3000,
         "catch_delay": 500,

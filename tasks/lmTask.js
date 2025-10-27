@@ -1,62 +1,5 @@
 // LM INSTRUCTIONS
 function createLMInstructions() {
-    const lm_base_layout = () => `
-        <div>
-            <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 50px; left: 50%;
-                    transform: translateX(-50%); color:#4682B4; text-align: center;">
-                <strong>Have you seen this image before?</strong>
-            </p>
-            <img src="stimuli/instructions/sample1.jpg" style="position: absolute; border-radius:10px;
-                                    height:200px; width:200px; top: 45%; left: 50%;
-                                    transform: translate(-50%, -50%);"/>
-            `;
-
-    const lm_scale_labels = () => `
-            <div style="position: absolute; top: 68%; left: 50%; transform: translateX(-50%);
-                        width: 100px; height: 10px; display: flex; align-items: center;">
-                <div style="width: 0; height: 0; border-right: 8px solid rgba(51, 51, 51, 0.2); border-top: 5px solid transparent; border-bottom: 5px solid transparent;"></div>
-                <div style="flex: 1; height: 2px; background: linear-gradient(to right, rgba(51, 51, 51, 0.2) 0%, rgba(51, 51, 51, 0.15) 10%, rgba(51, 51, 51, 0.05) 40%, rgba(51, 51, 51, 0.01) 50%, rgba(51, 51, 51, 0.05) 60%, rgba(51, 51, 51, 0.15) 90%, rgba(51, 51, 51, 0.2) 100%);"></div>
-                <div style="width: 0; height: 0; border-left: 8px solid rgba(51, 51, 51, 0.2); border-top: 5px solid transparent; border-bottom: 5px solid transparent;"></div>
-            </div>
-            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; top: 65%; left: 40%; transform: translateX(-50%);">No</p>
-            <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; top: 65%; left: 60%; transform: translateX(-50%);">Yes</p>`;
-
-    const lm_slider = () => `
-        <div style="position: absolute; top: 70%; left: 50%; transform: translateX(-50%); width: 320px;">
-                <input type="range" class="jspsych-slider" value="50" min="5" max="95" step="15" disabled/>
-                <div>
-                    ${['certain', 'probably', 'guess', ' ', 'guess', 'probably', 'certain'].map((label, i) =>
-                        `<div style="border: 1px solid transparent; display: inline-block; position: absolute; left:calc(${i * 16.67}% - (16.67% / 2) - ${i === 1 ? '-1.25px' : i === 2 ? '-2.5px' : i === 4 ? '2.5px' : i === 5 ? '1.25px' : '0px'}); text-align: center; width: 16.67%;"><span style="text-align: center; font-size: 80%; font-family: 'Courier New', monospace; transform: rotate(-30deg); display: inline-block;">${label}</span></div>`
-                    ).join('')}
-                </div>
-            </div>`;
-
-    // LM recognition slides
-    lm_recognition_slide_1 = lm_base_layout() + `
-            <p class="instruction-paragraph-left">
-                <strong>Have you seen this image?</strong><br><br>
-                Now we would like to know if you can still remember the images from the task before. <br><br>
-                You will see images which were shown in the task before as well as some new images. <br><br>
-                Please, try to remember if you have seen the image before or not.
-            </p>
-        </div>`;
-    
-    lm_recognition_slide_2 = lm_base_layout() + lm_scale_labels() + lm_slider() + `
-            <p class="instruction-paragraph-left">
-                <strong>Use the slider to respond</strong><br><br>
-                The <strong>right side</strong> of the slider indicates that the image has been shown before (i.e. it is <strong>old</strong>).<br><br>
-                The <strong>left side</strong>  means that has not been shown (i.e. it is <strong>new</strong>).
-            </p>
-        </div>`;
-
-    lm_recognition_slide_3 = lm_base_layout() + lm_scale_labels() + lm_slider() + `
-            <p class="instruction-paragraph-left">
-                <strong>Use the slider to respond to indicate your confidence</strong><br><br>
-                You have three options: <strong>guess - probably - certain</strong>.<br><br>
-                Please, move the slider to the position that indicates your confidence level.
-            </p>
-        </div>`;
-
     // instructions long term memory 
     var lm_instructions =         
         {
@@ -73,16 +16,88 @@ function createLMInstructions() {
                         <strong>Great, you are almost done!</strong>
                         <br><br><br>
                         In the last task we will show you again some images. We want to know if you still remember the images from the first task.
-                        <br><br>
-                        For each image we will ask if you have seen it before (i.e. during the first/second block of the experiment)
                         <br><br><br><br>
                         The following instructions will explain the task in detail.
                     </p>
                 </div>`
             ], 
-            lm_recognition_slide_1, 
-            lm_recognition_slide_2, 
-            lm_recognition_slide_3, 
+            [
+                `<div style="width:500px; height: 60vh;">
+                <div class="rectangle"></div>
+                
+                <div>
+                    <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                    <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
+                </div>
+                
+                <p class="instruction-paragraph-left">
+                    <strong>1. Have you seen this image?</strong><br><br>
+                    Now we would like to know if you can still remember the images from the task before. <br><br>
+                    You will see 2 images. <strong>One image was shown in the task before, the other image is new</strong>. <br><br>
+                    Please, try to remember which image you have seen in the previous task.
+                    </p>
+                </div>`
+            ], 
+            [
+                `<div style="width:500px; height: 60vh;">
+                <div class="rectangle"></div>
+                
+                <div>
+                    <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                    <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
+                </div>
+                
+                <p class="instruction-paragraph-left">
+                    <strong>2. How to select an image</strong><br><br>
+                    You can choose the image that you remember from the previous task by clicking on it.
+                    <br><br>
+                    If you don't recognize any of images, that's okay — just make your best guess.
+                </p>
+                </div>`
+            ], 
+            [
+                `<div style="width:500px; height: 60vh;">
+                <div class="rectangle"></div>
+                
+                <div>
+                    <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                    <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
+                </div>
+                
+                <p class="instruction-paragraph-left">
+                    <strong>3. Timing</strong><br><br>
+                    As before, you will have <strong>30 seconds</strong> to select an image on each trial. 
+                    <br><br>
+                    Please try to respond within this time window.
+                    <br><br>
+                    </p>
+                </div>`
+            ], 
+            [
+                `<div style="width:500px; height: 60vh;">
+                <div class="rectangle"></div>
+                
+                <div>
+                    <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                    <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
+                </div>
+
+                <div class="progress-bar" style="bottom: 140px;">
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: 10%;"></div>
+                    </div>
+                </div>
+                
+                <p class="instruction-paragraph-left">
+                    <strong>4. What about breaks?</strong><br><br>
+                    This is the final task of the experiment, which will take only 5-10 minutes. 
+                    <br><br>
+                    Therefore, there will be no breaks in this task. 
+                    <br><br>
+                    But you can track your progress on the progress bar at the bottom of the screen
+                </p>
+                </div>`
+            ], 
             ],
         };
     return lm_instructions
@@ -105,7 +120,7 @@ function startingLM() {
                 <p class="instruction-paragraph">
                     We will now start the last task of this experiment.<br><br>
                     There will be <strong>no practice</strong>, you will directly start the real task.<br><br>
-                    This task will take approx. <strong>10 minutes</strong>.
+                    This task will take <strong>5-10 minutes</strong>.
                 </p>
                 <p class="continue-prompt">
                     To start, press <strong>Enter</strong> to start. 
@@ -118,6 +133,7 @@ function startingLM() {
 }
 
 // LM TASK
+var lm_trial_counter = 0;
 function createLM(timeline_variables, jsPsych) {
     var lm_timeline = [];  
     
@@ -128,7 +144,7 @@ function createLM(timeline_variables, jsPsych) {
         record_data: false,
         show_progress_bar: false,
         show_detailed_errors: true,
-        message:
+        message: function() {
             `<div style="width:500px; height: 60vh;">
                 <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 20%; left: 50%;
                     transform: translateX(-50%); color:#4682B4; text-align: center;">
@@ -142,7 +158,19 @@ function createLM(timeline_variables, jsPsych) {
                 </div>
                 <div class="rectangle"></div>
             </div>`
-            ,
+            
+            // progress bar
+            const { lm_trials } = experimentSettings.memory_experiment;                
+            var progress_percent = (lm_trial_counter / lm_trials) * 100
+            var progress_bar = 
+                `<div class="progress-bar">
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
+                    </div>
+                </div>`
+            html += progress_bar
+
+        },
         
         images: function() {
             var files = []
@@ -160,19 +188,9 @@ function createLM(timeline_variables, jsPsych) {
         trial_duration: experimentSettings.timing.lm_inter_trial_delay,
         record_data: false,
         stimulus: function(){
-            var html =
-            `<div style="width:500px; height: 60vh;">
-                <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 20%; left: 50%;
-                    transform: translateX(-50%); color:#4682B4; text-align: center;">
-                    <strong>Which image do you remember from the previous task?</strong>
-                </p>
-                <div style="width:250px; height:75vh;">
-                    <div class="cross">
-                        <div class="cross-vertical" style="background-color: rgba(0, 0, 0, 0.05);"></div>
-                        <div class="cross-horizontal" style="background-color: rgba(0, 0, 0, 0.05);"></div>
-                    </div>
-                </div>
-                <div class="rectangle"></div>
+            var html = 
+            `<div style="width:250px; height:80vh;">
+                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
             </div>`
             return html;
         }
@@ -184,6 +202,18 @@ function createLM(timeline_variables, jsPsych) {
             type: jsPsychHtmlButtonResponse,
             choices: ["left", "right"],
             button_layout: 'grid',
+            trial_duration: 31000,
+            
+            on_load: function() {
+                startTimer(
+                    radius=4,
+                    delay=25000,
+                    duration=5000, 
+                    top=50, 
+                    color="#f57c00"
+                );
+            },
+
             button_html: (choice) => {
                 var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
                 var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
@@ -199,13 +229,13 @@ function createLM(timeline_variables, jsPsych) {
             
                 left_button = 
                     `<div style="cursor: pointer; width: 130px; height: 130px; 
-                                position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
+                                position: absolute; top: 50%; left: calc( 50% - 75px); transform: translate(-50%, -50%);">
                     <img src="${left_image}" class="image-button" />
                     </div>`
 
                 right_button = 
                     `<div style="cursor: pointer; width: 130px; height: 130px; 
-                                position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
+                                position: absolute; top: 50%; left: calc( 50% + 75px); transform: translate(-50%, -50%);">
                     <img src="${right_image}" class="image-button"/>
                     </div>`
             
@@ -225,10 +255,26 @@ function createLM(timeline_variables, jsPsych) {
                     </p>
                     <div class="rectangle"></div>
                     </div>`
+                
+                // progress bar
+                const { lm_trials } = experimentSettings.memory_experiment;                
+                var progress_percent = (lm_trial_counter / lm_trials) * 100
+                var progress_bar = 
+                    `<div class="progress-bar">
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
+                        </div>
+                    </div>`
+                html += progress_bar
+                
                 return html;
             },
 
-            on_finish: function(data) {               
+            on_finish: function(data) {  
+                // reset time and update the counter
+                resetTimer();             
+                lm_trial_counter++
+
                 // stimulus
                 var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
                 var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
@@ -262,9 +308,37 @@ function createLM(timeline_variables, jsPsych) {
                 data.sample_position = jsPsych.evaluateTimelineVariable('sample_position')
                 data.left_target = jsPsych.evaluateTimelineVariable('left_target') 
                 data.trial_type = jsPsych.evaluateTimelineVariable('trial_type') 
+                data.timed_out = (data.response === null);
                 data.timestamp = new Date().toLocaleTimeString()
             }
         })
+    
+    // Time-out
+    lm_timeline.push(    
+        {
+            timeline: [{
+                type: jsPsychHtmlKeyboardResponse, 
+                stimulus: 
+                    `<div class="timeout-warning">
+                        <p class="instruction-header warning-header">
+                            <strong>⏸ Time Out</strong>
+                        </p>
+                        <p class="instruction-paragraph warning-message"> 
+                            You did not respond in the last trial.<br><br>
+                            <strong>Please remember to respond within 30 seconds after the images appear.</strong><br><br>
+                            You're doing well! Let's stay focused until the last task is over.
+                        </p>
+                        <p class="continue-prompt">
+                            Press <strong>Enter</strong> to continue
+                        </p>
+                    </div>`,
+                choices: ['Enter'],
+            }],
+            conditional_function: function() {
+                return jsPsych.data.get().last(1).values()[0].timed_out;
+            }
+        }
+    ) 
 
     return {timeline:lm_timeline, timeline_variables:timeline_variables};
 }
