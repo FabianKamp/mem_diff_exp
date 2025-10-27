@@ -27,7 +27,6 @@ lm_trials = settings["memory_experiment"]["lm_trials"]
 ncatch = settings["memory_experiment"]["ncatch"]
 
 num_blocks = 3
-
 all_wm_trials = wm_trials + practice_trials
 
 # weightings for sequential presentation
@@ -229,7 +228,7 @@ while counter < subject_number:
         recognition_theta = recognition_thetas,
         wm_block_id = wm_block_ids, 
         trial_type = wm_trial_type,
-        n_encoding = load
+        n_encoding = load, 
     )
     
     for i in range(load):
