@@ -121,9 +121,62 @@ function createWMInstructions() {
             </div>
 
             <p class="instruction-paragraph-left">
-                <strong>4. Pick an image by clicking on it.</strong><br><br> 
-                You can choose the matching image by clicking on it.<br><br> 
-                If you don't remember the original image make your best guess.
+                <strong>4. How to select an image</strong>
+                <br><br> 
+                You can choose the matching image by clicking on it.
+                <br><br>
+                If you're uncertain which image matches the original, 
+                that's okay — just make your best guess.
+            </p>
+            `
+            ],
+            [
+            `<div class="square" 
+                style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+            </div>
+                
+            <div>
+                <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+             </div>
+            
+            <p class="instruction-paragraph-left">
+                <strong>5. Timing</strong><br><br> 
+                You will have <strong>30 seconds</strong> to select an image on each trial. 
+                Please try to respond within this time window.
+                <br><br>
+                A small timer will appear at the center of the screen during the final 5 seconds 
+                to remind you that the trial is about to end automatically.
+            </p>
+            `
+            ],
+            [
+            `<div class="square" 
+                style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+            </div>
+                
+            <div>
+                <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+             </div>
+            
+             <div class="progress-bar" style="bottom: 140px;">
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" style="width: 10%;"></div>
+                    <div class="progress-marker" style="left: 33%"></div>
+                    <div class="progress-marker" style="left: 66%"></div>
+                </div>
+            </div>
+            
+            <p class="instruction-paragraph-left">
+                <strong>6. What about breaks?</strong><br><br> 
+                At the bottom of your screen, you'll see a progress bar to help you track your progress through the task. 
+                <br><br>
+                The marker on the progress bar indicate when breaks will occur.
+                <br><br>
+                You will have <strong>2 breaks</strong> during this task, each lasting up to 2 minutes. 
+                Each block between breaks takes approximately 8 minutes to complete.
+                <br>
             </p>
             `
             ],
@@ -185,8 +238,10 @@ function startingWM () {
                 </p>
                 <p class="instruction-paragraph">
                     Great! We will now start the experiment.
-                    The next break will be in ~15 minutes.<br><br>
-                    Attention, there will be <strong>no feedback</strong> in during the experiment.<br><br>
+                    The next break will be in ~8 minutes.<br><br>
+                    Attention, there will be <strong>no feedback</strong> 
+                    in during the experiment.<br><br>
+
                     Press <strong>enter</strong> to start.
                 </p>
                 <p class="continue-prompt">
@@ -324,6 +379,7 @@ function createWM(timeline_variables, jsPsych) {
                     data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                     data.trial_type = jsPsych.evaluateTimelineVariable('trial_type');
                     data.phase = 'encoding';
+                    data.serial  = 0;
                     data.timestamp = new Date().toLocaleTimeString()
                 }, 
             }],
@@ -338,78 +394,78 @@ function createWM(timeline_variables, jsPsych) {
         {
             timeline: (() => {
                 var encoding_slides = [];
-                const load = experimentSettings.memory_experiment.load;
-
+                var load = experimentSettings.memory_experiment.load
+                
                 for (let i = 0; i < load; i++) {
                     const encodingIndex = i + 1;
 
                     // Encoding trial
                     encoding_slides.push({
-                        type: jsPsychHtmlKeyboardResponse,
-                        choices: "NO_KEYS",
-                        trial_duration: function() {
-                            var encoding_time = jsPsych.evaluateTimelineVariable(`encoding_time`)
-                            var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
-                            return encoding_time/n_encoding
-                        },
-                        stimulus: function() {
-                            var file = jsPsych.evaluateTimelineVariable(`encoding_file_${encodingIndex}`)
-                            var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${encodingIndex}`)
-                            var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
+                        timeline: [
+                        {
+                            type: jsPsychHtmlKeyboardResponse,
+                            choices: "NO_KEYS",
+                            trial_duration: function() {
+                                var encoding_time = jsPsych.evaluateTimelineVariable(`encoding_time`)
+                                var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+                                return encoding_time/n_encoding
+                            },
+                            stimulus: function() {
+                                var file = jsPsych.evaluateTimelineVariable(`encoding_file_${encodingIndex}`)
+                                var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${encodingIndex}`)
+                                var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
 
-                            html =
-                            `<div style="width:500px; height:80vh;">
-                                <div>
-                                    <img src="${file}" class="image-object"
-                                    style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
+                                html =
+                                `<div style="width:500px; height:80vh;">
+                                    <div>
+                                        <img src="${file}" class="image-object"
+                                        style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
+                                    </div>
+                                `
+                                html +=
+                                `<div class="cross">
+                                    <div class="cross-vertical"></div>
+                                    <div class="cross-horizontal"></div>
                                 </div>
-                            `
-                            html +=
-                            `<div class="cross">
-                                <div class="cross-vertical"></div>
-                                <div class="cross-horizontal"></div>
-                            </div>
-                            </div>`
-                            return html;
+                                </div>`
+                                return html;
+                            },
+
+                            on_finish: function(data) {
+                                var file = jsPsych.evaluateTimelineVariable(`encoding_file_${encodingIndex}`)
+                                var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${encodingIndex}`)
+                                var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+                                var long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
+                                var encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
+
+                                data.long_encoding = long_encoding
+                                data.encoding_time = encoding_time/n_encoding
+                                data.stimulus = file
+                                data.theta = theta
+                                data.n_encoding = n_encoding
+                                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                                data.trial_type = jsPsych.evaluateTimelineVariable('trial_type');
+                                data.phase = 'encoding';
+                                data.encoding_position = encodingIndex;
+                                data.serial  = 1;
+                                data.timestamp = new Date().toLocaleTimeString()
+                            }
                         },
 
-                        on_finish: function(data) {
-                            var file = jsPsych.evaluateTimelineVariable(`encoding_file_${encodingIndex}`)
-                            var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${encodingIndex}`)
-                            var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
-                            var long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
-                            var encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
-                            
-                            data.long_encoding = long_encoding
-                            data.encoding_time = encoding_time/n_encoding
-                            data.stimulus = file
-                            data.theta = theta
-                            data.n_encoding = n_encoding
-                            data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                            data.trial_type = jsPsych.evaluateTimelineVariable('trial_type');
-                            data.phase = 'encoding';
-                            data.encoding_position = encodingIndex;
-                            data.timestamp = new Date().toLocaleTimeString()
-                        },
-                        conditional_function: function() {
-                            var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding');
-                            return encodingIndex <= n_encoding;
-                        }
-                    });
-
-                    // ISI
-                    encoding_slides.push({
-                        type: jsPsychHtmlKeyboardResponse,
-                        choices: "NO_KEYS",
-                        trial_duration: experimentSettings.timing.wm_isi,
-                        record_data: false,
-                        stimulus: function(){
-                            var html =
-                            `<div style="width:250px; height:80vh;">
-                                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                            </div>`
-                            return html;
-                        },
+                        // ISI
+                        {
+                            type: jsPsychHtmlKeyboardResponse,
+                            choices: "NO_KEYS",
+                            trial_duration: experimentSettings.timing.wm_isi,
+                            record_data: false,
+                            stimulus: function(){
+                                var html =
+                                `<div style="width:250px; height:80vh;">
+                                    <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
+                                </div>`
+                                return html;
+                                }
+                        }],
                         conditional_function: function() {
                             var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding');
                             return encodingIndex <= n_encoding;
@@ -418,6 +474,7 @@ function createWM(timeline_variables, jsPsych) {
                 }
                 return encoding_slides;
             })(),
+
             conditional_function: function() {
                 return experimentSettings.memory_experiment.serial == 1;
             }
@@ -455,15 +512,15 @@ function createWM(timeline_variables, jsPsych) {
             type: jsPsychHtmlButtonResponse,
             choices: ["left", "right"],
             button_layout: 'grid',
-            trial_duration: 20000,
+            trial_duration: 31000,
 
             on_load: function() {
                 startTimer(
                     radius=4,
-                    delay=15000,
+                    delay=25000,
                     duration=5000, 
                     top=50, 
-                    color="#00000021"
+                    color="#f57c00"
                 );
             },
 
@@ -513,20 +570,23 @@ function createWM(timeline_variables, jsPsych) {
                     </div>
                     `
 
-                // Progress bar using global counter
-                var total_trials =
-                    experimentSettings.memory_experiment.wm_trials +
-                    experimentSettings.memory_experiment.ncatch +
-                    experimentSettings.memory_experiment.practice_trials
+                // Progress bar
+                const { wm_trials, ncatch, practice_trials } = experimentSettings.memory_experiment;
+                const total_trials = wm_trials + ncatch + practice_trials;
+                const block_size = (wm_trials + ncatch) / 3;
+                const first_break = 100 * (practice_trials + block_size) / total_trials;
+                const second_break = 100 * (practice_trials + 2 * block_size) / total_trials;
 
+                
                 var progress_percent = (wm_trial_counter / total_trials) * 100
-                var progress_bar = `
-                    <div class="progress-bar">
+                var progress_bar = 
+                    `<div class="progress-bar">
                         <div class="progress-bar-track">
                             <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
+                            <div class="progress-marker" style="left: ${first_break}%"></div>
+                            <div class="progress-marker" style="left: ${second_break}%"></div>
                         </div>
-                    </div>
-                `
+                    </div>`
                 html += progress_bar
                 return html;
             },
@@ -584,17 +644,17 @@ function createWM(timeline_variables, jsPsych) {
             timeline: [{
                 type: jsPsychHtmlKeyboardResponse, 
                 stimulus: 
-                    `<div>
-                        <p class="instruction-header">
-                            <strong>Time out</strong>
+                    `<div class="timeout-warning">
+                        <p class="instruction-header warning-header">
+                            <strong>⏸ Time Out</strong>
                         </p>
-                        <p class="instruction-paragraph"> 
-                            You did not respond in the the last trial.<br><br>
-                            <strong>Please respond within max. 20 seconds after stimulus presentation.</strong><br><br>
-                            There are two 2 minute breaks during the task. Please, try to keep focused until the next break.
+                        <p class="instruction-paragraph warning-message"> 
+                            You did not respond in the last trial.<br><br>
+                            <strong>Please remember to respond within 30 seconds after the images appear.</strong><br><br>
+                            You're doing well! Let's stay focused until the next break.
                         </p>
                         <p class="continue-prompt">
-                            To continue press <strong>Enter</strong>
+                            Press <strong>Enter</strong> to continue
                         </p>
                     </div>`,
                 choices: ['Enter'],
@@ -650,12 +710,12 @@ function createWM(timeline_variables, jsPsych) {
                             </div>
 
                             <div style="cursor: pointer; width: 130px; height: 130px;
-                                    position: absolute; top: 50%; left: calc( 50% + 80px); transform: translate(-50%, -50%);">
+                                    position: absolute; top: 50%; left: calc( 50% + 75px); transform: translate(-50%, -50%);">
                                     <img src="${right_image}" class="image-button"/>
                             </div>
 
                             <div style="cursor: pointer; width: 130px; height: 130px;
-                                    position: absolute; top: 50%; left: calc( 50% - 80px); transform: translate(-50%, -50%);">
+                                    position: absolute; top: 50%; left: calc( 50% - 75px); transform: translate(-50%, -50%);">
                                     <img src="${left_image}" class="image-button" />
                             </div>
                         </div>`
