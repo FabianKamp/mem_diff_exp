@@ -5,6 +5,11 @@
         "subject_number": 3
     },
 
+    "stimuli": {
+        "exp_stimuli_dir": "stimuli/exp_stimuli_pilot_B",
+        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot_B"
+    },
+
     "vision_experiment": {
         "vision_trials": 177,
         "enable_button_after": 1200,
@@ -14,7 +19,7 @@
 
     "memory_experiment": {
         "load": 3,
-        "practice_trials": 9,
+        "practice_trials": 6,
         "wm_trials": 162,
         "lm_trials": 110, 
         "ncatch": 18, 
@@ -58,6 +63,6 @@
     },
 
     "feedback": {
-        "duration": 5000
+        "duration": 10000
     }
 }

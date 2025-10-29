@@ -7,9 +7,7 @@ from generate_token import generate_token
 
 # set seed
 np.random.seed(42) 
-
 out_dir = f"input_data/"
-image_dir = "stimuli"
 
 # load settings
 setting_file = "experimentSettings.json"
@@ -25,6 +23,9 @@ practice_trials = settings["memory_experiment"]["practice_trials"]
 wm_trials = settings["memory_experiment"]["wm_trials"]
 lm_trials = settings["memory_experiment"]["lm_trials"]
 ncatch = settings["memory_experiment"]["ncatch"]
+
+exp_stimuli_dir = settings["stimuli"]["exp_stimuli_dir"]
+dist_stimuli_dir = settings["stimuli"]["dist_stimuli_dir"]
 
 num_blocks = 3
 all_wm_trials = wm_trials + practice_trials
@@ -42,14 +43,16 @@ encoding_time_catch = settings["timing"]["encoding_time_catch"]
 if not os.path.exists(out_dir): 
     os.mkdir(out_dir)
 
-def get_image_paths(stimuli_folder): 
-    image_path = list(glob.glob(os.path.join(stimuli_folder, "**", "*.jpg"), recursive=True))
-    image_path = [os.path.join(stimuli_folder, i.split("stimuli/", 1)[-1]) for i in image_path 
-                  if ("instruction" not in i) & ("_archive" not in i)]
-    image_id = [int(i.split("/")[-1].rstrip(".jpg")) for i in image_path]
-    image_paths = pd.DataFrame(dict(image_id=image_id, image_path=image_path)).sort_values(by="image_id")
+def get_image_paths(): 
+    exp_image_paths = [os.path.join("stimuli", i.split("stimuli/", 1)[-1]) 
+                       for i in glob.glob(os.path.join(exp_stimuli_dir, "**", "*.jpg"))]
+    dist_image_paths = [os.path.join("stimuli", i.split("stimuli/", 1)[-1]) 
+                       for i in glob.glob(os.path.join(dist_stimuli_dir, "**", "*.jpg"))]
+    image_paths = exp_image_paths + dist_image_paths
+    image_id = [int(i.split("/")[-1].rstrip(".jpg")) for i in image_paths]
+    image_paths = pd.DataFrame(dict(image_id=image_id, image_path=image_paths)).sort_values(by="image_id")
     return image_paths
-image_paths = get_image_paths(image_dir)
+image_paths = get_image_paths()
 
 def get_file_path(image_id):
     file_path = image_paths.loc[image_paths.image_id == image_id, "image_path"]
@@ -176,7 +179,7 @@ while counter < subject_number:
 
     # randomize distractors 
     # distractor concepts should not overlap between wm and lm
-    dist_info = pd.read_csv("./stimuli/dist_stimuli/image_info.csv")
+    dist_info = pd.read_csv(os.path.join(dist_stimuli_dir,"image_info.csv"))
     
     # lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials-wm_trials, replace=False)
     lm_trials = (wm_trials//3)*2
