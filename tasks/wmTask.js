@@ -5,12 +5,12 @@ var experimentSettings = fetch(`experimentSettings.json`)
         experimentSettings = data;
     });
 
-// helper function
-// function convert2cartesian(rx, ry, theta) {
-//     const x = rx * Math.cos(theta);
-//     const y = ry * Math.sin(theta);
-//     return {x:x,y:y};
-// }
+// set up progress bar
+const { wm_trials, ncatch, practice_trials } = experimentSettings.memory_experiment;
+const total_trials = wm_trials + ncatch + practice_trials;
+const block_size = (wm_trials + ncatch) / 3;
+const first_break = 100 * (practice_trials + block_size) / total_trials;
+const second_break = 100 * (practice_trials + 2 * block_size) / total_trials;
 
 // superellipse version with n=3 for rounder edges
 function convert2cartesian(rx, ry, theta, n=3) {
@@ -296,8 +296,6 @@ function endingWM() {
 }
 
 // WM TASK
-var wm_trial_counter = 0;
-
 function createWM(timeline_variables, jsPsych) {
     var wm_timeline = []
     // Preload
@@ -591,15 +589,9 @@ function createWM(timeline_variables, jsPsych) {
                     </div>
                     `
 
-                // Progress bar
-                const { wm_trials, ncatch, practice_trials } = experimentSettings.memory_experiment;
-                const total_trials = wm_trials + ncatch + practice_trials;
-                const block_size = (wm_trials + ncatch) / 3;
-                const first_break = 100 * (practice_trials + block_size) / total_trials;
-                const second_break = 100 * (practice_trials + 2 * block_size) / total_trials;
-
+                var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                var progress_percent = (trial_id / total_trials) * 100
                 
-                var progress_percent = (wm_trial_counter / total_trials) * 100
                 var progress_bar = 
                     `<div class="progress-bar">
                         <div class="progress-bar-track">
@@ -608,16 +600,13 @@ function createWM(timeline_variables, jsPsych) {
                             <div class="progress-marker" style="left: ${second_break}%"></div>
                         </div>
                     </div>`
+                
                 html += progress_bar
                 return html;
             },
 
             on_finish: function(data) {
                 resetTimer();
-
-                // Increment global trial counter
-                wm_trial_counter++;
-
                 // stimulus
                 var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
                 var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
