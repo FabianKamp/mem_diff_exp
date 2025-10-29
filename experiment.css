@@ -151,7 +151,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 2px;
-    height: 20px;
+    height: 15px;
     background-color: black;
 }
 
@@ -160,19 +160,9 @@
     top: 50%; 
     left: 50%; 
     transform: translate(-50%, -50%); 
-    width: 20px;
+    width: 15px;
     height: 2px;
     background-color: black;
-}
-
-.next-trial-btn #jspsych-html-slider-response-next {
-    position: absolute;
-    top: 83%;
-    left: 50%;
-    margin: 0 auto;
-    display: block;
-    transform: translateX(-50%);
-    font-family: 'Courier New', monospace;
 }
 
 :root {
@@ -264,4 +254,13 @@
 
 .warning-message strong {
     color: #e65100; /* Darker orange for emphasis */
+}
+
+.next-trial-button {
+    position: fixed !important;
+    bottom: 25px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    font-family: 'Courier New', monospace !important;
+    margin: 0 !important;
 }
