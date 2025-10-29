@@ -1,6 +1,5 @@
 [
     {
-        "trial_id": 0,
         "wm_id": 138,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/138/1138.jpg",
         "sample_position": 3,
@@ -29,10 +28,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 0
     },
     {
-        "trial_id": 1,
         "wm_id": 31,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/031/1031.jpg",
         "sample_position": 2,
@@ -61,10 +60,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 1
     },
     {
-        "trial_id": 2,
         "wm_id": 120,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/120/1120.jpg",
         "sample_position": 2,
@@ -93,10 +92,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 2
     },
     {
-        "trial_id": 3,
         "wm_id": 30,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/030/1030.jpg",
         "sample_position": 1,
@@ -125,10 +124,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 3
     },
     {
-        "trial_id": 4,
         "wm_id": 143,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/143/1143.jpg",
         "sample_position": 2,
@@ -157,10 +156,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 4
     },
     {
-        "trial_id": 5,
         "wm_id": 162,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/162/1162.jpg",
         "sample_position": 1,
@@ -189,10 +188,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 5
     },
     {
-        "trial_id": 6,
         "wm_id": 165,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/165/1165.jpg",
         "sample_position": 2,
@@ -221,10 +220,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 6
     },
     {
-        "trial_id": 7,
         "wm_id": 52,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/052/1052.jpg",
         "sample_position": 3,
@@ -253,10 +252,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 7
     },
     {
-        "trial_id": 8,
         "wm_id": 106,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/106/1106.jpg",
         "sample_position": 2,
@@ -285,10 +284,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 8
     },
     {
-        "trial_id": 9,
         "wm_id": 61,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/061/1061.jpg",
         "sample_position": 1,
@@ -317,10 +316,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 9
     },
     {
-        "trial_id": 10,
         "wm_id": 16,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/016/1016.jpg",
         "sample_position": 2,
@@ -349,12 +348,12 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 10
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 0,
         "sample_position": 1,
         "recognition_theta": 2.811525250988226,
         "trial_type": "catch",
@@ -371,10 +370,10 @@
         "encoding_theta_1": 2.811525250988226,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 11
     },
     {
-        "trial_id": 11,
         "wm_id": 157,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/157/1157.jpg",
         "sample_position": 2,
@@ -403,10 +402,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 12
     },
     {
-        "trial_id": 12,
         "wm_id": 134,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/134/1134.jpg",
         "sample_position": 2,
@@ -435,10 +434,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 13
     },
     {
-        "trial_id": 13,
         "wm_id": 46,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/046/1046.jpg",
         "sample_position": 1,
@@ -467,10 +466,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 14
     },
     {
-        "trial_id": 14,
         "wm_id": 69,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/069/1069.jpg",
         "sample_position": 1,
@@ -499,10 +498,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 15
     },
     {
-        "trial_id": 15,
         "wm_id": 86,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/086/1086.jpg",
         "sample_position": 1,
@@ -531,10 +530,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 16
     },
     {
-        "trial_id": 16,
         "wm_id": 25,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/025/1025.jpg",
         "sample_position": 2,
@@ -563,10 +562,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 17
     },
     {
-        "trial_id": 17,
         "wm_id": 110,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/110/1110.jpg",
         "sample_position": 1,
@@ -595,10 +594,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 18
     },
     {
-        "trial_id": 18,
         "wm_id": 76,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/076/1076.jpg",
         "sample_position": 2,
@@ -627,12 +626,12 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 19
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 1,
         "sample_position": 1,
         "recognition_theta": 2.9800420346191103,
         "trial_type": "catch",
@@ -649,10 +648,10 @@
         "encoding_theta_1": 2.9800420346191103,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 20
     },
     {
-        "trial_id": 19,
         "wm_id": 109,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/109/1109.jpg",
         "sample_position": 2,
@@ -681,10 +680,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 21
     },
     {
-        "trial_id": 20,
         "wm_id": 20,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/020/1020.jpg",
         "sample_position": 1,
@@ -713,10 +712,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 22
     },
     {
-        "trial_id": 21,
         "wm_id": 17,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/017/1017.jpg",
         "sample_position": 2,
@@ -745,10 +744,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 23
     },
     {
-        "trial_id": 22,
         "wm_id": 32,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/032/1032.jpg",
         "sample_position": 1,
@@ -777,10 +776,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 24
     },
     {
-        "trial_id": 23,
         "wm_id": 19,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/019/1019.jpg",
         "sample_position": 1,
@@ -809,10 +808,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 25
     },
     {
-        "trial_id": 24,
         "wm_id": 13,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/013/1013.jpg",
         "sample_position": 2,
@@ -841,10 +840,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 26
     },
     {
-        "trial_id": 25,
         "wm_id": 10,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/010/1010.jpg",
         "sample_position": 2,
@@ -873,10 +872,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 27
     },
     {
-        "trial_id": 26,
         "wm_id": 83,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/083/1083.jpg",
         "sample_position": 1,
@@ -905,10 +904,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 28
     },
     {
-        "trial_id": 27,
         "wm_id": 99,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/099/1099.jpg",
         "sample_position": 1,
@@ -937,12 +936,12 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 29
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 2,
         "sample_position": 1,
         "recognition_theta": 3.712529625485005,
         "trial_type": "catch",
@@ -959,10 +958,10 @@
         "encoding_theta_1": 3.712529625485005,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 30
     },
     {
-        "trial_id": 28,
         "wm_id": 77,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/077/1077.jpg",
         "sample_position": 2,
@@ -991,10 +990,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 31
     },
     {
-        "trial_id": 29,
         "wm_id": 56,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/056/1056.jpg",
         "sample_position": 1,
@@ -1023,10 +1022,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 32
     },
     {
-        "trial_id": 30,
         "wm_id": 43,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/043/1043.jpg",
         "sample_position": 2,
@@ -1055,10 +1054,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 33
     },
     {
-        "trial_id": 31,
         "wm_id": 57,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/057/1057.jpg",
         "sample_position": 2,
@@ -1087,10 +1086,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 34
     },
     {
-        "trial_id": 32,
         "wm_id": 149,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/149/1149.jpg",
         "sample_position": 2,
@@ -1119,10 +1118,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 35
     },
     {
-        "trial_id": 33,
         "wm_id": 112,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/112/1112.jpg",
         "sample_position": 2,
@@ -1151,10 +1150,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 36
     },
     {
-        "trial_id": 34,
         "wm_id": 70,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/070/1070.jpg",
         "sample_position": 1,
@@ -1183,10 +1182,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 37
     },
     {
-        "trial_id": 35,
         "wm_id": 137,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/137/1137.jpg",
         "sample_position": 2,
@@ -1215,12 +1214,12 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 38
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 3,
         "sample_position": 1,
         "recognition_theta": 3.3741175606546676,
         "trial_type": "catch",
@@ -1237,10 +1236,10 @@
         "encoding_theta_1": 3.3741175606546676,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 39
     },
     {
-        "trial_id": 36,
         "wm_id": 3,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/003/1003.jpg",
         "sample_position": 1,
@@ -1269,10 +1268,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 40
     },
     {
-        "trial_id": 37,
         "wm_id": 94,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/094/1094.jpg",
         "sample_position": 3,
@@ -1301,10 +1300,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 41
     },
     {
-        "trial_id": 38,
         "wm_id": 135,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/135/1135.jpg",
         "sample_position": 2,
@@ -1333,10 +1332,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 42
     },
     {
-        "trial_id": 39,
         "wm_id": 153,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/153/1153.jpg",
         "sample_position": 1,
@@ -1365,10 +1364,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 43
     },
     {
-        "trial_id": 40,
         "wm_id": 91,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/091/1091.jpg",
         "sample_position": 1,
@@ -1397,10 +1396,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 44
     },
     {
-        "trial_id": 41,
         "wm_id": 115,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/115/1115.jpg",
         "sample_position": 2,
@@ -1429,10 +1428,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 45
     },
     {
-        "trial_id": 42,
         "wm_id": 27,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/027/1027.jpg",
         "sample_position": 2,
@@ -1461,10 +1460,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 46
     },
     {
-        "trial_id": 43,
         "wm_id": 145,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/145/1145.jpg",
         "sample_position": 3,
@@ -1493,10 +1492,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 47
     },
     {
-        "trial_id": 44,
         "wm_id": 136,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/136/1136.jpg",
         "sample_position": 2,
@@ -1525,12 +1524,12 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 48
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 4,
         "sample_position": 1,
         "recognition_theta": 5.366694750770826,
         "trial_type": "catch",
@@ -1547,10 +1546,10 @@
         "encoding_theta_1": 5.366694750770826,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 49
     },
     {
-        "trial_id": 45,
         "wm_id": 98,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/098/1098.jpg",
         "sample_position": 3,
@@ -1579,10 +1578,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 50
     },
     {
-        "trial_id": 46,
         "wm_id": 66,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/066/1066.jpg",
         "sample_position": 1,
@@ -1611,10 +1610,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 51
     },
     {
-        "trial_id": 47,
         "wm_id": 37,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/037/1037.jpg",
         "sample_position": 2,
@@ -1643,10 +1642,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 52
     },
     {
-        "trial_id": 48,
         "wm_id": 127,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/127/1127.jpg",
         "sample_position": 2,
@@ -1675,10 +1674,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 53
     },
     {
-        "trial_id": 49,
         "wm_id": 23,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/023/1023.jpg",
         "sample_position": 2,
@@ -1707,10 +1706,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 54
     },
     {
-        "trial_id": 50,
         "wm_id": 102,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/102/1102.jpg",
         "sample_position": 3,
@@ -1739,10 +1738,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 55
     },
     {
-        "trial_id": 51,
         "wm_id": 160,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/160/1160.jpg",
         "sample_position": 1,
@@ -1771,10 +1770,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 56
     },
     {
-        "trial_id": 52,
         "wm_id": 97,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/097/1097.jpg",
         "sample_position": 2,
@@ -1803,12 +1802,12 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 57
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 5,
         "sample_position": 1,
         "recognition_theta": 0.3109979026230266,
         "trial_type": "catch",
@@ -1825,10 +1824,10 @@
         "encoding_theta_1": 0.3109979026230266,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 58
     },
     {
-        "trial_id": 53,
         "wm_id": 12,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/012/1012.jpg",
         "sample_position": 1,
@@ -1857,10 +1856,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 59
     },
     {
-        "trial_id": 54,
         "wm_id": 68,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/068/1068.jpg",
         "sample_position": 2,
@@ -1889,10 +1888,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 60
     },
     {
-        "trial_id": 55,
         "wm_id": 133,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/133/1133.jpg",
         "sample_position": 1,
@@ -1921,10 +1920,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 61
     },
     {
-        "trial_id": 56,
         "wm_id": 7,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/007/1007.jpg",
         "sample_position": 1,
@@ -1953,10 +1952,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 62
     },
     {
-        "trial_id": 57,
         "wm_id": 28,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/028/1028.jpg",
         "sample_position": 2,
@@ -1985,10 +1984,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 63
     },
     {
-        "trial_id": 58,
         "wm_id": 79,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/079/1079.jpg",
         "sample_position": 2,
@@ -2017,10 +2016,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 64
     },
     {
-        "trial_id": 59,
         "wm_id": 146,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/146/1146.jpg",
         "sample_position": 1,
@@ -2049,10 +2048,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 65
     },
     {
-        "trial_id": 60,
         "wm_id": 39,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/039/1039.jpg",
         "sample_position": 2,
@@ -2081,10 +2080,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 66
     },
     {
-        "trial_id": 61,
         "wm_id": 42,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/042/1042.jpg",
         "sample_position": 3,
@@ -2113,12 +2112,12 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 67
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 6,
         "sample_position": 1,
         "recognition_theta": 5.235885579701153,
         "trial_type": "catch",
@@ -2135,10 +2134,10 @@
         "encoding_theta_1": 5.235885579701153,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 68
     },
     {
-        "trial_id": 62,
         "wm_id": 5,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/005/1005.jpg",
         "sample_position": 1,
@@ -2167,10 +2166,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 69
     },
     {
-        "trial_id": 63,
         "wm_id": 142,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/142/1142.jpg",
         "sample_position": 2,
@@ -2199,10 +2198,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 70
     },
     {
-        "trial_id": 64,
         "wm_id": 33,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/033/1033.jpg",
         "sample_position": 3,
@@ -2231,10 +2230,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 71
     },
     {
-        "trial_id": 65,
         "wm_id": 67,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/067/1067.jpg",
         "sample_position": 2,
@@ -2263,10 +2262,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 72
     },
     {
-        "trial_id": 66,
         "wm_id": 128,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/128/1128.jpg",
         "sample_position": 3,
@@ -2295,10 +2294,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 73
     },
     {
-        "trial_id": 67,
         "wm_id": 96,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/096/1096.jpg",
         "sample_position": 1,
@@ -2327,10 +2326,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 74
     },
     {
-        "trial_id": 68,
         "wm_id": 11,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/011/1011.jpg",
         "sample_position": 1,
@@ -2359,10 +2358,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 75
     },
     {
-        "trial_id": 69,
         "wm_id": 101,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/101/1101.jpg",
         "sample_position": 1,
@@ -2391,10 +2390,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 76
     },
     {
-        "trial_id": 70,
         "wm_id": 116,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/116/1116.jpg",
         "sample_position": 2,
@@ -2423,12 +2422,12 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 77
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 7,
         "sample_position": 1,
         "recognition_theta": 5.302534726329209,
         "trial_type": "catch",
@@ -2445,10 +2444,10 @@
         "encoding_theta_1": 5.302534726329209,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 78
     },
     {
-        "trial_id": 71,
         "wm_id": 1,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/001/1001.jpg",
         "sample_position": 1,
@@ -2477,10 +2476,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 79
     },
     {
-        "trial_id": 72,
         "wm_id": 126,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/126/1126.jpg",
         "sample_position": 2,
@@ -2509,10 +2508,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 80
     },
     {
-        "trial_id": 73,
         "wm_id": 118,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/118/1118.jpg",
         "sample_position": 1,
@@ -2541,10 +2540,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 81
     },
     {
-        "trial_id": 74,
         "wm_id": 65,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/065/1065.jpg",
         "sample_position": 1,
@@ -2573,10 +2572,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 82
     },
     {
-        "trial_id": 75,
         "wm_id": 45,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/045/1045.jpg",
         "sample_position": 2,
@@ -2605,10 +2604,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 83
     },
     {
-        "trial_id": 76,
         "wm_id": 121,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/121/1121.jpg",
         "sample_position": 2,
@@ -2637,10 +2636,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 84
     },
     {
-        "trial_id": 77,
         "wm_id": 29,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/029/1029.jpg",
         "sample_position": 3,
@@ -2669,10 +2668,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 85
     },
     {
-        "trial_id": 78,
         "wm_id": 41,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/041/1041.jpg",
         "sample_position": 2,
@@ -2701,12 +2700,12 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 86
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 8,
         "sample_position": 1,
         "recognition_theta": 1.7901298947809383,
         "trial_type": "catch",
@@ -2723,10 +2722,10 @@
         "encoding_theta_1": 1.7901298947809383,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 87
     },
     {
-        "trial_id": 79,
         "wm_id": 119,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/119/1119.jpg",
         "sample_position": 1,
@@ -2755,10 +2754,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 88
     },
     {
-        "trial_id": 80,
         "wm_id": 26,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/026/1026.jpg",
         "sample_position": 3,
@@ -2787,10 +2786,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 89
     },
     {
-        "trial_id": 81,
         "wm_id": 24,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/024/1024.jpg",
         "sample_position": 1,
@@ -2819,10 +2818,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 90
     },
     {
-        "trial_id": 82,
         "wm_id": 124,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/124/1124.jpg",
         "sample_position": 2,
@@ -2851,10 +2850,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 91
     },
     {
-        "trial_id": 83,
         "wm_id": 82,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/082/1082.jpg",
         "sample_position": 1,
@@ -2883,10 +2882,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 92
     },
     {
-        "trial_id": 84,
         "wm_id": 80,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/080/1080.jpg",
         "sample_position": 1,
@@ -2915,10 +2914,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 93
     },
     {
-        "trial_id": 85,
         "wm_id": 85,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/085/1085.jpg",
         "sample_position": 2,
@@ -2947,10 +2946,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 94
     },
     {
-        "trial_id": 86,
         "wm_id": 40,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/040/1040.jpg",
         "sample_position": 2,
@@ -2979,10 +2978,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 95
     },
     {
-        "trial_id": 87,
         "wm_id": 95,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/095/1095.jpg",
         "sample_position": 2,
@@ -3011,12 +3010,12 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 96
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 9,
         "sample_position": 1,
         "recognition_theta": 2.9081846031549397,
         "trial_type": "catch",
@@ -3033,10 +3032,10 @@
         "encoding_theta_1": 2.9081846031549397,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 97
     },
     {
-        "trial_id": 88,
         "wm_id": 87,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/087/1087.jpg",
         "sample_position": 2,
@@ -3065,10 +3064,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 98
     },
     {
-        "trial_id": 89,
         "wm_id": 113,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/113/1113.jpg",
         "sample_position": 1,
@@ -3097,10 +3096,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 99
     },
     {
-        "trial_id": 90,
         "wm_id": 164,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/164/1164.jpg",
         "sample_position": 1,
@@ -3129,10 +3128,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 100
     },
     {
-        "trial_id": 91,
         "wm_id": 141,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/141/1141.jpg",
         "sample_position": 2,
@@ -3161,10 +3160,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 101
     },
     {
-        "trial_id": 92,
         "wm_id": 48,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/048/1048.jpg",
         "sample_position": 3,
@@ -3193,10 +3192,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 102
     },
     {
-        "trial_id": 93,
         "wm_id": 129,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/129/1129.jpg",
         "sample_position": 2,
@@ -3225,10 +3224,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 103
     },
     {
-        "trial_id": 94,
         "wm_id": 62,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/062/1062.jpg",
         "sample_position": 2,
@@ -3257,10 +3256,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 104
     },
     {
-        "trial_id": 95,
         "wm_id": 74,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/074/1074.jpg",
         "sample_position": 1,
@@ -3289,12 +3288,12 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 105
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 10,
         "sample_position": 1,
         "recognition_theta": 2.755418587811158,
         "trial_type": "catch",
@@ -3311,10 +3310,10 @@
         "encoding_theta_1": 2.755418587811158,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 106
     },
     {
-        "trial_id": 96,
         "wm_id": 34,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/034/1034.jpg",
         "sample_position": 2,
@@ -3343,10 +3342,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 107
     },
     {
-        "trial_id": 97,
         "wm_id": 158,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/158/1158.jpg",
         "sample_position": 2,
@@ -3375,10 +3374,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 108
     },
     {
-        "trial_id": 98,
         "wm_id": 125,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/125/1125.jpg",
         "sample_position": 1,
@@ -3407,10 +3406,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 109
     },
     {
-        "trial_id": 99,
         "wm_id": 132,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/132/1132.jpg",
         "sample_position": 2,
@@ -3439,10 +3438,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 110
     },
     {
-        "trial_id": 100,
         "wm_id": 63,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/063/1063.jpg",
         "sample_position": 1,
@@ -3471,10 +3470,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 111
     },
     {
-        "trial_id": 101,
         "wm_id": 167,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/167/1167.jpg",
         "sample_position": 1,
@@ -3503,10 +3502,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 112
     },
     {
-        "trial_id": 102,
         "wm_id": 105,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/105/1105.jpg",
         "sample_position": 1,
@@ -3535,10 +3534,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 113
     },
     {
-        "trial_id": 103,
         "wm_id": 139,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/139/1139.jpg",
         "sample_position": 2,
@@ -3567,10 +3566,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 114
     },
     {
-        "trial_id": 104,
         "wm_id": 54,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/054/1054.jpg",
         "sample_position": 3,
@@ -3599,12 +3598,12 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 115
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 11,
         "sample_position": 1,
         "recognition_theta": 1.3729377806881167,
         "trial_type": "catch",
@@ -3621,10 +3620,10 @@
         "encoding_theta_1": 1.3729377806881167,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 116
     },
     {
-        "trial_id": 105,
         "wm_id": 6,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/006/1006.jpg",
         "sample_position": 2,
@@ -3653,10 +3652,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 117
     },
     {
-        "trial_id": 106,
         "wm_id": 123,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/123/1123.jpg",
         "sample_position": 2,
@@ -3685,10 +3684,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 118
     },
     {
-        "trial_id": 107,
         "wm_id": 4,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/004/1004.jpg",
         "sample_position": 1,
@@ -3717,10 +3716,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 119
     },
     {
-        "trial_id": 108,
         "wm_id": 156,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/156/1156.jpg",
         "sample_position": 1,
@@ -3749,10 +3748,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 120
     },
     {
-        "trial_id": 109,
         "wm_id": 50,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/050/1050.jpg",
         "sample_position": 2,
@@ -3781,10 +3780,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 121
     },
     {
-        "trial_id": 110,
         "wm_id": 36,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/036/1036.jpg",
         "sample_position": 2,
@@ -3813,10 +3812,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 122
     },
     {
-        "trial_id": 111,
         "wm_id": 81,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/081/1081.jpg",
         "sample_position": 1,
@@ -3845,10 +3844,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 123
     },
     {
-        "trial_id": 112,
         "wm_id": 78,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/078/1078.jpg",
         "sample_position": 2,
@@ -3877,10 +3876,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 124
     },
     {
-        "trial_id": 113,
         "wm_id": 35,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/035/1035.jpg",
         "sample_position": 1,
@@ -3909,12 +3908,12 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 125
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 12,
         "sample_position": 1,
         "recognition_theta": 2.4931481195479286,
         "trial_type": "catch",
@@ -3931,10 +3930,10 @@
         "encoding_theta_1": 2.4931481195479286,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 126
     },
     {
-        "trial_id": 114,
         "wm_id": 47,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/047/1047.jpg",
         "sample_position": 2,
@@ -3963,10 +3962,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 127
     },
     {
-        "trial_id": 115,
         "wm_id": 8,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/008/1008.jpg",
         "sample_position": 2,
@@ -3995,10 +3994,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 128
     },
     {
-        "trial_id": 116,
         "wm_id": 44,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/044/1044.jpg",
         "sample_position": 2,
@@ -4027,10 +4026,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 129
     },
     {
-        "trial_id": 117,
         "wm_id": 71,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/071/1071.jpg",
         "sample_position": 2,
@@ -4059,10 +4058,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 130
     },
     {
-        "trial_id": 118,
         "wm_id": 148,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/148/1148.jpg",
         "sample_position": 1,
@@ -4091,10 +4090,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 131
     },
     {
-        "trial_id": 119,
         "wm_id": 111,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/111/1111.jpg",
         "sample_position": 2,
@@ -4123,10 +4122,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 132
     },
     {
-        "trial_id": 120,
         "wm_id": 92,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/092/1092.jpg",
         "sample_position": 1,
@@ -4155,10 +4154,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 133
     },
     {
-        "trial_id": 121,
         "wm_id": 84,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/084/1084.jpg",
         "sample_position": 2,
@@ -4187,12 +4186,12 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 134
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 13,
         "sample_position": 1,
         "recognition_theta": 0.2788965979223475,
         "trial_type": "catch",
@@ -4209,10 +4208,10 @@
         "encoding_theta_1": 0.2788965979223475,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 135
     },
     {
-        "trial_id": 122,
         "wm_id": 151,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/151/1151.jpg",
         "sample_position": 2,
@@ -4241,10 +4240,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 136
     },
     {
-        "trial_id": 123,
         "wm_id": 155,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/155/1155.jpg",
         "sample_position": 1,
@@ -4273,10 +4272,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 137
     },
     {
-        "trial_id": 124,
         "wm_id": 90,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/090/1090.jpg",
         "sample_position": 1,
@@ -4305,10 +4304,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 138
     },
     {
-        "trial_id": 125,
         "wm_id": 9,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/009/1009.jpg",
         "sample_position": 2,
@@ -4337,10 +4336,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 139
     },
     {
-        "trial_id": 126,
         "wm_id": 161,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/161/1161.jpg",
         "sample_position": 1,
@@ -4369,10 +4368,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 140
     },
     {
-        "trial_id": 127,
         "wm_id": 114,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/114/1114.jpg",
         "sample_position": 2,
@@ -4401,10 +4400,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 141
     },
     {
-        "trial_id": 128,
         "wm_id": 14,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/014/1014.jpg",
         "sample_position": 2,
@@ -4433,10 +4432,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 142
     },
     {
-        "trial_id": 129,
         "wm_id": 60,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/060/1060.jpg",
         "sample_position": 1,
@@ -4465,10 +4464,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 143
     },
     {
-        "trial_id": 130,
         "wm_id": 144,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/144/1144.jpg",
         "sample_position": 3,
@@ -4497,12 +4496,12 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 144
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 14,
         "sample_position": 1,
         "recognition_theta": 1.7456075657123713,
         "trial_type": "catch",
@@ -4519,10 +4518,10 @@
         "encoding_theta_1": 1.7456075657123713,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 145
     },
     {
-        "trial_id": 131,
         "wm_id": 18,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/018/1018.jpg",
         "sample_position": 3,
@@ -4551,10 +4550,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 146
     },
     {
-        "trial_id": 132,
         "wm_id": 73,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/073/1073.jpg",
         "sample_position": 1,
@@ -4583,10 +4582,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 147
     },
     {
-        "trial_id": 133,
         "wm_id": 147,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/147/1147.jpg",
         "sample_position": 1,
@@ -4615,10 +4614,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 148
     },
     {
-        "trial_id": 134,
         "wm_id": 140,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/140/1140.jpg",
         "sample_position": 1,
@@ -4647,10 +4646,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 149
     },
     {
-        "trial_id": 135,
         "wm_id": 154,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/154/1154.jpg",
         "sample_position": 1,
@@ -4679,10 +4678,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 150
     },
     {
-        "trial_id": 136,
         "wm_id": 64,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/064/1064.jpg",
         "sample_position": 1,
@@ -4711,10 +4710,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 151
     },
     {
-        "trial_id": 137,
         "wm_id": 55,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/055/1055.jpg",
         "sample_position": 1,
@@ -4743,10 +4742,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 152
     },
     {
-        "trial_id": 138,
         "wm_id": 108,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/108/1108.jpg",
         "sample_position": 1,
@@ -4775,12 +4774,12 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 153
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 15,
         "sample_position": 1,
         "recognition_theta": 5.131365445427413,
         "trial_type": "catch",
@@ -4797,10 +4796,10 @@
         "encoding_theta_1": 5.131365445427413,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 154
     },
     {
-        "trial_id": 139,
         "wm_id": 51,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/051/1051.jpg",
         "sample_position": 1,
@@ -4829,10 +4828,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 155
     },
     {
-        "trial_id": 140,
         "wm_id": 166,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/166/1166.jpg",
         "sample_position": 2,
@@ -4861,10 +4860,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 156
     },
     {
-        "trial_id": 141,
         "wm_id": 59,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/059/1059.jpg",
         "sample_position": 1,
@@ -4893,10 +4892,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 157
     },
     {
-        "trial_id": 142,
         "wm_id": 49,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/049/1049.jpg",
         "sample_position": 1,
@@ -4925,10 +4924,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 158
     },
     {
-        "trial_id": 143,
         "wm_id": 89,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/089/1089.jpg",
         "sample_position": 2,
@@ -4957,10 +4956,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 159
     },
     {
-        "trial_id": 144,
         "wm_id": 22,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/022/1022.jpg",
         "sample_position": 2,
@@ -4989,10 +4988,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 160
     },
     {
-        "trial_id": 145,
         "wm_id": 58,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/058/1058.jpg",
         "sample_position": 1,
@@ -5021,10 +5020,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 161
     },
     {
-        "trial_id": 146,
         "wm_id": 163,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/163/1163.jpg",
         "sample_position": 1,
@@ -5053,10 +5052,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 162
     },
     {
-        "trial_id": 147,
         "wm_id": 130,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/130/1130.jpg",
         "sample_position": 1,
@@ -5085,12 +5084,12 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 163
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 16,
         "sample_position": 1,
         "recognition_theta": 1.7879576734138416,
         "trial_type": "catch",
@@ -5107,10 +5106,10 @@
         "encoding_theta_1": 1.7879576734138416,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 164
     },
     {
-        "trial_id": 148,
         "wm_id": 38,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/038/1038.jpg",
         "sample_position": 2,
@@ -5139,10 +5138,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 165
     },
     {
-        "trial_id": 149,
         "wm_id": 159,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/159/1159.jpg",
         "sample_position": 1,
@@ -5171,10 +5170,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 166
     },
     {
-        "trial_id": 150,
         "wm_id": 2,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/002/1002.jpg",
         "sample_position": 1,
@@ -5203,10 +5202,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 167
     },
     {
-        "trial_id": 151,
         "wm_id": 53,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/053/1053.jpg",
         "sample_position": 2,
@@ -5235,10 +5234,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 168
     },
     {
-        "trial_id": 152,
         "wm_id": 150,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/150/1150.jpg",
         "sample_position": 3,
@@ -5267,10 +5266,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 169
     },
     {
-        "trial_id": 153,
         "wm_id": 131,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/131/1131.jpg",
         "sample_position": 1,
@@ -5299,10 +5298,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 170
     },
     {
-        "trial_id": 154,
         "wm_id": 152,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/152/1152.jpg",
         "sample_position": 2,
@@ -5331,10 +5330,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 171
     },
     {
-        "trial_id": 155,
         "wm_id": 104,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/104/1104.jpg",
         "sample_position": 2,
@@ -5363,10 +5362,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 172
     },
     {
-        "trial_id": 156,
         "wm_id": 100,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/100/1100.jpg",
         "sample_position": 2,
@@ -5395,12 +5394,12 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 173
     },
     {
         "wm_id": 9999,
         "condition": 9999,
-        "trial_id": 17,
         "sample_position": 1,
         "recognition_theta": 5.140944119315344,
         "trial_type": "catch",
@@ -5417,10 +5416,10 @@
         "encoding_theta_1": 5.140944119315344,
         "encoding_time": 3000,
         "n_encoding": 1,
-        "subject_id": 3
+        "subject_id": 3,
+        "trial_id": 174
     },
     {
-        "trial_id": 157,
         "wm_id": 117,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/117/1117.jpg",
         "sample_position": 3,
@@ -5449,10 +5448,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 175
     },
     {
-        "trial_id": 158,
         "wm_id": 88,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/088/1088.jpg",
         "sample_position": 1,
@@ -5481,10 +5480,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0
+        "correct_response": 0,
+        "trial_id": 176
     },
     {
-        "trial_id": 159,
         "wm_id": 75,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/075/1075.jpg",
         "sample_position": 3,
@@ -5513,10 +5512,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 177
     },
     {
-        "trial_id": 160,
         "wm_id": 122,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/122/1122.jpg",
         "sample_position": 3,
@@ -5545,10 +5544,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 178
     },
     {
-        "trial_id": 161,
         "wm_id": 168,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/168/1168.jpg",
         "sample_position": 1,
@@ -5577,10 +5576,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 179
     },
     {
-        "trial_id": 162,
         "wm_id": 21,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/021/1021.jpg",
         "sample_position": 2,
@@ -5609,10 +5608,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 180
     },
     {
-        "trial_id": 163,
         "wm_id": 72,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/072/1072.jpg",
         "sample_position": 1,
@@ -5641,10 +5640,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 181
     },
     {
-        "trial_id": 164,
         "wm_id": 107,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/107/1107.jpg",
         "sample_position": 2,
@@ -5673,10 +5672,10 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 182
     },
     {
-        "trial_id": 165,
         "wm_id": 15,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/015/1015.jpg",
         "sample_position": 2,
@@ -5705,10 +5704,10 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 183
     },
     {
-        "trial_id": 166,
         "wm_id": 93,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/093/1093.jpg",
         "sample_position": 2,
@@ -5737,10 +5736,10 @@
         "condition": 1,
         "condition_name": "mixed",
         "target_correct": 0,
-        "correct_response": 9999
+        "correct_response": 9999,
+        "trial_id": 184
     },
     {
-        "trial_id": 167,
         "wm_id": 103,
         "wm_sample_file": "stimuli/exp_stimuli_pilot_B/103/1103.jpg",
         "sample_position": 1,
@@ -5769,7 +5768,8 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 1
+        "correct_response": 1,
+        "trial_id": 185
     },
     {
         "trial_id": 0,

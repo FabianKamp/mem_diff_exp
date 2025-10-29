@@ -101,7 +101,6 @@ def generate_catch_trials(catch_ids):
     catch_trial_data = dict(
         wm_id = nan,
         condition = nan,
-        trial_id = np.arange(ncatch), 
         sample_position = 1,
         recognition_theta = encoding_thetas,
         trial_type = "catch",
@@ -228,7 +227,6 @@ while counter < subject_number:
 
     # assemble together
     wm_trial_data = dict(
-        trial_id = np.arange(all_wm_trials), 
         wm_id = wm_ids.astype(int),
         wm_sample_file = wm_sample_files,
         sample_position = sample_positions,
@@ -401,6 +399,10 @@ while counter < subject_number:
         for p, catch_trial in zip(reversed(catch_positions), reversed(catch_json_data)):
             wm_json_data.insert(p,catch_trial)
         
+        # update wm trial_ids
+        _ = [trial_dict.update(trial_id = trial_id) for (trial_id,trial_dict) in enumerate(wm_json_data)]
+
+
         # combine wm and lm data
         combined_json_data = wm_json_data + lm_json_data
         combined_file_path = os.path.join(out_dir, f"input_{session_id}.json")
