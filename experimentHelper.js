@@ -102,10 +102,10 @@ function startTimer(radius,delay,duration,top,color) {
         const countdown = document.createElement('div');
         const circumference = 2 * Math.PI * radius;
         countdown.id = 'countdown';
-        countdown.style.cssText = `position: absolute; top: ${top}%; left: 50%; transform: translate(-50%,-50%);`;
-        countdown.innerHTML = 
+        countdown.style.cssText = `position: absolute; top: ${top}%; left: 50%; transform: translate(-50%,-50%); line-height: 0;`;
+        countdown.innerHTML =
         `
-            <svg width="100" height="100" viewBox="0 0 100 100">
+            <svg width="100" height="100" viewBox="0 0 100 100" style="display: block;">
                 <circle cx="50" cy="50" r="${radius}" fill="none" stroke="white" stroke-width="${radius*2}"/>
                 <circle id="countdown-circle" cx="50" cy="50" r="${radius}" fill="none"
                         stroke="${color}" stroke-width="${radius*2}" stroke-dasharray="${circumference}"
