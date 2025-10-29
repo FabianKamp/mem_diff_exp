@@ -5,13 +5,6 @@ var experimentSettings = fetch(`experimentSettings.json`)
         experimentSettings = data;
     });
 
-// set up progress bar
-const { wm_trials, ncatch, practice_trials } = experimentSettings.memory_experiment;
-const total_trials = wm_trials + ncatch + practice_trials;
-const block_size = (wm_trials + ncatch) / 3;
-const first_break = 100 * (practice_trials + block_size) / total_trials;
-const second_break = 100 * (practice_trials + 2 * block_size) / total_trials;
-
 // superellipse version with n=3 for rounder edges
 function convert2cartesian(rx, ry, theta, n=3) {
     const cos_t = Math.cos(theta);
@@ -34,7 +27,8 @@ function generate_instruction_angles(load) {
     return result;
 }
 
-function createWMInstructions() {
+function createWMInstructions() {   
+    // instruction angles
     var instruction_angles = generate_instruction_angles(experimentSettings.memory_experiment.load)
     var sample_pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, instruction_angles[1])
     var instruction_files = ["dist1.jpg", "sample1.jpg", "dist2.jpg", "dist3.jpg", "dist4.jpg", "dist5.jpg", "dist6.jpg"]
@@ -297,8 +291,17 @@ function endingWM() {
 
 // WM TASK
 function createWM(timeline_variables, jsPsych) {
+    // set up progress bar
+    const { wm_trials, ncatch, practice_trials } = experimentSettings.memory_experiment;
+    const total_trials = wm_trials + ncatch + practice_trials;
+    const block_size = (wm_trials + ncatch) / 3;
+    const first_break = 100 * (practice_trials + block_size) / total_trials;
+    const second_break = 100 * (practice_trials + 2 * block_size) / total_trials;
+    
+    // timeline 
     var wm_timeline = []
-    // Preload
+    
+    // preload
     wm_timeline.push(
         {
             type: jsPsychPreload,
