@@ -82,13 +82,14 @@ def generate_random_angles(n):
     random_angles = np.round(random_angles, 3)
     return random_angles
 
-def generate_catch_trials(ncatch, catch_ids):   
+def generate_catch_trials(catch_ids):   
+    ncatch = len(catch_ids)
     encoding_thetas = np.random.rand(ncatch) * (np.pi * 2) 
     
-    encoding_ids = catch_ids[:ncatch]
+    encoding_ids = catch_ids
     encoding_files = np.array([get_file_path(i) for i in encoding_ids])
     
-    control_ids = catch_ids[ncatch:]
+    control_ids = np.concat([catch_ids[:ncatch//2],catch_ids[ncatch//2:]])
     recognition_control_files = np.array([get_file_path(i) for i in control_ids])
 
     left_target = np.random.choice([0,1], ncatch, replace=True).astype(int)
@@ -181,25 +182,28 @@ while counter < subject_number:
     # distractor concepts should not overlap between wm and lm
     dist_info = pd.read_csv(os.path.join(dist_stimuli_dir,"image_info.csv"))
     
-    # lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials-wm_trials, replace=False)
-    lm_trials = (wm_trials//3)*2
+    # lm 
+    lm_trials = wm_trials
     lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials, replace=False)
     lm_dist_pool = dist_info.loc[dist_info.concept.isin(lm_dist_concepts)]
     lm_distractors = lm_dist_pool.groupby("concept")["diff_id"].first().to_numpy()
     lm_distractors += 9000
     
+    # wm
     # Attention: No trials with several distractors from the same category
     all_wm_images = all_wm_trials * load
     wm_dist_pool = dist_info.loc[~dist_info.concept.isin(lm_dist_concepts)]
     wm_dist_idx = np.arange(all_wm_images - all_wm_trials) + 1
-    wm_dist_idx = np.concat([np.random.permutation(wm_dist_idx[i::5]) for i in np.random.permutation(range(5))]).flatten() # ensures distance of 5
+    wm_dist_idx = np.concat([np.random.permutation(wm_dist_idx[i::10]) 
+                             for i in np.random.permutation(range(10))]).flatten() # ensures distance of 10
     wm_dist_df = wm_dist_pool.iloc[wm_dist_idx,]
     wm_dist_concepts = wm_dist_df.concept.unique()
     wm_distractors = wm_dist_df.diff_id.to_numpy()
     wm_distractors += 9000
 
+    # catch
     catch_pool = dist_info.loc[~dist_info.concept.isin(wm_dist_concepts)&~dist_info.concept.isin(lm_dist_concepts)]
-    catch_ids = np.random.choice(np.arange(0, len(catch_pool)), ncatch*2, replace=False)
+    catch_ids = np.random.choice(np.arange(0, len(catch_pool)), ncatch, replace=False)
     catch_ids = catch_pool.iloc[catch_ids,].diff_id.to_numpy()
     catch_ids += 9000
 
@@ -340,25 +344,39 @@ while counter < subject_number:
             correct_response = wm_correct_response
         )   
 
-        # update LM
+        # update LM       
+        # fetch stimuli ids from overt/covert trials
         lm_encoding_trials = np.arange(all_wm_trials)
-        lm_encoding_trials = lm_encoding_trials[(lm_encoding_trials>=practice_trials) & (latin_conditions>1)]
-        assert len(lm_encoding_trials) == lm_trials, "lm trials and encoding trials don't have the same length"
+        lm_encoding_trials_overt = lm_encoding_trials[(lm_encoding_trials>=practice_trials) & (latin_conditions>1)]
+        lm_ids_overt = wm_ids[lm_encoding_trials_overt]
+        
+        lm_encoding_trials_covert = lm_encoding_trials[(lm_encoding_trials>=practice_trials) & (latin_conditions==1)]
+        lm_ids_covert = [np.random.choice([img_id for img_id in trial if img_id>=9000], 1, p=[.9,.1]) 
+                                    for trial in encoding_ids[lm_encoding_trials_covert]]
+        lm_ids_covert = np.array(lm_ids_covert).flatten()
+        
+        # concat
+        lm_ids = np.concat([lm_ids_overt, lm_ids_covert])
+        lm_encoding_trials = np.concat([lm_encoding_trials_overt, lm_encoding_trials_covert])
+        lm_recognition_target = np.concat([lm_ids_overt + 1000, lm_ids_covert])
 
         # randomize
+        assert len(lm_recognition_target) == lm_trials, "lm trials and encoding trials don't have the same length"
         lm_random_idx = np.random.permutation(np.arange(lm_trials))
-        
-        # select and mix the ids and conditions
-        lm_ids = wm_ids[lm_encoding_trials][lm_random_idx]
-        
-        lm_recognition_target = lm_ids + 1000
+
+        lm_ids = lm_ids[lm_random_idx]
+        lm_encoding_trials = lm_encoding_trials[lm_random_idx]
+        lm_recognition_target = lm_recognition_target[lm_random_idx]
         lm_recognition_target_files = np.array([get_file_path(i) for i in lm_recognition_target])
         
         lm_conditions = latin_conditions[lm_encoding_trials][lm_random_idx]
         lm_condition_names = latin_condition_names[lm_encoding_trials][lm_random_idx]
-        
         lm_long_encoding = long_encoding[lm_encoding_trials][lm_random_idx]
-        lm_sample_positions = sample_positions[lm_encoding_trials][lm_random_idx]
+        
+        # get the sequential position during encoding (starts with 1)
+        lm_sample_positions = np.array([np.where(encoding_ids==target)[1].item() 
+                                        for target in lm_recognition_target])
+        lm_sample_positions += 1 
 
         lm_trial_data.update(
             subject_id = subject_id,
@@ -379,7 +397,7 @@ while counter < subject_number:
         lm_json_data = lm_trial_df.to_dict(orient='records')
         
         # insert catch trials, this has to be done reverse order os the indexed don't get shifted
-        catch_positions, catch_json_data = generate_catch_trials(ncatch, catch_ids)
+        catch_positions, catch_json_data = generate_catch_trials(catch_ids)
         for p, catch_trial in zip(reversed(catch_positions), reversed(catch_json_data)):
             wm_json_data.insert(p,catch_trial)
         
