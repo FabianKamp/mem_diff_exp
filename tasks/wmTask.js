@@ -50,7 +50,7 @@ function createWMInstructions() {
     encoding_slide += 
         `<div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
             <p class="instruction-paragraph-left">
-                <strong>1. Memorize</strong><br><br> 
+                <strong>1/6 Memorize</strong><br><br> 
                 We will ask you to memorize <strong>${experimentSettings.memory_experiment.load} images</strong>.<br><br>
                 You have <strong>1-3 seconds</strong> to memorize all images.<br><br>
                 The time to memorize the images will vary from trial to trial.<br><br>
@@ -84,7 +84,7 @@ function createWMInstructions() {
             `<div>
                 <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>       
                 <p class="instruction-paragraph-left">
-                    <strong>2. Delay</strong><br><br> 
+                    <strong>2/6 Delay</strong><br><br> 
                     Afterwards there will be a short delay. <br><br>
                     The delay will take a couple of seconds. <br><br>
                     Please focus on the cross on the screen.
@@ -102,11 +102,15 @@ function createWMInstructions() {
             </div>
 
             <p class="instruction-paragraph-left">
-                <strong>3. Which image matches the original image better?</strong><br><br> 
+                <strong>3/6 Which image matches the original image better?</strong><br><br> 
                 After the delay you will see <strong>2 new images</strong>, i.e.
                 you haven't seen either of the images before.<br><br>
                 Your task is to <strong>choose the image that matches the original image better</strong>.<br><br>
                 The square indicates the position of the original image.
+                <div class="cross">
+                    <div class="cross-vertical" style="opacity: .1;"></div>
+                    <div class="cross-horizontal" style="opacity: .1;"></div>
+                </div>
             </p>
             `
             ],
@@ -121,13 +125,18 @@ function createWMInstructions() {
             </div>
 
             <p class="instruction-paragraph-left">
-                <strong>4. How to select an image</strong>
+                <strong>4/6 How to select an image</strong>
                 <br><br> 
                 You can choose the matching image by clicking on it.
                 <br><br>
                 If you're uncertain which image matches the original, 
                 that's okay — just make your best guess.
             </p>
+
+            <div class="cross">
+                <div class="cross-vertical" style="opacity: .1;"></div>
+                <div class="cross-horizontal" style="opacity: .1;"></div>
+            </div>
             `
             ],
             [
@@ -141,13 +150,18 @@ function createWMInstructions() {
              </div>
             
             <p class="instruction-paragraph-left">
-                <strong>5. Timing</strong><br><br> 
+                <strong>5/6 Timing</strong><br><br> 
                 You will have <strong>30 seconds</strong> to select an image on each trial. 
                 Please try to respond within this time window.
                 <br><br>
                 A small timer will appear at the center of the screen during the final 5 seconds 
                 to remind you that the trial is about to end automatically.
             </p>
+
+            <div class="cross">
+                <div class="cross-vertical" style="opacity: .1;"></div>
+                <div class="cross-horizontal" style="opacity: .1;"></div>
+            </div>
             `
             ],
             [
@@ -169,15 +183,18 @@ function createWMInstructions() {
             </div>
             
             <p class="instruction-paragraph-left">
-                <strong>6. What about breaks?</strong><br><br> 
+                <strong>6/6 What about breaks?</strong><br><br> 
                 At the bottom of your screen, you'll see a progress bar to help you track your progress through the task. 
-                <br><br>
-                The marker on the progress bar indicate when breaks will occur.
                 <br><br>
                 You will have <strong>2 breaks</strong> during this task, each lasting up to 2 minutes. 
                 Each block between breaks takes approximately 8 minutes to complete.
                 <br>
             </p>
+
+            <div class="cross">
+                <div class="cross-vertical" style="opacity: .1;"></div>
+                <div class="cross-horizontal" style="opacity: .1;"></div>
+            </div>
             `
             ],
         ]
@@ -201,13 +218,13 @@ function startingWMPractice(){
                     <strong>Starting practice runs</strong>
                 </p>
                 <p class="instruction-paragraph">
-                    We will start with <strong>12 practice runs</strong>.
+                    We will start with <strong>6 practice runs</strong>.
                     <br><br>
                     During the practice runs the original image will 
-                    appear again as soon as you have made your choice,  
-                    so that you're able to compare the original image with the image you picked. 
+                    appear again for a couple of seconds,  
+                    so that you're able to compare the original image 
+                    with the image you picked. 
                     <br><br>
-                    Press <strong>enter</strong> to start.
                 </p>
                 <p class="continue-prompt">
                     To start press <strong>Enter</strong>
@@ -241,8 +258,6 @@ function startingWM () {
                     The next break will be in ~8 minutes.<br><br>
                     Attention, there will be <strong>no feedback</strong> 
                     in during the experiment.<br><br>
-
-                    Press <strong>enter</strong> to start.
                 </p>
                 <p class="continue-prompt">
                     To continue press <strong>Enter</strong>
@@ -566,6 +581,12 @@ function createWM(timeline_variables, jsPsych) {
                             <div class="square"
                                 style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
                             </div>
+
+                            <div class="cross">
+                                <div class="cross-vertical" style="opacity: .1;"></div>
+                                <div class="cross-horizontal" style="opacity: .1;"></div>
+                            </div>
+
                         </div>
                     </div>
                     `
@@ -673,6 +694,7 @@ function createWM(timeline_variables, jsPsych) {
                 type: jsPsychHtmlButtonResponse,
                 // choices: "Enter",
                 choices: ["Next Trial"],
+                button_html: (choice) => '<button class="jspsych-btn next-trial-button">' + choice + '</button>',
                 trial_duration: experimentSettings.feedback.duration,
                 record_data: false,
                 stimulus: function() {
@@ -718,6 +740,12 @@ function createWM(timeline_variables, jsPsych) {
                                     position: absolute; top: 50%; left: calc( 50% - 75px); transform: translate(-50%, -50%);">
                                     <img src="${left_image}" class="image-button" />
                             </div>
+
+                            <div class="cross">
+                                <div class="cross-vertical" style="opacity: .1;"></div>
+                                <div class="cross-horizontal" style="opacity: .1;"></div>
+                            </div>
+
                         </div>`
                     return html;
                 }
