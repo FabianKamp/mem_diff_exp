@@ -31,7 +31,7 @@ function createLMInstructions() {
                 </div>
                 
                 <p class="instruction-paragraph-left">
-                    <strong>1. Have you seen this image?</strong><br><br>
+                    <strong>1/4 Have you seen this image?</strong><br><br>
                     Now we would like to know if you can still remember the images from the task before. <br><br>
                     You will see 2 images. <strong>One image was shown in the task before, the other image is new</strong>. <br><br>
                     Please, try to remember which image you have seen in the previous task.
@@ -48,7 +48,7 @@ function createLMInstructions() {
                 </div>
                 
                 <p class="instruction-paragraph-left">
-                    <strong>2. How to select an image</strong><br><br>
+                    <strong>2/4 How to select an image</strong><br><br>
                     You can choose the image that you remember from the previous task by clicking on it.
                     <br><br>
                     If you don't recognize any of images, that's okay — just make your best guess.
@@ -65,7 +65,7 @@ function createLMInstructions() {
                 </div>
                 
                 <p class="instruction-paragraph-left">
-                    <strong>3. Timing</strong><br><br>
+                    <strong>3/4 Timing</strong><br><br>
                     As before, you will have <strong>30 seconds</strong> to select an image on each trial. 
                     <br><br>
                     Please try to respond within this time window.
@@ -89,7 +89,7 @@ function createLMInstructions() {
                 </div>
                 
                 <p class="instruction-paragraph-left">
-                    <strong>4. What about breaks?</strong><br><br>
+                    <strong>4/4 What about breaks?</strong><br><br>
                     This is the final task of the experiment, which will take only 5-10 minutes. 
                     <br><br>
                     Therefore, there will be no breaks in this task. 
