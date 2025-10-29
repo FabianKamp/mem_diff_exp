@@ -89,7 +89,7 @@ def generate_catch_trials(catch_ids):
     encoding_ids = catch_ids
     encoding_files = np.array([get_file_path(i) for i in encoding_ids])
     
-    control_ids = np.concat([catch_ids[:ncatch//2],catch_ids[ncatch//2:]])
+    control_ids = np.concat([catch_ids[ncatch//2:],catch_ids[:ncatch//2]])
     recognition_control_files = np.array([get_file_path(i) for i in control_ids])
 
     left_target = np.random.choice([0,1], ncatch, replace=True).astype(int)
