@@ -21,7 +21,7 @@
         "load": 3,
         "practice_trials": 6,
         "wm_trials": 162,
-        "lm_trials": 110, 
+        "lm_trials": 162, 
         "ncatch": 18, 
         "serial": 1, 
         "position_weights": [0.45, 0.45, 0.10]
