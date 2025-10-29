@@ -133,9 +133,10 @@ function startingLM() {
 }
 
 // LM TASK
-var lm_trial_counter = 0;
 function createLM(timeline_variables, jsPsych) {
     var lm_timeline = [];  
+    const { lm_trials } = experimentSettings.memory_experiment;
+    const total_trials = lm_trials;
     
     // preload
     lm_timeline.push(
@@ -156,20 +157,7 @@ function createLM(timeline_variables, jsPsych) {
                         <div class="cross-horizontal" style="background-color: rgba(0, 0, 0, 0.05);"></div>
                     </div>
                 </div>
-                <div class="rectangle"></div>
             </div>`
-            
-            // progress bar
-            const { lm_trials } = experimentSettings.memory_experiment;                
-            var progress_percent = (lm_trial_counter / lm_trials) * 100
-            var progress_bar = 
-                `<div class="progress-bar">
-                    <div class="progress-bar-track">
-                        <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
-                    </div>
-                </div>`
-            html += progress_bar
-
         },
         
         images: function() {
@@ -189,9 +177,7 @@ function createLM(timeline_variables, jsPsych) {
         record_data: false,
         stimulus: function(){
             var html = 
-            `<div style="width:250px; height:80vh;">
-                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-            </div>`
+            `<div style="width:250px; height:80vh;"></div>`
             return html;
         }
     })
@@ -257,8 +243,9 @@ function createLM(timeline_variables, jsPsych) {
                     </div>`
                 
                 // progress bar
-                const { lm_trials } = experimentSettings.memory_experiment;                
-                var progress_percent = (lm_trial_counter / lm_trials) * 100
+                var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                var progress_percent = (trial_id / total_trials) * 100      
+
                 var progress_bar = 
                     `<div class="progress-bar">
                         <div class="progress-bar-track">
@@ -271,9 +258,8 @@ function createLM(timeline_variables, jsPsych) {
             },
 
             on_finish: function(data) {  
-                // reset time and update the counter
+                // reset timer
                 resetTimer();             
-                lm_trial_counter++
 
                 // stimulus
                 var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
@@ -312,7 +298,89 @@ function createLM(timeline_variables, jsPsych) {
                 data.timestamp = new Date().toLocaleTimeString()
             }
         })
-    
+
+    // Feedback (only for correct responses)
+    lm_timeline.push(
+        {
+            timeline: [{
+                type: jsPsychHtmlKeyboardResponse,
+                choices: "NO_KEYS",
+                trial_duration: 1000,
+                stimulus: function() {
+                    var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
+                    var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
+                    var left_target = jsPsych.evaluateTimelineVariable(`left_target`)
+
+                    // Determine images for left and right positions
+                    if (left_target === 1) {
+                        var left_image = target_file
+                        var right_image = control_file
+                    } else {
+                        var left_image = control_file
+                        var right_image = target_file
+                    }
+
+                    var html =
+                        `<div style="width:500px; height: 60vh;">
+                        <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 20%; left: 50%;
+                            transform: translateX(-50%); color:#4682B4; text-align: center;">
+                            <strong>Which image do you remember from the previous task?</strong>
+                        </p>
+                        `
+                    
+                    // Only show feedback if response was correct 
+                    var last_trial = jsPsych.data.get().last(1).values()[0]
+                    var last_response = last_trial.response
+
+                    if (last_response === last_trial.correct_response) {
+                        var clicked_left = (last_response === 0)
+                        var correct_on_left = (left_target === 1)
+                        
+                        var left_class = (clicked_left && correct_on_left) ? 'image-object feedback-correct' : 'image-object'
+                        var right_class = (!clicked_left && !correct_on_left) ? 'image-object feedback-correct' : 'image-object'
+                        
+                        html += 
+                        `
+                        <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; top: 65%; left: 50%;
+                            transform: translateX(-50%); color:#2e7d32; text-align: center;">
+                            <strong>Great, that was correct!</strong>
+                        </p>
+                        <div class="rectangle"></div>
+                        <img src="${left_image}" class="${left_class}" style="top: 50%; left: calc(50% - 75px);"/>
+                        <img src="${right_image}" class="${right_class}" style="top: 50%; left: calc(50% + 75px);"/>
+                        </div>
+                        `
+                    } else {
+                        html += 
+                        `
+                        <div class="rectangle"></div>
+                        <img src="${left_image}" class="image-object" style="top: 50%; left: calc(50% - 75px);"/>
+                        <img src="${right_image}" class="image-object" style="top: 50%; left: calc(50% + 75px);"/>
+                        </div>
+                        `
+                    }
+
+                    // progress bar
+                    var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                    var progress_percent = (trial_id / total_trials) * 100
+                    var progress_bar =
+                        `<div class="progress-bar">
+                            <div class="progress-bar-track">
+                                <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
+                            </div>
+                        </div>`
+                    html += progress_bar
+                    return html;
+                }
+            }],
+
+            conditional_function: function() {
+                var last_trial = jsPsych.data.get().last(1).values()[0]
+                return !last_trial.timed_out 
+            }
+        }
+    )
+
     // Time-out
     lm_timeline.push(    
         {

@@ -187,6 +187,25 @@
     animation: feedbackBlink .7s ease-out forwards;
 }
 
+@keyframes correctBounce {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    30% {
+        transform: translate(-50%, -50%) scale(1.12);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(0.98);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.06);
+    }
+}
+
+.feedback-correct {
+    animation: correctBounce 0.75s ease-out forwards;
+}
+
 .jspsych-instructions-nav {
     position: absolute;
     bottom: 25px;
