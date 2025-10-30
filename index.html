@@ -76,7 +76,7 @@
         const session_id = "M-PB-001"
         // const session_id = jsPsych.data.getURLVariable('sid')
         const version_id = session_id[0];
-        const wave_id = session_id.slice(2, 4)
+        const wave_id = session_id.slice(0, 4)
         const subject_id = parseInt(session_id.slice(-3), 10)
 
         // add meta data 
@@ -94,7 +94,7 @@
         fullscreen_tracker = new fullscreenTracker(jsPsych);
         
         // load data
-        var input_data = await fetch(`input_data/input_${session_id}.json`)
+        var input_data = await fetch(`input_data/${wave_id}/input_${session_id}.json`)
             .then(response => response.json())
             .catch(error => console.error(error));
         

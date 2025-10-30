@@ -7,7 +7,6 @@ from generate_token import generate_token
 
 # set seed
 np.random.seed(42) 
-out_dir = f"input_data/"
 
 # load settings
 setting_file = "experimentSettings.json"
@@ -16,7 +15,12 @@ with open(setting_file, "r") as file:
 
 # ids
 wave_id = settings["wave"]["wave_id"]
+assert wave_id.startswith("M"), "Version ID has to be M"
 subject_number = settings["wave"]["subject_number"]
+
+# output path
+out_dir = f"input_data/{wave_id}"
+os.makedirs(out_dir, exist_ok=True)
 
 # trial numbers
 practice_trials = settings["memory_experiment"]["practice_trials"]
@@ -298,8 +302,7 @@ while counter < subject_number:
 
     ## latin square randomization of conditions
     for i in range(num_conditions):  
-        subject_id = counter+1   
-        session_id = f"M-{wave_id}-{subject_id:03d}"       
+        subject_id = counter+1         
        
         # latin randomization
         latin_conditions = wm_conditions_random % num_conditions + 1
@@ -331,7 +334,6 @@ while counter < subject_number:
         
         wm_trial_data.update(
             subject_id = subject_id,
-            session_id = session_id,
             recognition_target_id = wm_recognition_target.astype(int),
             recognition_target_file = wm_recognition_target_files,
             recognition_control_id = wm_recognition_control.astype(int),
@@ -378,7 +380,6 @@ while counter < subject_number:
 
         lm_trial_data.update(
             subject_id = subject_id,
-            session_id = session_id,
             lm_id = lm_ids,
             recognition_target_id = lm_recognition_target.astype(int),
             recognition_target_file = lm_recognition_target_files,
@@ -402,13 +403,19 @@ while counter < subject_number:
         # update wm trial_ids
         _ = [trial_dict.update(trial_id = trial_id) for (trial_id,trial_dict) in enumerate(wm_json_data)]
 
-
         # combine wm and lm data
-        combined_json_data = wm_json_data + lm_json_data
-        combined_file_path = os.path.join(out_dir, f"input_{session_id}.json")
-               
-        with open(combined_file_path, 'w') as combined_file:
-            json.dump(combined_json_data, combined_file, indent=4)
+        json_data = wm_json_data + lm_json_data
+
+        # save twice (B -> backup token)
+        for backup_code in ["A","B"]:
+            # create session id
+            session_id = f"{wave_id}-{subject_id:03d}-{backup_code}" 
+            _ = [trial_dict.update(session_id = session_id) for trial_dict in json_data]
+            
+            # save
+            file_path = os.path.join(out_dir, f"input_{session_id}.json")
+            with open(file_path, 'w') as file:
+                json.dump(json_data, file, indent=4)
 
         counter += 1
 
