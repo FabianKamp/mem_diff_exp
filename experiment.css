@@ -189,21 +189,44 @@
 
 @keyframes correctBounce {
     0% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) scale(1.);
     }
-    30% {
-        transform: translate(-50%, -50%) scale(1.12);
+    25% {
+        transform: translate(-50%, -50%) scale(1.05);
     }
     50% {
-        transform: translate(-50%, -50%) scale(0.98);
+        transform: translate(-50%, -50%) scale(1.01);
+    }
+    80% {
+        transform: translate(-50%, -50%) scale(1.1);
     }
     100% {
-        transform: translate(-50%, -50%) scale(1.06);
+        transform: translate(-50%, -50%) scale(1.08);
     }
 }
 
 .feedback-correct {
     animation: correctBounce 0.75s ease-out forwards;
+    border: 3px solid rgba(76, 175, 80, 0.8);
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+}
+
+@keyframes incorrectBounce {
+    0% {
+        transform: translate(-50%, -50%) scale(.95);
+    }
+    80% {
+        transform: translate(-50%, -50%) scale(0.93);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+}
+
+.feedback-incorrect {
+    animation: incorrectBounce 0.75s ease-out forwards;
+    border: 3px solid rgba(211, 47, 47, 0.8);
+    box-shadow: 0 0 8px rgba(211, 47, 47, 0.4);
 }
 
 .jspsych-instructions-nav {

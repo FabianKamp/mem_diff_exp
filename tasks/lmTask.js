@@ -146,18 +146,19 @@ function createLM(timeline_variables, jsPsych) {
         show_progress_bar: false,
         show_detailed_errors: true,
         message: function() {
-            `<div style="width:500px; height: 60vh;">
-                <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 20%; left: 50%;
-                    transform: translateX(-50%); color:#4682B4; text-align: center;">
-                    <strong>Which image do you remember from the previous task?</strong>
-                </p>
-                <div style="width:250px; height:75vh;">
-                    <div class="cross">
-                        <div class="cross-vertical" style="background-color: rgba(0, 0, 0, 0.05);"></div>
-                        <div class="cross-horizontal" style="background-color: rgba(0, 0, 0, 0.05);"></div>
+            html = `<div style="width:500px; height: 60vh;"></div>`
+            // progress bar
+            var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+            var progress_percent = (trial_id / total_trials) * 100
+            var progress_bar =
+                `<div class="progress-bar">
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
                     </div>
-                </div>
-            </div>`
+                </div>`
+            html += progress_bar
+            return html
+
         },
         
         images: function() {
@@ -178,6 +179,16 @@ function createLM(timeline_variables, jsPsych) {
         stimulus: function(){
             var html = 
             `<div style="width:250px; height:80vh;"></div>`
+            // progress bar
+            var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+            var progress_percent = (trial_id / total_trials) * 100
+            var progress_bar =
+                `<div class="progress-bar">
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
+                    </div>
+                </div>`
+            html += progress_bar
             return html;
         }
     })
@@ -351,11 +362,16 @@ function createLM(timeline_variables, jsPsych) {
                         </div>
                         `
                     } else {
-                        html += 
+                        var clicked_left = (last_response === 0)
+
+                        var left_class = clicked_left ? 'image-object feedback-incorrect' : 'image-object'
+                        var right_class = !clicked_left ? 'image-object feedback-incorrect' : 'image-object'
+
+                        html +=
                         `
                         <div class="rectangle"></div>
-                        <img src="${left_image}" class="image-object" style="top: 50%; left: calc(50% - 75px);"/>
-                        <img src="${right_image}" class="image-object" style="top: 50%; left: calc(50% + 75px);"/>
+                        <img src="${left_image}" class="${left_class}" style="top: 50%; left: calc(50% - 75px);"/>
+                        <img src="${right_image}" class="${right_class}" style="top: 50%; left: calc(50% + 75px);"/>
                         </div>
                         `
                     }
