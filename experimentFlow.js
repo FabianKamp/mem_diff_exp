@@ -74,7 +74,7 @@ function createBreak(label) {
                 delay=100,
                 duration=120000, 
                 top=80, 
-                color="#00000021"
+                color="#4682B4"//"#00000021"
             );
         },
         
