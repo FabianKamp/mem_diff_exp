@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import glob
 import json
+import shutil
 from generate_token import generate_token
 
 # set seed
@@ -20,7 +21,12 @@ subject_number = settings["wave"]["subject_number"]
 
 # output path
 out_dir = f"input_data/{wave_id}"
-os.makedirs(out_dir, exist_ok=True)
+if os.path.exists(out_dir):
+    k = input(f"Overwrite {out_dir} [y/n]?");
+    if k!="y": raise(FileExistsError("Outdir exists. Delete before regenerating input data."))
+    shutil.rmtree(out_dir)
+
+os.mkdir(out_dir)
 
 # trial numbers
 practice_trials = settings["memory_experiment"]["practice_trials"]
@@ -89,11 +95,12 @@ def generate_random_angles(n):
 def generate_catch_trials(catch_ids):   
     ncatch = len(catch_ids)
     encoding_thetas = np.random.rand(ncatch) * (np.pi * 2) 
-    
-    encoding_ids = catch_ids
+
+    encoding_ids = np.random.permutation(catch_ids)
     encoding_files = np.array([get_file_path(i) for i in encoding_ids])
     
-    control_ids = np.concat([catch_ids[ncatch//2:],catch_ids[:ncatch//2]])
+    control_ids = [np.random.choice([c for c in encoding_ids if (c<=e-3) | (c>=e+3)]) 
+                   for e in encoding_ids]
     recognition_control_files = np.array([get_file_path(i) for i in control_ids])
 
     left_target = np.random.choice([0,1], ncatch, replace=True).astype(int)
@@ -206,7 +213,7 @@ while counter < subject_number:
 
     # catch
     catch_pool = dist_info.loc[~dist_info.concept.isin(wm_dist_concepts)&~dist_info.concept.isin(lm_dist_concepts)]
-    catch_ids = np.random.choice(np.arange(0, len(catch_pool)), ncatch, replace=False)
+    catch_ids = np.random.choice(np.arange(0, len(catch_pool)), ncatch, replace=True)
     catch_ids = catch_pool.iloc[catch_ids,].diff_id.to_numpy()
     catch_ids += 9000
 
