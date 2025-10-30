@@ -8,6 +8,7 @@ import json
 def generate_token(session_ids=None):
     # Ensure tokens are always unique by using uuid4 (independent of any random seed)
     # uuid4 uses os.urandom() which is not affected by random.seed() or np.random.seed()
+    print("Generating tokens.")
 
     # load settings
     setting_file = "experimentSettings.json"
@@ -19,7 +20,8 @@ def generate_token(session_ids=None):
 
     if session_ids is None:
         session_ids = [i.rstrip(".json").split("_")[1] 
-                       for i in os.listdir(input_dir) if i.endswith(".json")]
+                       for i in os.listdir(input_dir) 
+                       if i.endswith(".json") and not i.startswith("settings")]
         session_ids = sorted(session_ids)
     
     token = [str(uuid.uuid4()) for _ in session_ids]
@@ -32,12 +34,12 @@ def generate_token(session_ids=None):
 
     # saving
     token_csv = os.path.join(os.getcwd(), "token", f"token_{wave_id}.csv")
+    
     if os.path.isfile(token_csv): 
         key = input(f"{token_csv} exists already. Overwrite existing file?[y/n]")
-        if key=="y":
-            token_df.to_csv(token_csv, index=False)
-        else:
-            return
+        if key!="y": return
+
+    token_df.to_csv(token_csv, index=False)
 
 if __name__ == "__main__":
     generate_token()

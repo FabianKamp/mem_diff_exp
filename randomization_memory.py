@@ -25,8 +25,12 @@ if os.path.exists(out_dir):
     k = input(f"Overwrite {out_dir} [y/n]?");
     if k!="y": raise(FileExistsError("Outdir exists. Delete before regenerating input data."))
     shutil.rmtree(out_dir)
-
 os.mkdir(out_dir)
+
+# save snapshot of the experimental settings
+snapshot_path = os.path.join(out_dir, "settings.json")
+with open(snapshot_path, "w") as file: 
+    json.dump(settings, file, indent=4)
 
 # trial numbers
 practice_trials = settings["memory_experiment"]["practice_trials"]
@@ -137,24 +141,23 @@ def generate_catch_trials(catch_ids):
 
     return catch_positions, catch_json_data
 
+
+# set up conditions and condition codes 
+conditions = ["mixed", "semantic", "visual"]
+condition_codes = {i+1: k for i,k in enumerate(conditions)}
+num_conditions = len(conditions)
+assert wm_trials%(num_conditions*2) == 0, f"Number of wm trials must be divisible by {num_conditions*2}"
+if subject_number%len(conditions)!=0:
+    print("Subject number will be higher due to latin square randomization")
+
 # randomization
 nan = 9999
 counter = 0
-
 while counter < subject_number:    
     # randomize images ids for wm and lm
-    wm_ids = np.random.permutation(np.arange(all_wm_trials) +   1)
+    wm_ids = np.random.permutation(np.arange(all_wm_trials) + 1)
     wm_encoding = wm_ids + 1000
     wm_sample_files = np.array([get_file_path(i) for i in wm_encoding])
-
-    # conditions and condition codes 
-    conditions = ["mixed", "semantic", "visual"]
-    condition_codes = {i+1: k for i,k in enumerate(conditions)}
-    num_conditions = len(conditions)
-    assert wm_trials%(num_conditions*2) == 0, f"Number of wm trials must be divisible by {num_conditions*2}"
-
-    if subject_number%len(conditions)!=0:
-        print("Subject number will be higher due to latin square randomization")
 
     # randomize wm condition across trials
     condition_repeats = wm_trials//num_conditions

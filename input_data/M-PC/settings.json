@@ -1,0 +1,63 @@
+{
+    "wave": {
+        "version_id": "M",
+        "wave_id": "M-PC",
+        "subject_number": 20
+    },
+    "stimuli": {
+        "exp_stimuli_dir": "stimuli/exp_stimuli_pilot_B",
+        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot_B"
+    },
+    "vision_experiment": {
+        "vision_trials": 177,
+        "enable_button_after": 1200,
+        "ncatch": 20,
+        "inter_trial_delay": 150
+    },
+    "memory_experiment": {
+        "load": 3,
+        "practice_trials": 6,
+        "wm_trials": 162,
+        "lm_trials": 162,
+        "ncatch": 18,
+        "serial": 1,
+        "position_weights": [
+            0.45,
+            0.45,
+            0.1
+        ]
+    },
+    "timing": {
+        "wm_inter_trial_delay": 1250,
+        "lm_inter_trial_delay": 500,
+        "wm_isi": 200,
+        "memory_delay": 3000,
+        "catch_delay": 500,
+        "encoding_time_short": 1200,
+        "encoding_time_long": 2000,
+        "encoding_time_catch": 3000
+    },
+    "spatial": {
+        "radius_x": 260,
+        "radius_y": 200
+    },
+    "break": {
+        "duration": 120000
+    },
+    "countdown": {
+        "interval": 1000
+    },
+    "distractor": {
+        "initial_number": 100,
+        "random_min": 2,
+        "random_max": 6,
+        "delay_time": 1000,
+        "stimulus_time": 3000,
+        "feedback_timeout": 10000,
+        "rounds": 3,
+        "operations_per_round": 5
+    },
+    "feedback": {
+        "duration": 10000
+    }
+}
