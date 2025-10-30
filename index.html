@@ -73,11 +73,13 @@
     async function createTimeline(){        
         // load session/subject/wave id
         // const session_id = "V-PA-001"
-        const session_id = "M-PB-001"
+        const session_id = "M-PB-001-A"
+        
         // const session_id = jsPsych.data.getURLVariable('sid')
         const version_id = session_id[0];
-        const wave_id = session_id.slice(0, 4)
-        const subject_id = parseInt(session_id.slice(-3), 10)
+        const wave_id = session_id.slice(0, 4);
+        const subject_id = parseInt(session_id.slice(4,-2), 10);
+        const backup = session_id.at(-1);
 
         // add meta data 
         jsPsych.data.addProperties({
@@ -85,6 +87,7 @@
             version_id : version_id,
             wave_id : wave_id,
             subject_id : subject_id,
+            backup: backup,
             startTime : new Date().toISOString().replace('T', ' ').slice(0, 19),
             OS : window.navigator.platform,
             fullscreen_mode: true, 
