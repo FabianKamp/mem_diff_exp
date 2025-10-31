@@ -96,10 +96,14 @@ function createWMInstructions() {
             </div>
 
             <p class="instruction-paragraph-left">
-                <strong>3/6 Which image matches the original image better?</strong><br><br> 
-                After the delay you will see <strong>2 new images</strong>, i.e.
-                you haven't seen either of the images before.<br><br>
-                Your task is to <strong>choose the image that matches the original image better</strong>.<br><br>
+                <strong>3/6 Which image matches the original image better?</strong>
+                <br><br> 
+                After the delay you will see <strong>2 new images</strong>.
+                You haven't seen either of the images before.
+                <br><br>
+                Your task is to <strong>choose the image that matches the original image better</strong>
+                by clicking on it.
+                <br><br>
                 The square indicates the position of the original image.
                 <div class="cross">
                     <div class="cross-vertical" style="opacity: .1;"></div>
@@ -119,12 +123,12 @@ function createWMInstructions() {
             </div>
 
             <p class="instruction-paragraph-left">
-                <strong>4/6 How to select an image</strong>
-                <br><br> 
-                You can choose the matching image by clicking on it.
+                <strong>4/6 What if you're uncertain?</strong>
                 <br><br>
-                If you're uncertain which image matches the original, 
-                that's okay — just make your best guess.
+                The images can match in many ways.
+                <br><br> 
+                If you're uncertain which image matches the original better, 
+                that's okay - just make your best guess.
             </p>
 
             <div class="cross">
@@ -144,7 +148,7 @@ function createWMInstructions() {
              </div>
             
             <p class="instruction-paragraph-left">
-                <strong>5/6 Timing</strong><br><br> 
+                <strong>5/6 Response timing</strong><br><br> 
                 You will have <strong>30 seconds</strong> to select an image on each trial. 
                 <br><br>
                 Please try to respond within this time window.
@@ -248,8 +252,8 @@ function startingWM () {
                 <p class="instruction-paragraph">
                     Great! We will now start the experiment.
                     The next break will be in ~8 minutes.<br><br>
-                    Attention, there will be <strong>no feedback</strong> 
-                    in during the experiment.<br><br>
+                    <strong>Attention</strong>, there will be no feedback during the experiment and
+                    the next trial will start automatically as soon as you responded.
                 </p>
                 <p class="continue-prompt">
                     To continue press <strong>Enter</strong>

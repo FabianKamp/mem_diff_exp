@@ -160,9 +160,10 @@ while counter < subject_number:
     wm_sample_files = np.array([get_file_path(i) for i in wm_encoding])
 
     # randomize wm condition across trials
-    condition_repeats = wm_trials//num_conditions
-    wm_conditions = np.repeat(list(condition_codes.keys()), condition_repeats)
     wm_random_idx = np.random.permutation(np.arange(wm_trials))
+    
+    trials_per_condition = wm_trials//num_conditions
+    wm_conditions = np.repeat(list(condition_codes.keys()), trials_per_condition)
     wm_conditions_random = wm_conditions[wm_random_idx]
     
     practice_conditions = np.random.permutation(list(condition_codes.keys()) * (practice_trials//num_conditions))
@@ -172,7 +173,7 @@ while counter < subject_number:
     assert len(position_weights) == load, "Position weights must match load"
     sample_positions = np.concatenate([np.random.choice(
         np.arange(load), 
-        size=condition_repeats, 
+        size=trials_per_condition, 
         p=position_weights,
         replace=True
         ) 
@@ -259,7 +260,7 @@ while counter < subject_number:
 
     # randomize encoding time
     long_encoding = np.concatenate([
-        np.random.permutation(np.repeat([0,1], condition_repeats//2))
+        np.repeat([0,1], trials_per_condition//2)
         for _ in range(num_conditions)
     ])
     long_encoding = long_encoding[wm_random_idx]
