@@ -299,8 +299,21 @@ function createWM(timeline_variables, jsPsych) {
     const block_size = (wm_trials + ncatch) / 3;
     const first_break = 100 * (practice_trials + block_size) / total_trials;
     const second_break = 100 * (practice_trials + 2 * block_size) / total_trials;
-    
-    // timeline 
+
+    // Helper function to generate progress bar HTML
+    const getProgressBarHTML = () => {
+        var trial_id = jsPsych.evaluateTimelineVariable('trial_id');
+        var progress_percent = (trial_id / total_trials) * 100;
+        return `<div class="progress-bar">
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
+                        <div class="progress-marker" style="left: ${first_break}%"></div>
+                        <div class="progress-marker" style="left: ${second_break}%"></div>
+                    </div>
+                </div>`;
+    };
+
+    // timeline
     var wm_timeline = []
     
     // preload
@@ -309,10 +322,14 @@ function createWM(timeline_variables, jsPsych) {
             type: jsPsychPreload,
             record_data: false,
             show_progress_bar: false,
-            message:                 
+            message:  function() {               
+                html = 
                 `<div style="width:250px; height:80vh;">
                     <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                </div>`,
+                </div>`
+                html += getProgressBarHTML()
+                return html 
+            },
             show_detailed_errors: true,
             images: function() {
                 var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
@@ -329,17 +346,18 @@ function createWM(timeline_variables, jsPsych) {
     )
     
     // inter trial delay
-    wm_timeline.push(    
+    wm_timeline.push(
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
             trial_duration: experimentSettings.timing.wm_inter_trial_delay,
             record_data: false,
             stimulus: function(){
-                var html = 
+                var html =
                 `<div style="width:250px; height:80vh;">
                     <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
                 </div>`
+                html += getProgressBarHTML();
                 return html;
             }
         }
@@ -358,23 +376,24 @@ function createWM(timeline_variables, jsPsych) {
                 var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
                 html = `<div style="width:500px; height:80vh;">`
                 for (let i = 0; i < n_encoding; i++) {
-                    if (i >= n_encoding) break; 
+                    if (i >= n_encoding) break;
                     var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
                     var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
                     var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
-                    html +=                         
-                    `<div> 
-                        <img src="${file}" class="image-object" 
+                    html +=
+                    `<div>
+                        <img src="${file}" class="image-object"
                         style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
                     </div>`
                 }
-                html += 
+                html +=
                 `<div class="cross">
                     <div class="cross-vertical"></div>
                     <div class="cross-horizontal"></div>
                 </div>
                 </div>`
-                
+
+                html += getProgressBarHTML();
                 return html;
                 },
 
@@ -446,6 +465,7 @@ function createWM(timeline_variables, jsPsych) {
                                     <div class="cross-horizontal"></div>
                                 </div>
                                 </div>`
+                                html += getProgressBarHTML();
                                 return html;
                             },
 
@@ -481,6 +501,7 @@ function createWM(timeline_variables, jsPsych) {
                                 `<div style="width:250px; height:80vh;">
                                     <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
                                 </div>`
+                                html += getProgressBarHTML();
                                 return html;
                                 }
                         }],
@@ -514,11 +535,12 @@ function createWM(timeline_variables, jsPsych) {
             },
             record_data: false,
             stimulus: function(){
-                var html = 
+                var html =
                     `<div style="width:250px; height:80vh;">
                         <div class="cross"><div class="cross-vertical"></div>
                         <div class="cross-horizontal"></div></div>
                     </div>`
+                html += getProgressBarHTML();
                 return html;
             }
         }
@@ -707,21 +729,21 @@ function createWM(timeline_variables, jsPsych) {
 
                     var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
                     var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
-                    var html = 
+                    var html =
                         `<div style="width:500px; height: 80vh;">
-                            <p style="font-size: x-large; position: absolute; top: 50px; left: 50%; 
+                            <p style="font-size: x-large; position: absolute; top: 50px; left: 50%;
                             transform: translateX(-50%); color:#4682B4; text-align: center;">
                                 <strong></strong>
                             </p>
 
-                            <div> 
-                                <div class="square" 
+                            <div>
+                                <div class="square"
                                     style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
                                 </div>
                             </div>
 
-                            <div> 
-                                <img src="${wm_sample_file}" class="image-object feedback-blink" 
+                            <div>
+                                <img src="${wm_sample_file}" class="image-object feedback-blink"
                                 style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
                             </div>
 
