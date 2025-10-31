@@ -146,10 +146,8 @@ function createWMInstructions() {
             <p class="instruction-paragraph-left">
                 <strong>5/6 Timing</strong><br><br> 
                 You will have <strong>30 seconds</strong> to select an image on each trial. 
-                Please try to respond within this time window.
                 <br><br>
-                A small timer will appear at the center of the screen during the final 5 seconds 
-                to remind you that the trial is about to end automatically.
+                Please try to respond within this time window.
             </p>
 
             <div class="cross">
