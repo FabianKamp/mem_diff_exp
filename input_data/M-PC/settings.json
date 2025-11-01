@@ -2,7 +2,7 @@
     "wave": {
         "version_id": "M",
         "wave_id": "M-PC",
-        "subject_number": 20
+        "subject_number": 21
     },
     "stimuli": {
         "exp_stimuli_dir": "stimuli/exp_stimuli_pilot_B",
