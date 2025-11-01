@@ -690,7 +690,7 @@ function createWM(timeline_variables, jsPsych) {
                             <strong style="color: #e65100;">Please remember to respond within 30 seconds after the images appear.</strong><br><br>
                             You're doing well! Let's stay focused until the next break.
                         </p>
-                        <p class="continue-prompt">
+                        <p class="continue-prompt" style="color: #f57c00;">
                             Press <strong>Enter</strong> to continue
                         </p>
                     </div>`,

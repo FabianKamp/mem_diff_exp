@@ -403,16 +403,16 @@ function createLM(timeline_variables, jsPsych) {
             timeline: [{
                 type: jsPsychHtmlKeyboardResponse, 
                 stimulus: 
-                    `<div class="timeout-warning">
-                        <p class="instruction-header warning-header">
+                    `<div>
+                        <p class="instruction-header" style="color: #f57c00;">
                             <strong>⏸ Time Out</strong>
                         </p>
-                        <p class="instruction-paragraph warning-message"> 
+                        <p class="instruction-paragraph">
                             You did not respond in the last trial.<br><br>
-                            <strong>Please remember to respond within 30 seconds after the images appear.</strong><br><br>
-                            You're doing well! Let's stay focused until the last task is over.
+                            <strong style="color: #e65100;">Please remember to respond within 30 seconds after the images appear.</strong><br><br>
+                            You're doing well! Let's stay focused until the next break.
                         </p>
-                        <p class="continue-prompt">
+                        <p class="continue-prompt" style="color: #f57c00;">
                             Press <strong>Enter</strong> to continue
                         </p>
                     </div>`,
