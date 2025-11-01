@@ -345,6 +345,7 @@ while counter < subject_number:
         )   
 
         # update LM       
+        
         # fetch stimuli ids from overt/covert trials
         lm_encoding_trials = np.arange(all_wm_trials)
         lm_encoding_trials_overt = lm_encoding_trials[(lm_encoding_trials>=practice_trials) & (latin_conditions>1)]
@@ -355,12 +356,11 @@ while counter < subject_number:
                                     for trial in encoding_ids[lm_encoding_trials_covert]]
         lm_ids_covert = np.array(lm_ids_covert).flatten()
         
-        # concat
         lm_ids = np.concat([lm_ids_overt, lm_ids_covert])
         lm_encoding_trials = np.concat([lm_encoding_trials_overt, lm_encoding_trials_covert])
         lm_recognition_target = np.concat([lm_ids_overt + 1000, lm_ids_covert])
 
-        # randomize
+        # randomize LM trials
         assert len(lm_recognition_target) == lm_trials, "lm trials and encoding trials don't have the same length"
         lm_random_idx = np.random.permutation(np.arange(lm_trials))
 
