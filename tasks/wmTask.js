@@ -37,10 +37,10 @@ function createWMInstructions() {
     encoding_slide += 
         `<div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
             <p class="instruction-paragraph-left">
-                <strong>1/6 Memorize</strong><br><br> 
+                <strong>1/6 Memorize</strong><br><br>
                 We will ask you to memorize <strong>${experimentSettings.memory_experiment.load} images</strong>.<br><br>
-                You have <strong>1-3 seconds</strong> to memorize all images.<br><br>
-                The time to memorize the images will vary from trial to trial.<br><br>
+                ${experimentSettings.memory_experiment.serial === 1 ? 'The images will appear <strong>sequentially</strong> on the screen.<br><br>' : ''}
+                You'll have <strong>1-3 seconds</strong> to memorize all images.
             </p>
             </div>`
     
@@ -94,8 +94,7 @@ function createWMInstructions() {
                 After the delay you will see <strong>2 new images</strong>.
                 You haven't seen either of the images before.
                 <br><br>
-                Your task is to <strong>choose the image that matches the original image better</strong>
-                by clicking on it.
+                Your task is to <strong>select the image that matches the original image better</strong>.
                 <br><br>
                 The square indicates the position of the original image.
                 <div class="cross">
@@ -118,7 +117,7 @@ function createWMInstructions() {
             <p class="instruction-paragraph-left">
                 <strong>4/6 What if you're uncertain?</strong>
                 <br><br>
-                The images can match in many ways.
+                The images can match the original image in various ways.
                 <br><br> 
                 If you're uncertain which image matches the original better, 
                 that's okay - just make your best guess.
