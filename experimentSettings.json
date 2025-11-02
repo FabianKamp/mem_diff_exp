@@ -1,13 +1,13 @@
 {
     "wave": {
         "version_id": "M",
-        "wave_id": "M-PB",
-        "subject_number": 12
+        "wave_id": "M-PC",
+        "subject_number": 21
     },
 
     "stimuli": {
-        "exp_stimuli_dir": "stimuli/exp_stimuli_pilot_B",
-        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot_B"
+        "exp_stimuli_dir": "stimuli/exp_stimuli_pilot",
+        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot"
     },
 
     "vision_experiment": {
@@ -23,7 +23,7 @@
         "wm_trials": 162,
         "lm_trials": 162, 
         "ncatch": 18, 
-        "serial": 0, 
+        "serial": 1, 
         "position_weights": [0.45, 0.45, 0.10]
     },
 

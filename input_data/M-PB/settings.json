@@ -5,8 +5,8 @@
         "subject_number": 12
     },
     "stimuli": {
-        "exp_stimuli_dir": "stimuli/exp_stimuli_pilot_B",
-        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot_B"
+        "exp_stimuli_dir": "stimuli/exp_stimuli_pilot",
+        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot"
     },
     "vision_experiment": {
         "vision_trials": 177,

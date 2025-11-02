@@ -4,7 +4,7 @@ import glob
 import os
 import numpy as np
 
-prefix = "M-PC"
+prefix = "M-PB"
 files = sorted(glob.glob(f"./input_data/{prefix}/*{prefix}*.json"))
 files = [f for f in files if '999' not in os.path.basename(f)]
 
