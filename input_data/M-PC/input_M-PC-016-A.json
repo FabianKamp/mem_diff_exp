@@ -260,7 +260,7 @@
         "trial_type": "wm",
         "long_encoding": 1,
         "encoding_time": 2000,
-        "left_target": 1,
+        "left_target": 0,
         "sample_position": 1,
         "recognition_theta": 3.153,
         "n_encoding": 3,
@@ -324,7 +324,7 @@
         "trial_type": "wm",
         "long_encoding": 0,
         "encoding_time": 1200,
-        "left_target": 1,
+        "left_target": 0,
         "sample_position": 1,
         "recognition_theta": 3.509,
         "n_encoding": 3,
@@ -1248,7 +1248,7 @@
         "trial_type": "wm",
         "long_encoding": 1,
         "encoding_time": 2000,
-        "left_target": 1,
+        "left_target": 0,
         "sample_position": 2,
         "recognition_theta": 5.353,
         "n_encoding": 3,
@@ -1271,7 +1271,7 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0,
+        "correct_response": 1,
         "trial_id": 40,
         "session_id": "M-PC-016-A"
     },
@@ -3361,7 +3361,7 @@
         "trial_type": "wm",
         "long_encoding": 0,
         "encoding_time": 1200,
-        "left_target": 1,
+        "left_target": 0,
         "sample_position": 2,
         "recognition_theta": 1.688,
         "n_encoding": 3,
@@ -3384,7 +3384,7 @@
         "condition": 3,
         "condition_name": "visual",
         "target_correct": 1,
-        "correct_response": 0,
+        "correct_response": 1,
         "trial_id": 108,
         "session_id": "M-PC-016-A"
     },
@@ -4015,7 +4015,7 @@
         "trial_type": "wm",
         "long_encoding": 1,
         "encoding_time": 2000,
-        "left_target": 1,
+        "left_target": 0,
         "sample_position": 2,
         "recognition_theta": 4.538,
         "n_encoding": 3,
@@ -4038,7 +4038,7 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0,
+        "correct_response": 1,
         "trial_id": 129,
         "session_id": "M-PC-016-A"
     },
@@ -5762,7 +5762,7 @@
         "trial_type": "wm",
         "long_encoding": 0,
         "encoding_time": 1200,
-        "left_target": 1,
+        "left_target": 0,
         "sample_position": 3,
         "recognition_theta": 0.503,
         "n_encoding": 3,
@@ -5785,7 +5785,7 @@
         "condition": 2,
         "condition_name": "semantic",
         "target_correct": 1,
-        "correct_response": 0,
+        "correct_response": 1,
         "trial_id": 185,
         "session_id": "M-PC-016-A"
     },
@@ -6890,8 +6890,8 @@
         "condition_name": "visual",
         "long_encoding": 0.0,
         "sample_position": 2,
-        "left_target": 1,
-        "correct_response": 0,
+        "left_target": 0,
+        "correct_response": 1,
         "session_id": "M-PC-016-A"
     },
     {
@@ -6958,8 +6958,8 @@
         "condition_name": "semantic",
         "long_encoding": 1.0,
         "sample_position": 2,
-        "left_target": 1,
-        "correct_response": 0,
+        "left_target": 0,
+        "correct_response": 1,
         "session_id": "M-PC-016-A"
     },
     {
@@ -7434,8 +7434,8 @@
         "condition_name": "mixed",
         "long_encoding": 0.0,
         "sample_position": 2,
-        "left_target": 1,
-        "correct_response": 0,
+        "left_target": 0,
+        "correct_response": 1,
         "session_id": "M-PC-016-A"
     },
     {
@@ -7995,8 +7995,8 @@
         "condition_name": "semantic",
         "long_encoding": 0.0,
         "sample_position": 1,
-        "left_target": 1,
-        "correct_response": 0,
+        "left_target": 0,
+        "correct_response": 1,
         "session_id": "M-PC-016-A"
     },
     {
@@ -8080,8 +8080,8 @@
         "condition_name": "mixed",
         "long_encoding": 1.0,
         "sample_position": 1,
-        "left_target": 1,
-        "correct_response": 0,
+        "left_target": 0,
+        "correct_response": 1,
         "session_id": "M-PC-016-A"
     },
     {
@@ -8369,8 +8369,8 @@
         "condition_name": "visual",
         "long_encoding": 1.0,
         "sample_position": 1,
-        "left_target": 1,
-        "correct_response": 0,
+        "left_target": 0,
+        "correct_response": 1,
         "session_id": "M-PC-016-A"
     },
     {

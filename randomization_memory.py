@@ -199,8 +199,8 @@ while counter < subject_number:
     sample_positions = np.concatenate([practice_positions,sample_positions])
 
     # recognition left vs. right: randomized and counter balanced across condition*encoding time
-    n_left = trials_per_condition//2
-    left_target = np.repeat([0,1], [n_left, trials_per_condition-n_left])
+    n_left = int(trials_per_condition/2)
+    left_target = np.repeat([0,1], [trials_per_condition-n_left, n_left])
     wm_left_target = np.concatenate([np.random.permutation(left_target) for _ in range(n_conditions_total)])
     wm_left_target = wm_left_target[wm_random_idx]
 
@@ -421,6 +421,16 @@ while counter < subject_number:
             file_path = os.path.join(out_dir, f"input_{session_id}.json")
             with open(file_path, 'w') as file:
                 json.dump(json_data, file, indent=4)
+            
+            # save testing session
+            if subject_id == 1: 
+                session_id = f"{wave_id}-999-{backup_code}" 
+                _ = [trial_dict.update(session_id = session_id) for trial_dict in json_data]
+                
+                # save
+                file_path = os.path.join(out_dir, f"input_{session_id}.json")
+                with open(file_path, 'w') as file:
+                    json.dump(json_data, file, indent=4)
 
         counter += 1
 

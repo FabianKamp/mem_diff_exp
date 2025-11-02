@@ -1,14 +1,19 @@
 async function createTimeline(jsPsych){
-    // Setup shortcuts
-    setupShortcuts(jsPsych);
-
     // load session/subject/wave id
     // const session_id = "V-PA-001"
-    const session_id = jsPsych.data.getURLVariable('sid') ||  "M-PB-001-A"
+    const session_id = jsPsych.data.getURLVariable('sid') ||  "M-PB-999-A"
     const version_id = session_id[0];
     const wave_id = session_id.slice(0, 4);
-    const subject_id = parseInt(session_id.slice(4,-2), 10);
+    const subject_id = parseInt(session_id.slice(5,-2), 10);
     const backup = session_id.at(-1);
+
+    // SETTINGS - Load and make globally accessible
+    window.experimentSettings = await fetch(`input_data/${wave_id}/settings.json`)
+        .then(response => response.json())
+        .catch(error => console.error(error));
+
+    // Setup shortcuts for testing
+    if (subject_id === 999) setupShortcuts(jsPsych);
 
     // add meta data
     jsPsych.data.addProperties({

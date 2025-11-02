@@ -44,7 +44,6 @@ for i, f in enumerate(files):
             lm_data = data.loc[mask]
 
             # Calculate counts
-            print(lm_data.left_target.sum())
             key_prefix = f"condition_{condition}{long_enc}"
             new_dict.update({
                 f"{key_prefix}_lm_count": len(lm_data),

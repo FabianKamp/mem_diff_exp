@@ -1,10 +1,3 @@
-// SETTINGS
-var experimentSettings = fetch(`experimentSettings.json`)
-    .then(response => response.json())
-    .then(data => {
-        experimentSettings = data;
-    });
-
 // superellipse version with n=3 for rounder edges
 function convert2cartesian(rx, ry, theta, n=3) {
     const cos_t = Math.cos(theta);

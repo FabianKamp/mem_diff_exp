@@ -1,10 +1,3 @@
-// SETTINGS
-var experimentSettings = fetch(`experimentSettings.json`)
-    .then(response => response.json())
-    .then(data => {
-        experimentSettings = data;
-    });
-
 // INSTRUCTIONS
 function createVisionInstructions() {
     var instructions = {

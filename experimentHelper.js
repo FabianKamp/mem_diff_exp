@@ -1,4 +1,3 @@
-
 // KEYBOARD SHORTCUTS FOR TESTING
 function setupShortcuts(jsPsych) {
     document.addEventListener('keydown', (e) => {
