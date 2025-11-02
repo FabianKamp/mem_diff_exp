@@ -16,8 +16,7 @@ function createLMInstructions() {
                         <strong>Great, you are almost done!</strong>
                         <br><br><br>
                         In the last task we will show you again some images. We want to know if you still remember the images from the first task.
-                        <br><br><br><br>
-                        The following instructions will explain the task in detail.
+                        <br><br>
                     </p>
                 </div>`
             ], 
@@ -33,8 +32,8 @@ function createLMInstructions() {
                 <p class="instruction-paragraph-left">
                     <strong>1/4 Have you seen this image?</strong><br><br>
                     Now we would like to know if you can still remember the images from the task before. <br><br>
-                    You will see 2 images. <strong>One image was shown in the task before, the other image is new</strong>. <br><br>
-                    Please, try to remember which image you have seen in the previous task.
+                    You will see two images. <strong>One image was shown in the task before, the other image is new</strong>. <br><br>
+                    Please, try to remember which image you have seen in the previous task and select it.
                     </p>
                 </div>`
             ], 
@@ -48,10 +47,13 @@ function createLMInstructions() {
                 </div>
                 
                 <p class="instruction-paragraph-left">
-                    <strong>2/4 How to select an image</strong><br><br>
-                    You can choose the image that you remember from the previous task by clicking on it.
+                    <strong>2/4 What if you don't recognize any of the images?</strong><br><br>
+                    In this task, one of the images has appeared in the previous task, 
+                    i.e. <strong>there is always a correct answer</strong>. 
                     <br><br>
-                    If you don't recognize any of images, that's okay — just make your best guess.
+                    If you don't recognize either image - that's okay. 
+                    This task is designed to be challenging.
+                    When unsure, just choose whichever one feels more familiar.
                 </p>
                 </div>`
             ], 
@@ -94,7 +96,7 @@ function createLMInstructions() {
                     <br><br>
                     Therefore, there will be no breaks in this task. 
                     <br><br>
-                    But you can track your progress on the progress bar at the bottom of the screen
+                    But you can track your progress on the progress bar at the bottom of the screen.
                 </p>
                 </div>`
             ], 
