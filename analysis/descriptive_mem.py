@@ -317,7 +317,7 @@ if show:
     plt.close('all')
 
 if save:
-    pdf_file = f"./figures/qc/qc_{wave_code}.pdf"
+    pdf_file = f"./figures/qc/descr_{wave_code}.pdf"
     plt.tight_layout()
     with PdfPages(pdf_file) as pdf:
         for f in all_figures:

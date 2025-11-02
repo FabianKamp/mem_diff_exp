@@ -1,0 +1,160 @@
+# %%
+import pandas as pd 
+import os
+import glob
+import seaborn as sns
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib
+from matplotlib.backends.backend_pdf import PdfPages
+matplotlib.use('TkAgg')
+plt.close()
+
+#%% variable set up
+wave_code = "M-PA"
+subject_ids = [2,3,4,5,6,7,9,10,11,21,22,23]
+
+show = False
+save = True
+
+#%% set up colors
+colors_palette = ["#ef476f","#ffd166","#06d6a0","#118ab2","#073b4c"]
+sns.set_palette(colors_palette)
+all_figures = []
+
+#%% load files
+if os.path.basename(os.getcwd()) == "analysis": 
+    os.chdir("..")
+
+out_files = [f"./output_data/{wave_code}-{i:03d}.csv" for i in subject_ids]
+labels = [f.split("/")[-1].rstrip(".csv") for f in out_files]
+
+all_data = []
+for file in out_files: 
+    data = pd.read_csv(file)   
+    all_data.append(data)
+
+all_data = pd.concat(all_data) 
+n_subjects = len(subject_ids)
+all_figures = []
+
+# %%
+results = dict(
+    total_duration = [], 
+    LM_duration = [],
+    WM_duration = []
+)
+
+for session, outdata in all_data.groupby("session_id"):   
+    try:
+        outdata["startTime_dt"] = pd.to_datetime(outdata.startTime,format='%Y-%m-%d %H:%M:%S')
+        outdata["endTime_dt"] = pd.to_datetime(outdata.endTime,format='%Y-%m-%d %H:%M:%S')
+    except:
+        outdata['startTime_dt'] = pd.to_datetime(outdata.startTime, format='%I:%M:%S %p') 
+        outdata['endTime_dt'] = pd.to_datetime(outdata.endTime, format='%I:%M:%S %p') 
+
+    results["total_duration"].append(
+        np.round((outdata['endTime_dt'].iloc[0]-outdata['startTime_dt'].iloc[0])
+        .total_seconds()/60)
+    )
+
+    wm_trials = outdata.loc[(outdata.trial_type == "wm")]
+    lm_trials = outdata.loc[(outdata.trial_type == "lm")|
+                        (outdata.trial_type == "lm-recognition")]
+    
+    results["WM_duration"].append(np.round((wm_trials.time_elapsed.iloc[-1]-wm_trials.time_elapsed.iloc[0])/60e3))
+    results["LM_duration"].append(np.round((lm_trials.time_elapsed.iloc[-1]-lm_trials.time_elapsed.iloc[0])/60e3))
+
+def label_outlier(data, labels, ax):
+    q1 = np.percentile(data, 25)
+    q3 = np.percentile(data, 75)
+    iqr = q3 - q1
+    lower_bound = q1 - 1.5 * iqr
+    upper_bound = q3 + 1.5 * iqr
+
+    for duration, label in zip(data, labels):
+        if duration < lower_bound or duration > upper_bound:
+            print(f"Detected outlier {label}")
+            ax.text(1.05, duration, label, fontsize=8, va='center')
+
+fig, ax = plt.subplots(1,3,sharey=True)
+
+i = 0
+for k,data in results.items():
+    ax[i].boxplot(data, widths=.8)
+    ax[i].set_xlabel(k.replace("_"," ").title())
+    ax[i].set_xticks([])
+    label_outlier(data, labels, ax[i])
+    i+=1
+
+all_figures.append(fig)
+# %% Attention checks
+attention_accuracy = []
+
+i = 0 
+for session, outdata in all_data.groupby("session_id"):  
+    catch_trials = outdata.loc[
+        (outdata.trial_type=="catch")&
+        (outdata.phase=="recognition")].copy()
+    catch_trials["correct"] = (catch_trials.correct_response.astype(int) == catch_trials.response.astype(int)).astype(int)
+    if i>0: assert len(catch_trials) == ncatch, "Number of catch trials is not equal across sessions."
+    
+    ncatch = len(catch_trials)
+    accuracy = (catch_trials.correct.sum()/ncatch)
+    if accuracy<.8: print(f"Warning: {session} - {accuracy}")
+    
+    attention_accuracy.append(accuracy)
+
+fig, ax = plt.subplots()
+ax.boxplot(attention_accuracy, widths=.8)
+ax.set_xlabel("Attention Checks".title())
+ax.set_ylabel("Accuracy".title())
+ax.set_xticks([])
+label_outlier(data, labels, ax)
+all_figures.append(fig)
+
+# %% Browser interaction
+record_files = [f"./output_data/M-PA-{i:03d}_ir.csv" for i in [2,3,5,6,7,9,10,11,21,22,23]]
+
+all_records = []
+for file in record_files: 
+    records = pd.read_csv(file)
+    records["session_id"] = os.path.basename(file.rstrip("_ir.csv"))
+    all_records.append(records)
+all_records = pd.concat(all_records)
+
+i, results = 0, []
+for session, records in all_records.groupby("session_id"): 
+    records = records.loc[records.trial>1]
+    
+    time_other_window = records.loc[records.event.isin(["blur","focus"])].time.diff()
+    time_other_window = time_other_window.iloc[1::2].sum()/60e3
+    
+    count_df = records.groupby("event").trial.count().reset_index()
+    count_df = count_df.rename(columns={"trial":"count"})
+    count_df["subject_id"] = session
+    count_df["time_other_window"] = time_other_window
+    
+    results.append(count_df)
+
+results = pd.concat(results)
+results = results.loc[results.event=="blur"]
+
+fig, ax = plt.subplots()
+sns.barplot(data=results, y="count", x="subject_id", hue="event", ax=ax, legend=False)
+ax.set_ylabel("Count of tasks events")
+all_figures.append(fig)
+
+# %%
+if show:
+    plt.show(block=False)
+    plt.pause(10)
+    plt.close('all')
+
+if save:
+    pdf_file = f"./figures/qc/qc_{wave_code}.pdf"
+    plt.tight_layout()
+    with PdfPages(pdf_file) as pdf:
+        for f in all_figures:
+            pdf.savefig(f)
+
