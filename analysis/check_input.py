@@ -4,12 +4,13 @@ import glob
 import os
 import numpy as np
 
-prefix = "M-PB"
+prefix = "M-PC"
 files = sorted(glob.glob(f"./input_data/{prefix}/*{prefix}*.json"))
+files = [f for f in files if '999' not in os.path.basename(f)]
 
 old_dict = {}
 for i, f in enumerate(files):
-    print(f"Checking: {f} ...", end="", flush=True)
+    print(f"Count check: {f} ...", end="", flush=True)
     session_id = os.path.basename(f).rstrip(".json").lstrip("input_")
     data = pd.read_json(f)
 
@@ -61,6 +62,36 @@ for i, f in enumerate(files):
     print(" -> ok")
     old_dict = new_dict.copy()
 
+# ======================
+# Latin square check
+# ======================
+
+for suffix in ["A","B"]: 
+    file_list = [f for f in files if os.path.basename(f).endswith(f"{suffix}.json")]
+    while len(file_list)>0:
+        conditions = []
+        for i in range(3): 
+            last_check = []
+            current_file = file_list[0]
+            print(f"Latin square check: {os.path.basename(current_file)}  ", end="", flush=True)
+            
+            wm_data = pd.read_json(current_file)
+            wm_data = wm_data.loc[data.trial_type=="wm"]
+            conditions.append(wm_data.condition.to_numpy()[:,np.newaxis])
+            last_check.append(current_file)
+            file_list.pop(0)
+        conditions = np.hstack(conditions)
+        nconditions = [len(np.unique(trial)) for trial in conditions]
+        
+        if not all([trial==3 for trial in nconditions]):
+            print(f"\nLatin Square Error while checking f{last_check}")
+            raise Exception("")
+        
+        print(" -> ok")
+
+# ======================
+# print count sumary 
+# ======================
 def print_summary_table(data_dict):
     """Print formatted summary tables for all metrics."""
     print(f"\n{'='*80}")
