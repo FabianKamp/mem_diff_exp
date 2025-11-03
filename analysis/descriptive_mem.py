@@ -11,11 +11,11 @@ matplotlib.use('TkAgg')
 plt.close()
 
 #%% variable set up
-wave_code = "M-PA"
-subject_ids = [2,3,4,5,6,7,9,10,11,21,22,23]
+wave_code = "M-PB"
+subject_ids = [999] #[2,3,4,5,6,7,9,10,11,21,22,23]
 
-show = False
-save = True
+show = True
+save = False
 
 #%% set up colors
 colors_palette = ["#ef476f","#ffd166","#06d6a0","#118ab2","#073b4c"]
@@ -26,7 +26,7 @@ all_figures = []
 if os.path.basename(os.getcwd()) == "analysis": 
     os.chdir("..")
 
-out_files = [f"./output_data/{wave_code}-{i:03d}.csv" 
+out_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-A.csv" 
              for i in subject_ids]
 
 all_data = []
@@ -38,6 +38,9 @@ all_data = pd.concat(all_data)
 n_subjects = len(subject_ids)
 
 #%% Preprocess working memory data
+NAN = 9999
+all_data.loc[all_data.response.isna(), "response"] = NAN
+
 wm_data = all_data.loc[all_data.trial_type=='wm'].copy()
 wm_data = wm_data.loc[(wm_data.phase == "recognition")]
 wm_data["correct"] = (wm_data.response.astype(int) == wm_data.correct_response)
@@ -69,7 +72,7 @@ for s, sub_df in vis_sem.groupby("session_id"):
         columns= {"condition_name":"condition", 
                   "correct": "accuracy"}
                   )
-    sub_results["subject_id"]= int(s.split("-")[-1])
+    sub_results["subject_id"]= int(s.split("-")[-2])
     all_results.append(sub_results)
 
     bar = sns.barplot(data=sub_results, 
@@ -81,7 +84,7 @@ for s, sub_df in vis_sem.groupby("session_id"):
                       ax=fax[i])
     
     bar.axhline(.5,ls=":")
-    bar.set_title(int(s.split("-")[-1]))
+    bar.set_title(int(s.split("-")[-2]))
     bar.set_xlabel('')
 
     if i>0: bar.get_legend().remove()
@@ -313,7 +316,7 @@ for s, sub_data in all_results.groupby("session_id"):
 # %%
 if show:
     plt.show(block=False)
-    plt.pause(10)
+    plt.pause(20)
     plt.close('all')
 
 if save:
