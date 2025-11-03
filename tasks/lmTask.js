@@ -312,13 +312,14 @@ function createLM(timeline_variables, jsPsych) {
             }
         })
 
-    // Feedback (only for correct responses)
+    // Feedback 
     lm_timeline.push(
         {
             timeline: [{
                 type: jsPsychHtmlKeyboardResponse,
                 choices: "NO_KEYS",
                 trial_duration: 1000,
+                record_data: false,
                 stimulus: function() {
                     var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
                     var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
