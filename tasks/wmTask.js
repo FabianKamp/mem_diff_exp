@@ -94,7 +94,8 @@ function createWMInstructions() {
                 After the delay you will see <strong>2 new images</strong>.
                 You haven't seen either of the images before.
                 <br><br>
-                Your task is to <strong>select the image that matches the original image better</strong>.
+                Your task is to <strong>select the image that matches the original image better</strong> 
+                by clicking on it.
                 <br><br>
                 The square indicates the position of the original image.
                 <div class="cross">

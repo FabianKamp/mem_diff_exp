@@ -33,6 +33,9 @@ function createLMInstructions() {
                     <strong>1/4 Have you seen this image?</strong><br><br>
                     Now we would like to know if you can still remember the images from the task before. <br><br>
                     You will see two images. <strong>One image was shown in the task before, the other image is new</strong>. <br><br>
+                    In this task, one of the images has appeared in the previous task, 
+                    i.e. <strong>there is always a correct answer</strong>. 
+                    <br><br>
                     Please, try to remember which image you have seen in the previous task and select it.
                     </p>
                 </div>`
@@ -48,11 +51,9 @@ function createLMInstructions() {
                 
                 <p class="instruction-paragraph-left">
                     <strong>2/4 What if you don't recognize any of the images?</strong><br><br>
-                    In this task, one of the images has appeared in the previous task, 
-                    i.e. <strong>there is always a correct answer</strong>. 
-                    <br><br>
                     If you don't recognize either image - that's okay. 
                     This task is designed to be challenging.
+                    <br><br>
                     When unsure, just choose whichever one feels more familiar.
                 </p>
                 </div>`

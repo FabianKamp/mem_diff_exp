@@ -12,10 +12,10 @@ plt.close()
 
 #%% variable set up
 wave_code = "M-PB"
-subject_ids = [999] #[2,3,4,5,6,7,9,10,11,21,22,23]
+subject_ids = [1,3,4,5] #[2,3,4,5,6,7,9,10,11,21,22,23]
 
-show = True
-save = False
+show = False
+save = True
 
 #%% set up colors
 colors_palette = ["#ef476f","#ffd166","#06d6a0","#118ab2","#073b4c"]
@@ -26,8 +26,9 @@ all_figures = []
 if os.path.basename(os.getcwd()) == "analysis": 
     os.chdir("..")
 
-out_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-A.csv" 
-             for i in subject_ids]
+out_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}.csv" 
+             for i in subject_ids for suffix in "AB"]
+out_files = filter(os.path.exists, out_files)
 
 all_data = []
 for file in out_files: 
@@ -41,9 +42,13 @@ n_subjects = len(subject_ids)
 NAN = 9999
 all_data.loc[all_data.response.isna(), "response"] = NAN
 
-wm_data = all_data.loc[all_data.trial_type=='wm'].copy()
-wm_data = wm_data.loc[(wm_data.phase == "recognition")]
-wm_data["correct"] = (wm_data.response.astype(int) == wm_data.correct_response)
+wm_data = all_data.loc[(all_data.trial_type=='wm') & 
+                       (all_data.phase == "recognition")].copy()
+
+wm_data.response = wm_data.response.astype(int)
+wm_data.correct_response = wm_data.correct_response.astype(int)
+
+wm_data["correct"] = (wm_data.response == wm_data.correct_response)
 wm_data["encoding_time"] = wm_data.encoding_time.map({1200: "short", 2000: "long"})
 
 #%% Visual vs semantic condition
@@ -164,7 +169,8 @@ for s, sub_df in mixed_data.groupby("session_id"):
                .rename(columns={"proportion":"proportion_visual"})
                .drop(columns="response_stimulus")
     )
-    results["session_id"] = int(s.split("-")[-1])
+    results["session_id"] = s.split("-")[-2]
+    print(results)
     all_results.append(results)
 
 all_results = pd.concat(all_results)
@@ -180,7 +186,11 @@ bar.axhline(.5,ls=":")
 bar.set_xlabel('')
 
 ## scatter plot
-fig, ax = plt.subplots(figsize=(5,3))
+fig, ax = plt.subplots(
+    figsize=(5,3), 
+    constrained_layout=True
+    )
+
 all_figures.append(fig)
 fig.suptitle(f"{wave_code} - WM: mixed trials")
 box = sns.boxplot(
@@ -204,124 +214,66 @@ for s, sub_data in all_results.groupby("session_id"):
     )
 
 # %% LM preprocessing
-def recode_response(old, response): 
-    if old: 
-        if response >=3: 
-            return "hit"
-        else: 
-            return "miss"
-    else: 
-        if response >=3: 
-            return "fa"
-        else:
-            return "correct_rejection"
+lm_data = all_data.loc[(all_data.trial_type=="lm")].copy()
 
-lm_data = all_data.loc[
-    (all_data.trial_type=="lm-recognition")|
-    (all_data.trial_type=="lm")].copy()
+lm_data["correct"] = (lm_data.response.astype(int) == lm_data.correct_response.astype(int))
+lm_data["encoding_time"] = lm_data.encoding_time.map({1200: "short", 2000: "long"})
 
-lm_data.response = lm_data.response.astype(int)
-possible_responses = [5,20,35,65,80,95]
-lm_data.response = lm_data.response.map({
-    k: i for i,k in enumerate(possible_responses)
-})
 
-# recoding 
-lm_data["response_code"] = lm_data.apply(
-    lambda row: recode_response(row.image_old, row.response),
-    axis=1
-)
-
-# %% LM hit rate
-## barplot
+# %% LM short vs long conditions
+## barplots
 cols = 5
 rows = n_subjects//cols+1
-fig, ax = plt.subplots(rows, cols, 
+fig_lm, ax = plt.subplots(rows, cols, 
                        figsize=(cols*2, rows*2), 
                        sharey=True,
                        constrained_layout=True)
-all_figures.append(fig)
-fig.suptitle(f"{wave_code} - LM: hit rate")
+all_figures.append(fig_lm)
+fig_lm.suptitle(f"{wave_code} - LM: visual vs semantic")
 fax = ax.flatten()
 
 i = 0
 all_results = []
-for s, sub_data in lm_data.groupby("session_id"): 
-    # hit rate
-    old = sub_data.loc[sub_data.image_old==1].copy()
-    
-    old["encoding_time"] = old["encoding_time"].map({
-        1200: "short",
-        9999: "short",
-        2000: "long",
-    })
-    
-    old = (
-        old.groupby("encoding_time")["response_code"]
-        .agg(lambda x: (x=="hit").sum()/len(x))
-        .reset_index()
-    )
-
-    old = old.rename(columns={"response_code":"hit_rate"})
-    old["session_id"] = int(s.split("-")[-1])    
-    all_results.append(old)
-    
-    # fa rate 
-    new = sub_data.loc[sub_data.image_old==0]
-    fa_rate = (new.response_code=="fa").sum()/len(new)
-
-    fax[i].bar(
-        [0,1,2], 
-        [old.loc[old.encoding_time=="long","hit_rate"].item(),
-         old.loc[old.encoding_time=="short","hit_rate"].item(),
-         fa_rate], 
-        color=[colors_palette[1], colors_palette[1], colors_palette[0]]
+for s, sub_df in lm_data.groupby("session_id"):
+    sub_results = (
+        sub_df.groupby(["encoding_time", "condition_name"])["correct"]
+            .agg(lambda x: np.round(x.sum()/len(x), 2))
+            .reset_index()
         )
+    sub_results = sub_results.rename(
+        columns= {"correct": "accuracy"})
+    
+    sub_results["subject_id"]= int(s.split("-")[-2])
+    all_results.append(sub_results)
 
-    fax[i].set_xticks([0,1,2], labels=["HR long", "HR short", "FA"])
-    fax[i].axhline(.5, c='k')
-    fax[i].set_title(int(s.split("-")[-1]))
-    i += 1
-all_results = pd.concat(all_results)
+    bar = sns.barplot(data=sub_results, 
+                      x="encoding_time", 
+                      order = ["long", "short"],
+                      hue = "condition_name",
+                      y="accuracy", 
+                      ax=fax[i])
+    
+    bar.axhline(.5,ls=":")
+    bar.set_title(int(s.split("-")[-2]))
+    bar.set_xlabel('')
+    if i>0: bar.get_legend().remove()
+
+    i+=1
 
 # delete empty axes
 for j in range(i,cols*rows): 
     fax[j].remove()
 
-# boxplot
-fig, ax = plt.subplots(figsize=(5,3))
-all_figures.append(fig)
-fig.suptitle(f"{wave_code} - LM: hit rate")
-
-box = sns.boxplot(
-    data=all_results, 
-    x="encoding_time", 
-    y="hit_rate", 
-    widths=0.5, 
-    order=["long", "short"], 
-)
-box.axhline(.5, color='k')
-
-for s, sub_data in all_results.groupby("session_id"):
-    ax.plot([0, 1],
-            [sub_data.loc[sub_data.encoding_time=="long", "hit_rate"], 
-             sub_data.loc[sub_data.encoding_time=="short", "hit_rate"]],
-            'o:',  
-            alpha=0.6,
-            color='gray',
-            markerfacecolor='none',
-            linewidth=1
-    )
 
 # %%
 if show:
     plt.show(block=False)
-    plt.pause(20)
+    plt.pause(60)
     plt.close('all')
 
 if save:
     pdf_file = f"./figures/qc/descr_{wave_code}.pdf"
-    plt.tight_layout()
+    # plt.tight_layout()
     with PdfPages(pdf_file) as pdf:
         for f in all_figures:
             pdf.savefig(f)
