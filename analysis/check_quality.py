@@ -13,6 +13,7 @@ plt.close()
 #%% variable set up
 wave_code = "M-PA"
 subject_ids = [2,3,4,5,6,7,9,10,11,21,22,23]
+suffix = "A"
 
 show = False
 save = True
@@ -26,7 +27,8 @@ all_figures = []
 if os.path.basename(os.getcwd()) == "analysis": 
     os.chdir("..")
 
-out_files = [f"./output_data/{wave_code}-{i:03d}.csv" for i in subject_ids]
+out_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}.csv" 
+             for i in subject_ids for suffix in "AB"]
 labels = [f.split("/")[-1].rstrip(".csv") for f in out_files]
 
 all_data = []
@@ -114,7 +116,9 @@ label_outlier(data, labels, ax)
 all_figures.append(fig)
 
 # %% Browser interaction
-record_files = [f"./output_data/M-PA-{i:03d}_ir.csv" for i in [2,3,5,6,7,9,10,11,21,22,23]]
+record_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}_browser_records.csv" 
+               for i in subject_ids for suffix in "AB"]
+record_files = filter(os.path.exists, record_files)
 
 all_records = []
 for file in record_files: 
