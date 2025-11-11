@@ -10,9 +10,13 @@ user= os.getenv("EXP_USER")
 password= os.getenv("EXP_PASSWORD")
 root_url = os.getenv("EXP_URL")
 
+wave_id = "M-PB"
+default_csv = f"./token/token_{wave_id}.csv"
+default_out_dir = f"./output_data/{wave_id}"
+
 parser = argparse.ArgumentParser()
-parser.add_argument('--token_csv', type=str, default="./token/token_M-PB.csv")
-parser.add_argument('--out_dir', type=str, default="./output_data")
+parser.add_argument('--token_csv', type=str, default=default_csv)
+parser.add_argument('--out_dir', type=str, default=default_out_dir)
 args = parser.parse_args()
 
 # make out dir
@@ -36,6 +40,7 @@ def get_data(token):
     data.assign(**dataProperties)
 
     interaction_records = pd.DataFrame(parsed["interactionRecords"]["trials"])
+    interaction_records["session_id"] = session_id
     
     return session_id, data, interaction_records
 
