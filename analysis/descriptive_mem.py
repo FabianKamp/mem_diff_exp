@@ -1,12 +1,13 @@
 # %%
 import pandas as pd 
 import os
-import glob
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib.backends.backend_pdf import PdfPages
+import pickle
+
 matplotlib.use('TkAgg')
 plt.close()
 
@@ -21,6 +22,7 @@ save = True
 colors_palette = ["#ef476f","#ffd166","#06d6a0","#118ab2","#073b4c"]
 sns.set_palette(colors_palette)
 all_figures = []
+figure_data = {}
 
 #%% load files
 if os.path.basename(os.getcwd()) == "analysis": 
@@ -99,6 +101,8 @@ for s, sub_df in vis_sem.groupby("session_id"):
 for j in range(i,cols*rows): 
     fax[j].remove()
 
+figure_data.update(fig1=all_results)
+
 # scatter plots
 all_results = pd.concat(all_results)
 fig, ax = plt.subplots(1, 2, 
@@ -111,7 +115,7 @@ fig.suptitle(f"{wave_code} - WM: visual vs semantic")
 conditions = ["visual", "semantic"]
 encoding_times = ["long", "short"]
 for (ax, condition) in zip(ax, conditions):
-    scatter = sns.boxplot(
+    box = sns.boxplot(
         data=all_results.loc[all_results.condition == condition], 
         x="encoding_time", 
         y="accuracy", 
@@ -135,6 +139,8 @@ for (ax, condition) in zip(ax, conditions):
     
     ax.set_title(condition.capitalize())
     ax.set_xlabel("Encoding Time")
+
+figure_data.update(fig2=all_results)
 
 # %% Mixed trials
 mixed_data = wm_data.loc[wm_data.condition_name=='mixed'].copy()
@@ -170,7 +176,6 @@ for s, sub_df in mixed_data.groupby("session_id"):
                .drop(columns="response_stimulus")
     )
     results["session_id"] = s.split("-")[-2]
-    print(results)
     all_results.append(results)
 
 all_results = pd.concat(all_results)
@@ -184,6 +189,8 @@ bar = sns.barplot(
 )
 bar.axhline(.5,ls=":")
 bar.set_xlabel('')
+
+figure_data.update(fig3=all_results)
 
 ## scatter plot
 fig, ax = plt.subplots(
@@ -212,6 +219,9 @@ for s, sub_data in all_results.groupby("session_id"):
             markerfacecolor='none',
             linewidth=1
     )
+
+figure_data.update(fig4=all_results)
+
 
 # %% LM preprocessing
 lm_data = all_data.loc[(all_data.trial_type=="lm")].copy()
@@ -264,6 +274,8 @@ for s, sub_df in lm_data.groupby("session_id"):
 for j in range(i,cols*rows): 
     fax[j].remove()
 
+all_results = pd.concat(all_results)
+figure_data.update(fig5=all_results)
 
 # %%
 if show:
@@ -272,8 +284,9 @@ if show:
     plt.close('all')
 
 if save:
-    pdf_file = f"./figures/qc/descr_{wave_code}.pdf"
-    # plt.tight_layout()
+    pdf_file = f"./figures/descriptive/descr_{wave_code}.pdf"
+    data_file = f"./figures/descriptive/descr_{wave_code}.pkl"
+    pickle.dump(figure_data, open(data_file, "wb"))
     with PdfPages(pdf_file) as pdf:
         for f in all_figures:
             pdf.savefig(f)

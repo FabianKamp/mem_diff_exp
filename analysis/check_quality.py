@@ -11,9 +11,8 @@ matplotlib.use('TkAgg')
 plt.close()
 
 #%% variable set up
-wave_code = "M-PA"
-subject_ids = [2,3,4,5,6,7,9,10,11,21,22,23]
-suffix = "A"
+wave_code = "M-PB"
+subject_ids = [1,3,4,5] #[2,3,4,5,6,7,9,10,11,21,22,23]
 
 show = False
 save = True
@@ -29,7 +28,7 @@ if os.path.basename(os.getcwd()) == "analysis":
 
 out_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}.csv" 
              for i in subject_ids for suffix in "AB"]
-labels = [f.split("/")[-1].rstrip(".csv") for f in out_files]
+out_files = filter(os.path.exists, out_files)
 
 all_data = []
 for file in out_files: 
@@ -38,9 +37,11 @@ for file in out_files:
 
 all_data = pd.concat(all_data) 
 n_subjects = len(subject_ids)
+labels = all_data.session_id.unique()
+
 all_figures = []
 
-# %%
+# %% LM and WM length
 results = dict(
     total_duration = [], 
     LM_duration = [],
@@ -79,7 +80,9 @@ def label_outlier(data, labels, ax):
             print(f"Detected outlier {label}")
             ax.text(1.05, duration, label, fontsize=8, va='center')
 
-fig, ax = plt.subplots(1,3,sharey=True)
+fig, ax = plt.subplots(1,3,
+                       sharey=True, 
+                       constrained_layout=True)
 
 i = 0
 for k,data in results.items():
@@ -107,12 +110,11 @@ for session, outdata in all_data.groupby("session_id"):
     
     attention_accuracy.append(accuracy)
 
-fig, ax = plt.subplots()
-ax.boxplot(attention_accuracy, widths=.8)
-ax.set_xlabel("Attention Checks".title())
-ax.set_ylabel("Accuracy".title())
-ax.set_xticks([])
-label_outlier(data, labels, ax)
+fig, ax = plt.subplots(constrained_layout=True)
+bar = sns.barplot(x=all_data.session_id.unique(),
+            y=attention_accuracy, 
+            ax=ax)
+bar.tick_params(axis='x', labelrotation=90)
 all_figures.append(fig)
 
 # %% Browser interaction
@@ -122,10 +124,12 @@ record_files = filter(os.path.exists, record_files)
 
 all_records = []
 for file in record_files: 
+    print(file)
     records = pd.read_csv(file)
     records["session_id"] = os.path.basename(file.rstrip("_ir.csv"))
     all_records.append(records)
 all_records = pd.concat(all_records)
+all_records["session_id"] = all_records.session_id.str.rstrip("_browser_record")
 
 i, results = 0, []
 for session, records in all_records.groupby("session_id"): 
@@ -144,7 +148,7 @@ for session, records in all_records.groupby("session_id"):
 results = pd.concat(results)
 results = results.loc[results.event=="blur"]
 
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(constrained_layout=True)
 sns.barplot(data=results, y="count", x="subject_id", hue="event", ax=ax, legend=False)
 ax.set_ylabel("Count of tasks events")
 all_figures.append(fig)
@@ -156,8 +160,7 @@ if show:
     plt.close('all')
 
 if save:
-    pdf_file = f"./figures/qc/qc_{wave_code}.pdf"
-    plt.tight_layout()
+    pdf_file = f"./figures/quality_check/qc_{wave_code}.pdf"
     with PdfPages(pdf_file) as pdf:
         for f in all_figures:
             pdf.savefig(f)
