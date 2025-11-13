@@ -93,6 +93,33 @@ for k,data in results.items():
     i+=1
 
 all_figures.append(fig)
+
+# %% Missing Data
+missing_data = []
+
+i = 0 
+for session, outdata in all_data.groupby("session_id"):  
+    outdata = outdata.loc[outdata.phase=="recognition"]
+    missing = dict(
+        session_id = session,
+        timed_out = outdata.timed_out.astype(int).sum()
+        )
+    missing_data.append(missing)
+missing_data = pd.DataFrame(missing_data)
+
+fig, ax = plt.subplots(constrained_layout=True)
+bar = sns.barplot(
+    data=missing_data,
+    x="session_id",
+    y="timed_out",
+    ax=ax
+)
+bar.set_xlabel("")
+bar.set_ylabel("Time Outs")
+
+bar.tick_params(axis='x', labelrotation=90)
+all_figures.append(fig)
+
 # %% Attention checks
 attention_accuracy = []
 
