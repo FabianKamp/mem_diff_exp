@@ -28,8 +28,8 @@
         ]
     },
     "timing": {
-        "wm_inter_trial_delay": 1250,
-        "lm_inter_trial_delay": 500,
+        "wm_inter_trial_delay": 2000,
+        "lm_inter_trial_delay": 1000,
         "wm_isi": 200,
         "memory_delay": 3000,
         "catch_delay": 500,

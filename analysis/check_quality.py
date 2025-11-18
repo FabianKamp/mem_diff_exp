@@ -12,12 +12,11 @@ plt.close()
 
 #%% variable set up
 wave_code = "M-PB"
-subject_ids = [1,3,4,5] #[2,3,4,5,6,7,9,10,11,21,22,23]
+subject_ids = np.arange(1,12) #[2,3,4,5,6,7,9,10,11,21,22,23]
 
 show = False
 save = True
 
-#%% set up colors
 colors_palette = ["#ef476f","#ffd166","#06d6a0","#118ab2","#073b4c"]
 sns.set_palette(colors_palette)
 all_figures = []
@@ -41,60 +40,236 @@ labels = all_data.session_id.unique()
 
 all_figures = []
 
-# %% LM and WM length
-results = dict(
-    total_duration = [], 
-    LM_duration = [],
-    WM_duration = []
+# %% WM & LM length
+results = []
+
+for session, subdata in all_data.groupby("session_id"):   
+
+    wm_trials = subdata.loc[(subdata.trial_type == "wm")|(subdata.trial_type == "practice")|(subdata.trial_type == "catch")]
+    distractor_trials = subdata.loc[(subdata.trial_type == "distractor-task")]
+    lm_trials = subdata.loc[(subdata.trial_type == "lm")]
+    
+    results.append(dict(
+        session_id = session, 
+        instruction = np.round(wm_trials.time_elapsed.iloc[0]/60e3), 
+        WM = np.round((wm_trials.time_elapsed.iloc[-1]-wm_trials.time_elapsed.iloc[0])/60e3),
+        distractor = np.round((distractor_trials.time_elapsed.iloc[-1]-wm_trials.time_elapsed.iloc[-1])/60e3),
+        LM = np.round((lm_trials.time_elapsed.iloc[-1]-lm_trials.time_elapsed.iloc[0])/60e3),
+        total = np.round(subdata.time_elapsed.iloc[-1]/60e3)
+        ))
+
+results = pd.DataFrame(results).melt(id_vars="session_id", var_name="section", value_name="duration")
+
+fig, ax = plt.subplots(
+    1,
+    figsize=(6,5),
+    constrained_layout=True
+    )
+boxplot = sns.boxplot(
+    data=results, 
+    x ="section", 
+    y="duration",
+    color="white",
+    ax=ax
 )
 
-for session, outdata in all_data.groupby("session_id"):   
-    try:
-        outdata["startTime_dt"] = pd.to_datetime(outdata.startTime,format='%Y-%m-%d %H:%M:%S')
-        outdata["endTime_dt"] = pd.to_datetime(outdata.endTime,format='%Y-%m-%d %H:%M:%S')
-    except:
-        outdata['startTime_dt'] = pd.to_datetime(outdata.startTime, format='%I:%M:%S %p') 
-        outdata['endTime_dt'] = pd.to_datetime(outdata.endTime, format='%I:%M:%S %p') 
+ax.set_xlabel("")
+ax.set_yticks(np.arange(0,ax.get_ylim()[1],10))
+ax.grid(axis="y", alpha=.5)
 
-    results["total_duration"].append(
-        np.round((outdata['endTime_dt'].iloc[0]-outdata['startTime_dt'].iloc[0])
-        .total_seconds()/60)
+def annotate_outliers(ax, data, x, y, label_col):
+    categories = data[x].unique()
+    for i, category in enumerate(categories):
+        category_data = data[data[x] == category]
+        
+        Q1 = category_data[y].quantile(0.25)
+        Q3 = category_data[y].quantile(0.75)
+        IQR = Q3 - Q1
+        
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        outliers = category_data[
+            (category_data[y] < lower_bound) | 
+            (category_data[y] > upper_bound)
+        ]
+        
+        # Annotate each outlier
+        for _, row in outliers.iterrows():
+            ax.text(
+                x=i,
+                y=row[y],
+                s=str(row[label_col]),
+                fontsize=6,
+                alpha=.5
+            )
+annotate_outliers(
+    data=results, 
+    x ="section", 
+    y="duration",
+    label_col="session_id",
+    ax=ax
+)
+
+all_figures.append(fig)
+if show:
+    fig.show()
+
+# %% Reaction times
+wm_rt, lm_rt = [],[]
+
+for session_id, sub_data in all_data.groupby("session_id"):
+    session_id = str(int(session_id.split("-")[-2]))
+    # wm
+    wm_times = sub_data.loc[
+        (sub_data.trial_type=="wm") & 
+        (sub_data.phase=="recognition"), 
+        "rt"]/1e3
+    wm_rt.append(pd.DataFrame(dict(
+        session_id = [session_id] * len(wm_times), 
+        trial_time = wm_times.to_list()
+    )))
+    # lm
+    lm_times = sub_data.loc[
+        (sub_data.trial_type=="lm") & 
+        (sub_data.phase=="recognition"), 
+        "rt"]/1e3
+    lm_rt.append(pd.DataFrame(dict(
+        session_id = [session_id] * len(lm_times), 
+        trial_time = lm_times.to_list()
+    )))
+
+results = dict(
+    WM = pd.concat(wm_rt).reset_index(),
+    LM = pd.concat(lm_rt).reset_index(),
+)
+
+fig, ax = plt.subplots(
+    1, 2, 
+    constrained_layout=True, 
+    sharey=True,
+    figsize=(12,5)
+    )
+for i, el in enumerate(results.items()):
+    bars = sns.barplot(
+        data=el[1], 
+        x="session_id", 
+        y="trial_time",
+        color="w",
+        edgecolor="k",
+        errorbar=None,
+        ax=ax[i]
     )
 
-    wm_trials = outdata.loc[(outdata.trial_type == "wm")]
-    lm_trials = outdata.loc[(outdata.trial_type == "lm")|
-                        (outdata.trial_type == "lm-recognition")]
+    scatter = sns.scatterplot(
+        data=el[1],
+        x="session_id",
+        y="trial_time",
+        size=1,
+        legend=False,
+        ax=ax[i],
+        facecolor='none',
+        edgecolor='grey'
+    )
+
+    ax[i].set_title(el[0])
+    ax[i].axhline(30)
+    ax[i].axhline(15, linestyle=":", c="k", alpha=.5)
+    ax[i].axhline(10, linestyle=":", c="k", alpha=.5)
+    ax[i].axhline(5, linestyle=":", c="k", alpha=.5)
     
-    results["WM_duration"].append(np.round((wm_trials.time_elapsed.iloc[-1]-wm_trials.time_elapsed.iloc[0])/60e3))
-    results["LM_duration"].append(np.round((lm_trials.time_elapsed.iloc[-1]-lm_trials.time_elapsed.iloc[0])/60e3))
-
-def label_outlier(data, labels, ax):
-    q1 = np.percentile(data, 25)
-    q3 = np.percentile(data, 75)
-    iqr = q3 - q1
-    lower_bound = q1 - 1.5 * iqr
-    upper_bound = q3 + 1.5 * iqr
-
-    for duration, label in zip(data, labels):
-        if duration < lower_bound or duration > upper_bound:
-            print(f"Detected outlier {label}")
-            ax.text(1.05, duration, label, fontsize=8, va='center')
-
-fig, ax = plt.subplots(1,3,
-                       sharey=True, 
-                       constrained_layout=True)
-
-i = 0
-for k,data in results.items():
-    ax[i].boxplot(data, widths=.8)
-    ax[i].set_xlabel(k.replace("_"," ").title())
-    ax[i].set_xticks([])
-    label_outlier(data, labels, ax[i])
-    i+=1
+    if i == 0: 
+        ax[i].set_ylabel("Reaction times")
+    else: 
+        ax[i].set_ylabel("")
 
 all_figures.append(fig)
 
-# %% Missing Data
+
+# %% Trial times
+encoding_times, recognition_times, lm_times = [], [], []
+for session_id, sub_data in all_data.groupby("session_id"):
+    session_id = str(int(session_id.split("-")[-2]))
+    sub_data["trial_time"] = sub_data["time_elapsed"].diff()/1e3
+
+    # wm
+    ## encoding
+    break_mask = (sub_data['phase'] == 'encoding') & (sub_data['phase'].shift(1) != 'recognition')
+    sub_data.loc[break_mask, 'trial_time'] = np.nan
+    encoding_time = sub_data.loc[(sub_data.trial_type=="wm") & (sub_data.phase=="encoding"), 
+                                 "trial_time"]
+    encoding_time = encoding_time.loc[~encoding_time.isna()]
+    encoding_times.append(pd.DataFrame(dict(
+        session_id = [session_id] * len(encoding_time), 
+        trial_time = encoding_time.to_list()
+    )))
+
+    ## recognition
+    recognition_time = sub_data.loc[(sub_data.trial_type=="wm") & (sub_data.phase=="recognition"), 
+                                    "trial_time"]
+    recognition_times.append(pd.DataFrame(dict(
+        session_id = [session_id] * len(recognition_time), 
+        trial_time = recognition_time.to_list()
+    )))
+    
+    # lm
+    lm_time = sub_data.loc[(sub_data.trial_type=="lm") & (sub_data.phase=="recognition"), 
+                           "trial_time"]
+    lm_time = lm_time.loc[~lm_time.isna()]
+    lm_times.append(pd.DataFrame(dict(
+        session_id = [session_id] * len(lm_time), 
+        trial_time = lm_time.to_list()
+    )))
+
+results = dict(
+    encoding = pd.concat(encoding_times),
+    recognition = pd.concat(recognition_times),
+    lm_trials = pd.concat(lm_times),
+)
+
+fig, ax = plt.subplots(
+    1,3,
+    constrained_layout=True, 
+    sharey=True,
+    figsize=(12,5)
+    )
+
+for i, el in enumerate(results.items()):
+    bars = sns.barplot(
+        data=el[1], 
+        x="session_id", 
+        y="trial_time",
+        color="w",
+        edgecolor="k",
+        errorbar=None,
+        ax=ax[i]
+    )
+
+    scatter = sns.scatterplot(
+        data=el[1],
+        x="session_id",
+        y="trial_time",
+        size=1,
+        legend=False,
+        ax=ax[i],
+        facecolor='none',
+        edgecolor='grey'
+    )
+
+    ax[i].set_title(el[0])
+    ax[i].axhline(30)
+    ax[i].axhline(15, linestyle=":", c="k", alpha=.5)
+    ax[i].axhline(10, linestyle=":", c="k", alpha=.5)
+    ax[i].axhline(5, linestyle=":", c="k", alpha=.5)
+    if i == 0: 
+        ax[i].set_ylabel("Trial times")
+    else: 
+        ax[i].set_ylabel("")
+
+all_figures.append(fig)
+if show: 
+    fig.show()
+
+# %% Time outs
 missing_data = []
 
 i = 0 
@@ -102,9 +277,9 @@ for session, outdata in all_data.groupby("session_id"):
     outdata = outdata.loc[outdata.phase=="recognition"]
     missing = dict(
         session_id = session,
-        timed_out = outdata.timed_out.astype(int).sum()
-        )
+        timed_out = outdata.timed_out.astype(int).sum())
     missing_data.append(missing)
+    print(session)
 missing_data = pd.DataFrame(missing_data)
 
 fig, ax = plt.subplots(constrained_layout=True)
@@ -112,13 +287,17 @@ bar = sns.barplot(
     data=missing_data,
     x="session_id",
     y="timed_out",
+    color="w",
+    edgecolor="k",
     ax=ax
 )
+
 bar.set_xlabel("")
 bar.set_ylabel("Time Outs")
-
 bar.tick_params(axis='x', labelrotation=90)
 all_figures.append(fig)
+if show: 
+    fig.show()
 
 # %% Attention checks
 attention_accuracy = []
@@ -138,9 +317,15 @@ for session, outdata in all_data.groupby("session_id"):
     attention_accuracy.append(accuracy)
 
 fig, ax = plt.subplots(constrained_layout=True)
-bar = sns.barplot(x=all_data.session_id.unique(),
-            y=attention_accuracy, 
-            ax=ax)
+session_ids = all_data.loc[~all_data.session_id.isna(), "session_id"].unique().astype(str)
+
+bar = sns.barplot(
+    x=session_ids,
+    y=attention_accuracy, 
+    color="w",
+    edgecolor="k",
+    ax=ax
+)
 bar.tick_params(axis='x', labelrotation=90)
 all_figures.append(fig)
 
@@ -176,7 +361,13 @@ results = pd.concat(results)
 results = results.loc[results.event=="blur"]
 
 fig, ax = plt.subplots(constrained_layout=True)
-sns.barplot(data=results, y="count", x="subject_id", hue="event", ax=ax, legend=False)
+sns.barplot(
+    data=results, 
+    y="count", 
+    x="subject_id", 
+    hue="event", 
+    ax=ax, 
+    legend=False)
 ax.set_ylabel("Count of tasks events")
 all_figures.append(fig)
 

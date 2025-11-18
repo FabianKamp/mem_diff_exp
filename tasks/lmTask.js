@@ -145,11 +145,12 @@ function createLM(timeline_variables, jsPsych) {
     lm_timeline.push(
     {
         type: jsPsychPreload,
-        record_data: false,
+        record_data: true,
         show_progress_bar: false,
         show_detailed_errors: true,
         message: function() {
-            html = `<div style="width:500px; height: 60vh;"></div>`
+            html = `<div style="width:500px; height: 60vh;"></div>
+            <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>`
             // progress bar
             var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
             var progress_percent = (trial_id / total_trials) * 100
@@ -163,12 +164,16 @@ function createLM(timeline_variables, jsPsych) {
             return html
 
         },
-        
         images: function() {
             var files = []
             files.push(jsPsych.evaluateTimelineVariable(`recognition_control_file`));
             files.push(jsPsych.evaluateTimelineVariable(`recognition_target_file`));
             return files;
+        }, 
+        on_finish: function(data) { 
+            data.stimulus = null;
+            data.trial_type = "preload";
+            data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
         }
     })
 
@@ -177,11 +182,22 @@ function createLM(timeline_variables, jsPsych) {
     {
         type: jsPsychHtmlKeyboardResponse,
         choices: "NO_KEYS",
-        trial_duration: experimentSettings.timing.lm_inter_trial_delay,
-        record_data: false,
+        trial_duration: function() {
+            var preload_time = jsPsych.data.get().last(1).values()[0].time_elapsed
+            var recognition_time = jsPsych.data.get().last(2).values()[0].time_elapsed
+            var preload_delay = (preload_time-recognition_time)
+            var delay = Math.max(experimentSettings.timing.lm_inter_trial_delay-preload_delay,0)
+            console.log(preload_delay)
+            console.log(delay)
+            return delay
+        }, 
+
+        record_data: true,
         stimulus: function(){
             var html = 
-            `<div style="width:250px; height:80vh;"></div>`
+            `<div style="width:250px; height:80vh;"></div>
+            <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
+            `
             // progress bar
             var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
             var progress_percent = (trial_id / total_trials) * 100
@@ -193,6 +209,11 @@ function createLM(timeline_variables, jsPsych) {
                 </div>`
             html += progress_bar
             return html;
+        }, 
+        on_finish: function(data) { 
+            data.stimulus = null;
+            data.trial_type = "inter-trial-delay";
+            data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
         }
     })
     
@@ -249,7 +270,8 @@ function createLM(timeline_variables, jsPsych) {
             stimulus: function() {
                 var html =
                     `<div style="width:500px; height: 60vh;">
-                    <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 20%; left: 50%;
+                    <p style="font-family: 'Courier New', monospace; font-size: x-large; 
+                        position: absolute; top: 20%; left: 50%; max-width: 350px;
                         transform: translateX(-50%); color:#4682B4; text-align: center;">
                         <strong>Which image do you remember from the previous task?</strong>
                     </p>
@@ -320,7 +342,7 @@ function createLM(timeline_variables, jsPsych) {
                 type: jsPsychHtmlKeyboardResponse,
                 choices: "NO_KEYS",
                 trial_duration: 1000,
-                record_data: false,
+                record_data: true,
                 stimulus: function() {
                     var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
                     var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
@@ -338,7 +360,7 @@ function createLM(timeline_variables, jsPsych) {
                     var html =
                         `<div style="width:500px; height: 60vh;">
                         <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 20%; left: 50%;
-                            transform: translateX(-50%); color:#4682B4; text-align: center;">
+                            transform: translateX(-50%); color:#4682B4; text-align: center;  max-width: 350px;">
                             <strong>Which image do you remember from the previous task?</strong>
                         </p>
                         `
@@ -358,7 +380,7 @@ function createLM(timeline_variables, jsPsych) {
                         `
                         <p style="font-family: 'Courier New', monospace; font-size: large; position: absolute; top: 65%; left: 50%;
                             transform: translateX(-50%); color:#2e7d32; text-align: center;">
-                            <strong>Great, that was correct!</strong>
+                            <strong></strong>
                         </p>
                         <div class="rectangle"></div>
                         <img src="${left_image}" class="${left_class}" style="top: 50%; left: calc(50% - 75px);"/>
@@ -391,9 +413,13 @@ function createLM(timeline_variables, jsPsych) {
                         </div>`
                     html += progress_bar
                     return html;
+                }, 
+                on_finish: function(data) { 
+                    data.stimulus = null;
+                    data.trial_type = "lm-feedback";
+                    data.trial_id = data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
                 }
             }],
-
             conditional_function: function() {
                 var last_trial = jsPsych.data.get().last(1).values()[0]
                 return !last_trial.timed_out 
@@ -421,6 +447,11 @@ function createLM(timeline_variables, jsPsych) {
                         </p>
                     </div>`,
                 choices: ['Enter'],
+                on_finish: function(data) { 
+                    data.stimulus = null;
+                    data.trial_type = "timeout";
+                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
+                }
             }],
             conditional_function: function() {
                 return jsPsych.data.get().last(1).values()[0].timed_out;

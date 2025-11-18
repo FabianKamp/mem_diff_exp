@@ -130,7 +130,7 @@ function countdown(seconds) {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
             trial_duration: 1000,
-            record_data: false,
+            record_data: true,
             stimulus: function(){
                 var html = 
                     `<div style="width:250px; height:75vh;">
@@ -141,6 +141,10 @@ function countdown(seconds) {
                         </p>
                     </div>`
                 return html;
+            }, 
+            on_finish: function(data){
+                data.stimulus = null;
+                data.trial_type = "countdown"
             }
         })
     }

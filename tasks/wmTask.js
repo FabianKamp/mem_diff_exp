@@ -49,7 +49,7 @@ function createWMInstructions() {
         key_forward: 'ArrowRight',
         key_backward: 'ArrowLeft',
         show_clickable_nav: true,
-        record_data: false,
+        record_data: true,
         pages: [
             [
             `<div>
@@ -186,7 +186,11 @@ function createWMInstructions() {
             </div>
             `
             ],
-        ]
+        ], 
+        on_finish: function(data) { 
+            data.stimulus = null;
+            data.trial_type = "instructions";
+        }
     }
     return wm_instruction
 }
@@ -197,7 +201,7 @@ function startingWMPractice(){
         type: jsPsychInstructions,
         show_clickable_nav: false,
         key_forward: 'Enter',
-        record_data: false,
+        record_data: true,
         post_trial_gap: 200,
         min_viewing_time: 3000,
         pages: [
@@ -222,18 +226,22 @@ function startingWMPractice(){
             `
             ]
         ],
+        on_finish: function(data) { 
+            data.stimulus = null;
+            data.trial_type = "starting-practice";
+        }
     }
     return start_practice
 }
 
 // STARTING SCREEN
-function startingWM () {
+function startingWM() {
     // start wm experiment
     var start_wm = {
         type: jsPsychInstructions,
         show_clickable_nav: false,
         key_forward: 'Enter',
-        record_data: false,
+        record_data: true,
         post_trial_gap: 200,
         min_viewing_time: 3000,
         pages: [
@@ -255,6 +263,10 @@ function startingWM () {
             `
             ]
         ],
+        on_finish: function(data) { 
+            data.stimulus = null;
+            data.trial_type = "starting-wm";
+        }
     }
     return start_wm
 }
@@ -280,6 +292,10 @@ function endingWM() {
                 </p>
             </div>`,
         choices: ['Enter'],
+        on_finish: function(data) { 
+            data.stimulus = null;
+            data.trial_type = "ending-wm";
+        }
     }
     return end_wm
 }
@@ -313,7 +329,7 @@ function createWM(timeline_variables, jsPsych) {
     wm_timeline.push(
         {
             type: jsPsychPreload,
-            record_data: false,
+            record_data: true,
             show_progress_bar: false,
             message:  function() {               
                 html = 
@@ -334,6 +350,12 @@ function createWM(timeline_variables, jsPsych) {
                 files.push(jsPsych.evaluateTimelineVariable('recognition_target_file'))
                 files.push(jsPsych.evaluateTimelineVariable('recognition_control_file'))
                 return files;
+            },
+            on_finish: function(data) { 
+                data.stimulus = null;
+                data.trial_type = "preload";
+                data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id');
+                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
             }
         }
     )
@@ -343,8 +365,14 @@ function createWM(timeline_variables, jsPsych) {
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
-            trial_duration: experimentSettings.timing.wm_inter_trial_delay,
-            record_data: false,
+            trial_duration: function() {
+                var preload_time = jsPsych.data.get().last(1).values()[0].time_elapsed
+                var recognition_time = jsPsych.data.get().last(2).values()[0].time_elapsed
+                var preload_delay = (preload_time-recognition_time)
+                var delay = Math.max(experimentSettings.timing.wm_inter_trial_delay-preload_delay,0)
+                return delay  
+            },
+            record_data: true,
             stimulus: function(){
                 var html =
                 `<div style="width:250px; height:80vh;">
@@ -352,6 +380,12 @@ function createWM(timeline_variables, jsPsych) {
                 </div>`
                 html += getProgressBarHTML();
                 return html;
+            }, 
+            on_finish: function(data) { 
+                data.stimulus = null;
+                data.trial_type = "inter-trial-delay";
+                data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id');
+                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
             }
         }
     )
@@ -402,14 +436,15 @@ function createWM(timeline_variables, jsPsych) {
                         theta.push(jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`))
                     }
                     
+                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                    data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
+                    data.phase = 'encoding'
+                    data.trial_type = jsPsych.evaluateTimelineVariable('trial_type')
                     data.long_encoding = long_encoding
                     data.encoding_time = encoding_time
                     data.stimulus = file
                     data.theta = theta
-                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                    data.trial_type = jsPsych.evaluateTimelineVariable('trial_type');
-                    data.phase = 'encoding';
-                    data.serial  = 0;
+                    data.serial = 0;
                     data.timestamp = new Date().toLocaleTimeString()
                 }, 
             }],
@@ -469,13 +504,14 @@ function createWM(timeline_variables, jsPsych) {
                                 var long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
                                 var encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
 
+                                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                                data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
                                 data.long_encoding = long_encoding
                                 data.encoding_time = encoding_time/n_encoding
                                 data.stimulus = file
                                 data.theta = theta
                                 data.n_encoding = n_encoding
-                                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                                data.trial_type = jsPsych.evaluateTimelineVariable('trial_type');
+                                data.trial_type = jsPsych.evaluateTimelineVariable('trial_type')
                                 data.phase = 'encoding';
                                 data.encoding_position = encodingIndex;
                                 data.serial  = 1;
@@ -526,7 +562,7 @@ function createWM(timeline_variables, jsPsych) {
                     return experimentSettings.timing.memory_delay
                 }
             },
-            record_data: false,
+            record_data: true,
             stimulus: function(){
                 var html =
                     `<div style="width:250px; height:80vh;">
@@ -535,6 +571,12 @@ function createWM(timeline_variables, jsPsych) {
                     </div>`
                 html += getProgressBarHTML();
                 return html;
+            }, 
+            on_finish: function(data) { 
+                data.stimulus = null;
+                data.trial_type = "memory-delay";
+                data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id');
+                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
             }
         }
     )
@@ -649,8 +691,9 @@ function createWM(timeline_variables, jsPsych) {
                     data.encoding_time = experimentSettings.timing.encoding_time_short
                 }
 
-                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.phase = 'recognition'
+                data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
+                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.image_id = jsPsych.evaluateTimelineVariable('wm_id')
                 data.target = jsPsych.evaluateTimelineVariable('recognition_target_file')
                 data.target_correct = jsPsych.evaluateTimelineVariable('target_correct')
@@ -688,6 +731,12 @@ function createWM(timeline_variables, jsPsych) {
                         </p>
                     </div>`,
                 choices: ['Enter'],
+                on_finish: function(data) { 
+                    data.stimulus = null;
+                    data.trial_type = "timeout";
+                    data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id');
+                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
+                }
             }],
             conditional_function: function() {
                 return jsPsych.data.get().last(1).values()[0].timed_out;
@@ -699,13 +748,12 @@ function createWM(timeline_variables, jsPsych) {
     wm_timeline.push(    
         {
             timeline: [{
-                // type: jsPsychHtmlKeyboardResponse,
                 type: jsPsychHtmlButtonResponse,
                 // choices: "Enter",
                 choices: ["Next Trial"],
                 button_html: (choice) => '<button class="jspsych-btn next-trial-button">' + choice + '</button>',
                 trial_duration: experimentSettings.feedback.duration,
-                record_data: false,
+                record_data: true,
                 stimulus: function() {
                     var wm_sample_file = jsPsych.evaluateTimelineVariable('wm_sample_file')
                     var control_file = jsPsych.evaluateTimelineVariable('recognition_control_file')
@@ -757,6 +805,11 @@ function createWM(timeline_variables, jsPsych) {
 
                         </div>`
                     return html;
+                },
+                on_finish: function(data) { 
+                    data.stimulus = null;
+                    data.trial_type = "practice-feedback";
+                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
                 }
             }], 
             conditional_function: function() {
@@ -764,7 +817,6 @@ function createWM(timeline_variables, jsPsych) {
             }
         }
     )
-
     return {timeline:wm_timeline, 
             timeline_variables:timeline_variables};
 }

@@ -12,10 +12,9 @@ matplotlib.use('TkAgg')
 plt.close()
 
 #%% variable set up
-wave_code = "M-PC"
-subject_ids = [1] #[2,3,4,5,6,7,9,10,11,21,22,23]
+subject_ids = np.arange(1,25)
 
-show = False
+show = True
 save = True
 
 #%% set up colors
@@ -28,9 +27,9 @@ figure_data = {}
 if os.path.basename(os.getcwd()) == "analysis": 
     os.chdir("..")
 
-out_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}.csv" 
-             for i in subject_ids for suffix in "AB"]
-out_files = filter(os.path.exists, out_files)
+out_files_A = [f"./output_data/M-PA/M-PA-{i:03d}.csv" for i in subject_ids]
+out_files_B = [f"./output_data/M-PB/M-PB-{i:03d}-{suffix}.csv" for i in subject_ids for suffix in "AB"]
+out_files = filter(os.path.exists, out_files_A+out_files_B)
 
 all_data = []
 for file in out_files: 
@@ -64,7 +63,7 @@ fig, ax = plt.subplots(rows, cols,
                        sharey=True,
                        constrained_layout=True)
 all_figures.append(fig)
-fig.suptitle(f"{wave_code} - WM: visual vs semantic")
+fig.suptitle(f"WM: visual vs semantic")
 fax = ax.flatten()
 
 i = 0
@@ -79,7 +78,7 @@ for s, sub_df in vis_sem.groupby("session_id"):
         columns= {"condition_name":"condition", 
                   "correct": "accuracy"}
                   )
-    sub_results["subject_id"]= int(s.split("-")[-2])
+    sub_results["subject_id"]= s
     all_results.append(sub_results)
 
     bar = sns.barplot(data=sub_results, 
@@ -91,7 +90,7 @@ for s, sub_df in vis_sem.groupby("session_id"):
                       ax=fax[i])
     
     bar.axhline(.5,ls=":")
-    bar.set_title(int(s.split("-")[-2]))
+    bar.set_title(s)
     bar.set_xlabel('')
 
     if i>0: bar.get_legend().remove()
@@ -100,17 +99,18 @@ for s, sub_df in vis_sem.groupby("session_id"):
 # delete empty axes
 for j in range(i,cols*rows): 
     fax[j].remove()
-
 figure_data.update(fig1=all_results)
 
-# scatter plots
+if show: fig.show()
+
+# %% Scatter plots
 all_results = pd.concat(all_results)
 fig, ax = plt.subplots(1, 2, 
                        figsize=(10,3), 
                        sharey=True,
                        constrained_layout=True)
 all_figures.append(fig)
-fig.suptitle(f"{wave_code} - WM: visual vs semantic")
+fig.suptitle(f"WM: visual vs semantic")
 
 conditions = ["visual", "semantic"]
 encoding_times = ["long", "short"]
@@ -141,6 +141,7 @@ for (ax, condition) in zip(ax, conditions):
     ax.set_xlabel("Encoding Time")
 
 figure_data.update(fig2=all_results)
+if show: fig.show()
 
 # %% Mixed trials
 mixed_data = wm_data.loc[wm_data.condition_name=='mixed'].copy()
@@ -162,7 +163,7 @@ fig, ax = plt.subplots(
     constrained_layout=True
     )
 all_figures.append(fig)
-fig.suptitle(f"{wave_code} - WM: mixed trials")
+fig.suptitle(f"WM: mixed trials")
 
 all_results = []
 for s, sub_df in mixed_data.groupby("session_id"):
@@ -175,7 +176,7 @@ for s, sub_df in mixed_data.groupby("session_id"):
                .rename(columns={"proportion":"proportion_visual"})
                .drop(columns="response_stimulus")
     )
-    results["session_id"] = s.split("-")[-2]
+    results["session_id"] = s
     all_results.append(results)
 
 all_results = pd.concat(all_results)
@@ -189,17 +190,18 @@ bar = sns.barplot(
 )
 bar.axhline(.5,ls=":")
 bar.set_xlabel('')
+bar.tick_params(axis='x', labelrotation=90)
 
 figure_data.update(fig3=all_results)
-
-## scatter plot
+if show: fig.show()
+# %% scatter plot
 fig, ax = plt.subplots(
     figsize=(5,3), 
     constrained_layout=True
     )
 
 all_figures.append(fig)
-fig.suptitle(f"{wave_code} - WM: mixed trials")
+fig.suptitle(f"WM: mixed trials")
 box = sns.boxplot(
     data=all_results, 
     x="encoding_time", 
@@ -221,71 +223,12 @@ for s, sub_data in all_results.groupby("session_id"):
     )
 
 figure_data.update(fig4=all_results)
+if show: fig.show()
 
-
-# %% LM preprocessing
-lm_data = all_data.loc[(all_data.trial_type=="lm")].copy()
-
-lm_data["correct"] = (lm_data.response.astype(int) == lm_data.correct_response.astype(int))
-lm_data["encoding_time"] = lm_data.encoding_time.map({1200: "short", 2000: "long"})
-
-
-# %% LM short vs long conditions
-## barplots
-cols = 5
-rows = n_subjects//cols+1
-fig_lm, ax = plt.subplots(rows, cols, 
-                       figsize=(cols*2, rows*2), 
-                       sharey=True,
-                       constrained_layout=True)
-all_figures.append(fig_lm)
-fig_lm.suptitle(f"{wave_code} - LM: visual vs semantic")
-fax = ax.flatten()
-
-i = 0
-all_results = []
-for s, sub_df in lm_data.groupby("session_id"):
-    sub_results = (
-        sub_df.groupby(["encoding_time", "condition_name"])["correct"]
-            .agg(lambda x: np.round(x.sum()/len(x), 2))
-            .reset_index()
-        )
-    sub_results = sub_results.rename(
-        columns= {"correct": "accuracy"})
-    
-    sub_results["subject_id"]= int(s.split("-")[-2])
-    all_results.append(sub_results)
-
-    bar = sns.barplot(data=sub_results, 
-                      x="encoding_time", 
-                      order = ["long", "short"],
-                      hue = "condition_name",
-                      y="accuracy", 
-                      ax=fax[i])
-    
-    bar.axhline(.5,ls=":")
-    bar.set_title(int(s.split("-")[-2]))
-    bar.set_xlabel('')
-    if i>0: bar.get_legend().remove()
-
-    i+=1
-
-# delete empty axes
-for j in range(i,cols*rows): 
-    fax[j].remove()
-
-all_results = pd.concat(all_results)
-figure_data.update(fig5=all_results)
-
-# %%
-if show:
-    plt.show(block=False)
-    plt.pause(60)
-    plt.close('all')
-
+# %% saving
 if save:
-    pdf_file = f"./figures/descriptive/descr_{wave_code}.pdf"
-    data_file = f"./figures/descriptive/descr_{wave_code}.pkl"
+    pdf_file = f"./figures/descriptive/descr_M-PAB.pdf"
+    data_file = f"./figures/descriptive/descr_M-PAB.pkl"
     pickle.dump(figure_data, open(data_file, "wb"))
     with PdfPages(pdf_file) as pdf:
         for f in all_figures:
