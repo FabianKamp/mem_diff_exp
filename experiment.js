@@ -1,7 +1,7 @@
 async function createTimeline(jsPsych){
     // load session/subject/wave id
     // const session_id = "V-PA-001"
-    const session_id = jsPsych.data.getURLVariable('sid') ||  "M-PB-999-A"
+    const session_id = jsPsych.data.getURLVariable('sid') ||  "M-PD-999-A"
     const version_id = session_id[0];
     const wave_id = session_id.slice(0, 4);
     const subject_id = parseInt(session_id.slice(5,-2), 10);

@@ -210,6 +210,7 @@ def assemble_wm_trial_data():
     
     # data dict --> wmTask.js
     wm_trial_data = dict(
+        trial_type = np.repeat(["practice", "wm"], repeats=[practice_trials, wm_trials]),
         subject_id = subject_id,
         encoding_trial_id = design_mat.loc["encoding_trial_id"],
         wm_block_id = design_mat.loc["wm_block_id"], 
@@ -217,7 +218,6 @@ def assemble_wm_trial_data():
         set_id = set_ids.astype(int),
         sample_file = wm_sample_files,
         sample_position = design_mat.loc["wm_sample_position",:].to_numpy() + 1,
-        trial_type = np.repeat(["practice", "wm"], repeats=[practice_trials, wm_trials]),
         long_encoding = design_mat.loc["long_encoding"].to_numpy(),
         encoding_time = np.where(design_mat.loc["long_encoding"]==1, 
                                  encoding_time_long, 
@@ -273,6 +273,7 @@ def insert_catch_trials():
     catch_trial_data = dict(
         subject_id = subject_id,
         encoding_trial_id = np.repeat(nan,ncatch),
+        set_id = np.repeat(nan,ncatch),
         wm_block_id = catch_block_ids,
         n_encoding = 1,
         wm_sample_id = nan,
@@ -334,12 +335,12 @@ def assemble_lm_trial_data():
 
     # assemble lm data
     lm_trial_data = dict(
+        trial_type = "lm",
         subject_id = subject_id,
         trial_id = np.arange(lm_trials), 
         encoding_trial_id = lm_encoding_trials_random,
         set_id = set_ids,
         sample_position = lm_sample_positions,
-        trial_type = "lm",
         long_encoding = wm_mat.loc["long_encoding",lm_encoding_trials_random],
         encoding_time = np.where(wm_mat.loc["long_encoding",lm_encoding_trials_random], 
                             encoding_time_long, 

@@ -348,7 +348,7 @@ function createWM(timeline_variables, jsPsych) {
                     files.push(file)
                 }
                 files.push(jsPsych.evaluateTimelineVariable('recognition_target_file'))
-                files.push(jsPsych.evaluateTimelineVariable('recognition_control_file'))
+                files.push(jsPsych.evaluateTimelineVariable('recognition_foil_file'))
                 return files;
             },
             on_finish: function(data) { 
@@ -428,20 +428,19 @@ function createWM(timeline_variables, jsPsych) {
                     var file = []
                     var theta = []
                     var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
-                    var long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
-                    var encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
                     
                     for (let i = 0; i < n_encoding; i++) { 
                         file.push(jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`))
                         theta.push(jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`))
                     }
                     
+                    data.phase = 'encoding'
                     data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                     data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
-                    data.phase = 'encoding'
+                    data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
                     data.trial_type = jsPsych.evaluateTimelineVariable('trial_type')
-                    data.long_encoding = long_encoding
-                    data.encoding_time = encoding_time
+                    data.long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
+                    data.encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
                     data.stimulus = file
                     data.theta = theta
                     data.serial = 0;
@@ -504,7 +503,9 @@ function createWM(timeline_variables, jsPsych) {
                                 var long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
                                 var encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
 
+                                data.phase = 'encoding';
                                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                                data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
                                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
                                 data.long_encoding = long_encoding
                                 data.encoding_time = encoding_time/n_encoding
@@ -512,7 +513,6 @@ function createWM(timeline_variables, jsPsych) {
                                 data.theta = theta
                                 data.n_encoding = n_encoding
                                 data.trial_type = jsPsych.evaluateTimelineVariable('trial_type')
-                                data.phase = 'encoding';
                                 data.encoding_position = encodingIndex;
                                 data.serial  = 1;
                                 data.timestamp = new Date().toLocaleTimeString()
@@ -600,15 +600,15 @@ function createWM(timeline_variables, jsPsych) {
             },
 
             button_html: (choice) => {
-                var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
+                var foil_file = jsPsych.evaluateTimelineVariable(`recognition_foil_file`)
                 var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
                 var left_target = jsPsych.evaluateTimelineVariable(`left_target`) 
 
                 if (left_target === 1) {
                     var left_image = target_file
-                    var right_image = control_file
+                    var right_image = foil_file
                 } else {
-                    var left_image = control_file
+                    var left_image = foil_file
                     var right_image = target_file 
                 }
             
@@ -670,16 +670,16 @@ function createWM(timeline_variables, jsPsych) {
             on_finish: function(data) {
                 resetTimer();
                 // stimulus
-                var control_file = jsPsych.evaluateTimelineVariable(`recognition_control_file`)
+                var foil_file = jsPsych.evaluateTimelineVariable(`recognition_foil_file`)
                 var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
                 var left_target = jsPsych.evaluateTimelineVariable(`left_target`)
 
-                data.stimulus = [target_file, control_file]
+                data.stimulus = [target_file, foil_file]
                 if (left_target === 1) {
                     data.stimulus_left = target_file
-                    data.stimulus_right = control_file
+                    data.stimulus_right = foil_file
                 } else {
-                    data.stimulus_left = control_file
+                    data.stimulus_left = foil_file
                     data.stimulus_right = target_file
                 }
 
@@ -694,11 +694,11 @@ function createWM(timeline_variables, jsPsych) {
                 data.phase = 'recognition'
                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                data.image_id = jsPsych.evaluateTimelineVariable('wm_id')
-                data.target = jsPsych.evaluateTimelineVariable('recognition_target_file')
+                data.set_id = jsPsych.evaluateTimelineVariable('set_id')
+                data.target_file = jsPsych.evaluateTimelineVariable('recognition_target_file')
                 data.target_correct = jsPsych.evaluateTimelineVariable('target_correct')
                 data.correct_response = jsPsych.evaluateTimelineVariable('correct_response')
-                data.control = jsPsych.evaluateTimelineVariable('recognition_control_file')
+                data.control = jsPsych.evaluateTimelineVariable('recognition_foil_file')
                 data.theta = jsPsych.evaluateTimelineVariable('recognition_theta')
                 data.condition = jsPsych.evaluateTimelineVariable('condition')
                 data.condition_name = jsPsych.evaluateTimelineVariable('condition_name')
@@ -756,15 +756,15 @@ function createWM(timeline_variables, jsPsych) {
                 record_data: true,
                 stimulus: function() {
                     var wm_sample_file = jsPsych.evaluateTimelineVariable('wm_sample_file')
-                    var control_file = jsPsych.evaluateTimelineVariable('recognition_control_file')
+                    var foil_file = jsPsych.evaluateTimelineVariable('recognition_foil_file')
                     var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
                     var left_target = jsPsych.evaluateTimelineVariable(`left_target`) 
 
                     if (left_target === 1) {
                         var left_image = target_file
-                        var right_image = control_file
+                        var right_image = foil_file
                     } else {
-                        var left_image = control_file
+                        var left_image = foil_file
                         var right_image = target_file 
                     }
 
