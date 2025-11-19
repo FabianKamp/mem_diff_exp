@@ -1,7 +1,7 @@
 {
     "wave": {
         "version_id": "M",
-        "wave_id": "M-PC",
+        "wave_id": "M-PD",
         "subject_number": 21
     },
 
@@ -19,9 +19,9 @@
 
     "memory_experiment": {
         "load": 3,
-        "practice_trials": 6,
+        "practice_trials": 3,
         "wm_trials": 162,
-        "lm_trials": 162, 
+        "lm_trials": 108, 
         "ncatch": 18, 
         "serial": 1, 
         "position_weights": [0.45, 0.45, 0.10]
