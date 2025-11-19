@@ -6,10 +6,11 @@ import json
 import shutil
 from generate_token import generate_token
 
-def get_image_paths(): 
-    exp_image_paths = [os.path.join("stimuli", i.split("stimuli/", 1)[-1]) 
+def get_image_paths():
+    """Load all experimental and distractor image paths into a DataFrame."""
+    exp_image_paths = [os.path.join("stimuli", i.split("stimuli/", 1)[-1])
                        for i in glob.glob(os.path.join(exp_stimuli_dir, "**", "*.jpg"))]
-    dist_image_paths = [os.path.join("stimuli", i.split("stimuli/", 1)[-1]) 
+    dist_image_paths = [os.path.join("stimuli", i.split("stimuli/", 1)[-1])
                        for i in glob.glob(os.path.join(dist_stimuli_dir, "**", "*.jpg"))]
     image_paths = exp_image_paths + dist_image_paths
     image_id = [int(i.split("/")[-1].rstrip(".jpg")) for i in image_paths]
@@ -17,24 +18,12 @@ def get_image_paths():
     return image_paths
 
 def get_file_path(image_id):
+    """Return the file path for a given image ID."""
     file_path = image_paths.loc[image_paths.image_id == image_id, "image_path"]
     return file_path.iloc[0]
 
 def generate_random_angles(n):
-    """
-    Generate a list of random angles evenly distributed around a circle.
-
-    This function generates `n` angles such that they are evenly spaced 
-    around a circle, starting from a random initial angle. The angles 
-    are then randomly permuted and rounded to three decimal places.
-
-    Parameters:
-        n (int): The number of angles to generate.
-
-    Returns:
-        numpy.ndarray: A 1D array of `n` random angles (in radians), 
-        evenly distributed and randomly permuted, rounded to three decimal places.
-    """
+    """Generate a list of random angles evenly distributed around a circle."""
     angle_between = np.pi * 2 / n
     random_angles = [np.random.rand() * (np.pi * 2)]
     for _ in range(n-1):
@@ -44,12 +33,15 @@ def generate_random_angles(n):
     random_angles = np.round(random_angles).astype(int)
     return random_angles
 
-def randomized_set_ids(): 
-    # randomize image ids of all samples during encoding
+def randomized_set_ids():
+    """Generate randomized stimulus set IDs for all encoding trials."""
     set_ids = np.random.permutation(np.arange(all_encoding_trials) + 1)
     return set_ids
 
 def generate_wm_mat():
+    """Generate the working memory design matrix with counterbalanced conditions, 
+    encoding times, and trial parameters."""
+    
     design_mat = []
     for block in range(num_blocks):
         # initialize block mat
@@ -112,7 +104,7 @@ def generate_wm_mat():
     return design_mat
 
 def generate_practice_mat():
-    # hard coded practice trials
+    """Generate the practice trial design matrix with hard-coded trial parameters."""
     practice_mat = np.vstack([
         np.repeat(nan,3),
         np.array([3,2,1]), 
@@ -138,9 +130,7 @@ def generate_practice_mat():
     return practice_mat
 
 def get_distractor_stimuli():
-    #### Distractors
-    # randomize distractors 
-    # distractor concepts should not overlap between wm and lm
+    """Generate non-overlapping distractor stimulus sets for WM, LM, and catch trials."""
     dist_info = pd.read_csv(os.path.join(dist_stimuli_dir, "image_info.csv"))
     
     # lm 
@@ -176,6 +166,7 @@ def get_distractor_stimuli():
     return distractors
 
 def generate_encoding_id_mat():
+    """Create encoding matrix with target stimuli at sample positions and distractors at remaining positions."""
     encoding_ids = np.zeros((all_encoding_trials, load))
     encoding_ids[np.arange(all_encoding_trials), design_mat.loc["wm_sample_position",:]] = set_ids + 1000
     encoding_ids[encoding_ids == 0] = distractors["wm"]
@@ -183,7 +174,7 @@ def generate_encoding_id_mat():
     return encoding_ids
 
 def map_conditions2stimuli(conditions):
-    # conditions -> (target, control): 1 -> (4,3), 2 -> (4,5), 3 -> (3,5)
+    """Map experimental conditions to target and foil stimulus codes for recognition trials."""
     condition_mapping = {
         1: (4, 3),
         2: (4, 5),
@@ -194,8 +185,7 @@ def map_conditions2stimuli(conditions):
     return target_codes, foil_codes
 
 def assemble_wm_trial_data():
-    # encoding 
-    # get encoding files
+    """Assemble complete working memory trial data including encoding, recognition, and response parameters."""
     wm_sample_files = np.array([get_file_path(i) for i in  set_ids + 1000])
     encoding_files = np.array([get_file_path(i) for i in encoding_ids.flatten()])
     encoding_files = encoding_files.reshape(encoding_ids.shape)
@@ -256,7 +246,8 @@ def assemble_wm_trial_data():
 
     return wm_trial_data
 
-def insert_catch_trials():   
+def insert_catch_trials():
+    """Generate catch trial data and insert them at evenly-spaced positions into the WM trial sequence."""
     catch_ids = distractors["catch"]
     ncatch = len(catch_ids)
     
@@ -315,6 +306,7 @@ def insert_catch_trials():
     return wm_trial_data
 
 def get_lm_target_ids():
+    """Identify long memory target stimuli from cued and uncued WM encoding trials."""
     cued_trials = np.where((wm_mat.loc["condition"] != 1) & (wm_mat.loc["wm_block_id"] < 3))[0]
     lm_ids_cued = encoding_ids[cued_trials, wm_mat.loc["lm_sample_position", cued_trials]]
     
@@ -327,7 +319,7 @@ def get_lm_target_ids():
     return lm_encoding_trials, lm_recognition_target
 
 def assemble_lm_trial_data():
-    # randomize LM trials
+    """Assemble randomized long memory trial data with target and foil stimuli."""
     lm_encoding_trials_random = lm_encoding_trials[lm_random_idx]
     lm_recognition_target_random = lm_recognition_target[lm_random_idx]
     set_ids = np.array([s if s < 9000 else nan for s in lm_recognition_target_random]).astype(int)
@@ -368,7 +360,7 @@ def assemble_lm_trial_data():
     return lm_trial_data
 
 def save_input_data():
-    # save twice (B -> backup token)
+    """Save trial data to JSON files with A/B backup codes and create test session for first subject."""
     for backup_code in ["A","B"]:
         # create session id
         session_id = f"{wave_id}-{subject_id:03d}-{backup_code}" 
@@ -407,8 +399,8 @@ if __name__ == "__main__":
     # output path
     out_dir = f"input_data/{wave_id}"
     if os.path.exists(out_dir):
-        # k = input(f"Overwrite {out_dir} [y/n]?");
-        # if k!="y": raise(FileExistsError("Outdir exists. Delete before regenerating input data."))
+        k = input(f"Overwrite {out_dir} [y/n]?");
+        if k!="y": raise(FileExistsError("Outdir exists. Delete before regenerating input data."))
         shutil.rmtree(out_dir)
     os.mkdir(out_dir)
 
