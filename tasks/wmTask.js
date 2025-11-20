@@ -1,5 +1,14 @@
 // superellipse version with n=3 for rounder edges
-function convert2cartesian(rx, ry, theta, n=3) {
+function convert2cartesian(theta) {
+    
+    const rx = experimentSettings.spatial.radius_x;
+    const ry = experimentSettings.spatial.radius_y;
+    const n = experimentSettings.spatial.n;
+
+    console.log(theta)
+    // console.log(rx)
+    // console.log(ry)
+
     const cos_t = Math.cos(theta);
     const sin_t = Math.sin(theta);
 
@@ -22,12 +31,13 @@ function generate_instruction_angles(load) {
 
 function createWMInstructions() {   
     // instruction angles
+    const button_pos = experimentSettings.spatial.button_pos
     var instruction_angles = generate_instruction_angles(experimentSettings.memory_experiment.load)
-    var sample_pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, instruction_angles[1])
+    var sample_pos = convert2cartesian(instruction_angles[1])
     var instruction_files = ["dist1.jpg", "sample1.jpg", "dist2.jpg", "dist3.jpg", "dist4.jpg", "dist5.jpg", "dist6.jpg"]
     var encoding_slide = `<div>`
     for (let i = 0; i < instruction_angles.length; i++) {
-        var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, instruction_angles[i])
+        var pos = convert2cartesian(instruction_angles[i])
         encoding_slide += 
             `<div class="image-container"> 
                 <img src="stimuli/instructions/${instruction_files[i]}" class="image-object" 
@@ -84,8 +94,8 @@ function createWMInstructions() {
             </div>
                 
             <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
             </div>
 
             <p class="instruction-paragraph-left">
@@ -111,8 +121,8 @@ function createWMInstructions() {
             </div>
                 
             <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
             </div>
 
             <p class="instruction-paragraph-left">
@@ -136,8 +146,8 @@ function createWMInstructions() {
             </div>
                 
             <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% + 70px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% - 70px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
              </div>
             
             <p class="instruction-paragraph-left">
@@ -159,8 +169,8 @@ function createWMInstructions() {
             </div>
                 
             <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
              </div>
             
              <div class="progress-bar" style="bottom: 140px;">
@@ -173,10 +183,11 @@ function createWMInstructions() {
             
             <p class="instruction-paragraph-left">
                 <strong>6/6 What about breaks?</strong><br><br> 
-                At the bottom of your screen, you'll see a progress bar to help you track your progress through the task. 
-                <br><br>
                 You will have <strong>2 breaks</strong>, each lasting up to two minutes. 
                 Each block between breaks takes ~8 minutes to complete.
+                <br><br>
+                At the bottom of your screen, 
+                you'll see a progress bar to help you track your progress through the task. 
                 <br>
             </p>
 
@@ -211,7 +222,7 @@ function startingWMPractice(){
                     <strong>Starting practice runs</strong>
                 </p>
                 <p class="instruction-paragraph">
-                    We will start with <strong>6 practice runs</strong>.
+                    We will start with <strong>three practice runs</strong>.
                     <br><br>
                     During the practice runs the original image will 
                     appear again for a couple of seconds,  
@@ -308,6 +319,7 @@ function createWM(timeline_variables, jsPsych) {
     const block_size = (wm_trials + ncatch) / 3;
     const first_break = 100 * (practice_trials + block_size) / total_trials;
     const second_break = 100 * (practice_trials + 2 * block_size) / total_trials;
+    const button_pos = experimentSettings.spatial.button_pos
 
     // Helper function to generate progress bar HTML
     const getProgressBarHTML = () => {
@@ -406,7 +418,7 @@ function createWM(timeline_variables, jsPsych) {
                     if (i >= n_encoding) break;
                     var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
                     var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
-                    var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
+                    var pos = convert2cartesian(theta)
                     html +=
                     `<div>
                         <img src="${file}" class="image-object"
@@ -477,7 +489,7 @@ function createWM(timeline_variables, jsPsych) {
                             stimulus: function() {
                                 var file = jsPsych.evaluateTimelineVariable(`encoding_file_${encodingIndex}`)
                                 var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${encodingIndex}`)
-                                var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
+                                var pos = convert2cartesian(theta)
 
                                 html =
                                 `<div style="width:500px; height:80vh;">
@@ -613,14 +625,14 @@ function createWM(timeline_variables, jsPsych) {
                 }
             
                 left_button = 
-                    `<div style="cursor: pointer; width: 130px; height: 130px; 
-                                position: absolute; top: 50%; left: calc( 50% - 75px); transform: translate(-50%, -50%);">
+                    `<div style="cursor: pointer; width: 126px; height: 126px; 
+                                position: absolute; top: 50%; left: calc( 50% - ${button_pos}px); transform: translate(-50%, -50%);">
                     <img src="${left_image}" class="image-button" />
                     </div>`
 
                 right_button = 
-                    `<div style="cursor: pointer; width: 130px; height: 130px; 
-                                position: absolute; top: 50%; left: calc( 50% + 75px); transform: translate(-50%, -50%);">
+                    `<div style="cursor: pointer; width: 126px; height: 126px; 
+                                position: absolute; top: 50%; left: calc( 50% + ${button_pos}px); transform: translate(-50%, -50%);">
                     <img src="${right_image}" class="image-button"/>
                     </div>`
             
@@ -633,7 +645,7 @@ function createWM(timeline_variables, jsPsych) {
 
             stimulus: function() {
                 var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
+                var pos = convert2cartesian(theta)
 
                 var html =
                     `<div style="width:500px; height: 75vh;">
@@ -643,8 +655,8 @@ function createWM(timeline_variables, jsPsych) {
                             </div>
 
                             <div class="cross">
-                                <div class="cross-vertical" style="opacity: .1;"></div>
-                                <div class="cross-horizontal" style="opacity: .1;"></div>
+                                <div class="cross-vertical" style="opacity: .05;"></div>
+                                <div class="cross-horizontal" style="opacity: .05;"></div>
                             </div>
 
                         </div>
@@ -755,7 +767,7 @@ function createWM(timeline_variables, jsPsych) {
                 trial_duration: experimentSettings.feedback.duration,
                 record_data: true,
                 stimulus: function() {
-                    var wm_sample_file = jsPsych.evaluateTimelineVariable('wm_sample_file')
+                    var sample_file = jsPsych.evaluateTimelineVariable('sample_file')
                     var foil_file = jsPsych.evaluateTimelineVariable('recognition_foil_file')
                     var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
                     var left_target = jsPsych.evaluateTimelineVariable(`left_target`) 
@@ -769,7 +781,7 @@ function createWM(timeline_variables, jsPsych) {
                     }
 
                     var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                    var pos = convert2cartesian(experimentSettings.spatial.radius_x, experimentSettings.spatial.radius_y, theta)
+                    var pos = convert2cartesian(theta)
                     var html =
                         `<div style="width:500px; height: 80vh;">
                             <p style="font-size: x-large; position: absolute; top: 50px; left: 50%;
@@ -784,23 +796,23 @@ function createWM(timeline_variables, jsPsych) {
                             </div>
 
                             <div>
-                                <img src="${wm_sample_file}" class="image-object feedback-blink"
-                                style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
+                                <img src="${sample_file}" class="image-object feedback-blink"
+                                style="width: 100px; height: 100px; top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
                             </div>
 
-                            <div style="cursor: pointer; width: 130px; height: 130px;
-                                    position: absolute; top: 50%; left: calc( 50% + 75px); transform: translate(-50%, -50%);">
+                            <div style="cursor: pointer; width: 126px; height: 126px;
+                                    position: absolute; top: 50%; left: calc( 50% + ${button_pos}px); transform: translate(-50%, -50%);">
                                     <img src="${right_image}" class="image-button"/>
                             </div>
 
-                            <div style="cursor: pointer; width: 130px; height: 130px;
-                                    position: absolute; top: 50%; left: calc( 50% - 75px); transform: translate(-50%, -50%);">
+                            <div style="cursor: pointer; width: 126px; height: 126px;
+                                    position: absolute; top: 50%; left: calc( 50% - ${button_pos}px); transform: translate(-50%, -50%);">
                                     <img src="${left_image}" class="image-button" />
                             </div>
 
                             <div class="cross">
-                                <div class="cross-vertical" style="opacity: .1;"></div>
-                                <div class="cross-horizontal" style="opacity: .1;"></div>
+                                <div class="cross-vertical" style="opacity: .05;"></div>
+                                <div class="cross-horizontal" style="opacity: .05;"></div>
                             </div>
 
                         </div>`
@@ -821,3 +833,57 @@ function createWM(timeline_variables, jsPsych) {
             timeline_variables:timeline_variables};
 }
 
+// BREAK TRIAL
+function createBreak(label) {
+    // break
+    var break_trial = {
+        type: jsPsychHtmlKeyboardResponse,
+        trial_duration: 121000,
+        choices: ['Enter'],
+        post_trial_gap: 200,
+        min_viewing_time: 10000,
+        stimulus: function() {
+            html = 
+            `
+            <div>
+                <p class="instruction-header"><strong>Break #${label}</strong></p>
+                <p class="instruction-paragraph"> 
+                    If you need a break, you can take one now.<br><br>
+                    Please allow yourself a maximum of <strong>2 minutes</strong>.<br>
+                    Press <strong>enter</strong> to continue.<br><br>
+                    <strong>The task will continue automatically after 2 minutes.</strong>
+                </p>
+                <p class="continue-prompt">
+                    To continue press <strong>Enter</strong>
+                </p>
+            </div>
+            `
+            return html
+        },
+        
+        on_load: function() {
+            startTimer(
+                radius=12,
+                delay=100,
+                duration=120000,
+                top=80,
+                color="#87CEEB"//"#00000021"
+            );
+        },
+        
+        on_finish: function(data) {
+            resetTimer();
+
+            if(data.rt === null) {
+                data.break_ending = "ended by timeout after 2 minutes";
+            } 
+            else {
+                data.break_ending = "ended by participant's action after " + data.rt + " ms";
+            }
+            data.stimulus = null;
+            data.trial_type = "break";
+            data.timestamp = new Date().toLocaleTimeString()
+        }
+    }
+    return break_trial;
+}

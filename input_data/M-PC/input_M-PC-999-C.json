@@ -30,7 +30,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/136/1136.jpg",
         "encoding_theta_3": 0.849,
         "trial_id": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "practice",
@@ -63,7 +63,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9053.jpg",
         "encoding_theta_3": 3.025,
         "trial_id": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "practice",
@@ -96,7 +96,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9486.jpg",
         "encoding_theta_3": 1.434,
         "trial_id": 2,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -129,7 +129,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9425.jpg",
         "encoding_theta_3": 2.831,
         "trial_id": 3,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -162,7 +162,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9245.jpg",
         "encoding_theta_3": 2.35,
         "trial_id": 4,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -195,7 +195,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9010.jpg",
         "encoding_theta_3": 2.607,
         "trial_id": 5,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -228,7 +228,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9349.jpg",
         "encoding_theta_3": 1.553,
         "trial_id": 6,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -261,7 +261,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9225.jpg",
         "encoding_theta_3": 1.289,
         "trial_id": 7,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -287,7 +287,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9626.jpg",
         "encoding_theta_1": 5.1677977928682015,
         "trial_id": 8,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -320,7 +320,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9259.jpg",
         "encoding_theta_3": 6.132,
         "trial_id": 9,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -353,7 +353,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9302.jpg",
         "encoding_theta_3": 5.478,
         "trial_id": 10,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -386,7 +386,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/020/1020.jpg",
         "encoding_theta_3": 2.369,
         "trial_id": 11,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -419,7 +419,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9385.jpg",
         "encoding_theta_3": 0.33,
         "trial_id": 12,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -452,7 +452,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9407.jpg",
         "encoding_theta_3": 6.26,
         "trial_id": 13,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -485,7 +485,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9366.jpg",
         "encoding_theta_3": 6.181,
         "trial_id": 14,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -518,7 +518,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9438.jpg",
         "encoding_theta_3": 4.274,
         "trial_id": 15,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -551,7 +551,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/031/1031.jpg",
         "encoding_theta_3": 0.193,
         "trial_id": 16,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -577,7 +577,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9654.jpg",
         "encoding_theta_1": 0.832677076610365,
         "trial_id": 17,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -610,7 +610,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9069.jpg",
         "encoding_theta_3": 5.001,
         "trial_id": 18,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -643,7 +643,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9327.jpg",
         "encoding_theta_3": 4.569,
         "trial_id": 19,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -676,7 +676,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9223.jpg",
         "encoding_theta_3": 4.768,
         "trial_id": 20,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -709,7 +709,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9211.jpg",
         "encoding_theta_3": 5.266,
         "trial_id": 21,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -742,7 +742,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9466.jpg",
         "encoding_theta_3": 3.23,
         "trial_id": 22,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -775,7 +775,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9242.jpg",
         "encoding_theta_3": 2.279,
         "trial_id": 23,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -808,7 +808,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9382.jpg",
         "encoding_theta_3": 1.714,
         "trial_id": 24,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -841,7 +841,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9422.jpg",
         "encoding_theta_3": 2.888,
         "trial_id": 25,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -874,7 +874,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9125.jpg",
         "encoding_theta_3": 2.045,
         "trial_id": 26,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -900,7 +900,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9521.jpg",
         "encoding_theta_1": 5.41619672959136,
         "trial_id": 27,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -933,7 +933,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/157/1157.jpg",
         "encoding_theta_3": 0.162,
         "trial_id": 28,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -966,7 +966,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9301.jpg",
         "encoding_theta_3": 2.927,
         "trial_id": 29,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -999,7 +999,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9270.jpg",
         "encoding_theta_3": 3.576,
         "trial_id": 30,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1032,7 +1032,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9159.jpg",
         "encoding_theta_3": 4.641,
         "trial_id": 31,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1065,7 +1065,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9362.jpg",
         "encoding_theta_3": 6.069,
         "trial_id": 32,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1098,7 +1098,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9483.jpg",
         "encoding_theta_3": 3.221,
         "trial_id": 33,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1131,7 +1131,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9079.jpg",
         "encoding_theta_3": 0.434,
         "trial_id": 34,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1164,7 +1164,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9420.jpg",
         "encoding_theta_3": 0.612,
         "trial_id": 35,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1197,7 +1197,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/085/1085.jpg",
         "encoding_theta_3": 1.631,
         "trial_id": 36,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -1223,7 +1223,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9576.jpg",
         "encoding_theta_1": 5.797854421528074,
         "trial_id": 37,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1256,7 +1256,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9123.jpg",
         "encoding_theta_3": 2.069,
         "trial_id": 38,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1289,7 +1289,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9238.jpg",
         "encoding_theta_3": 4.097,
         "trial_id": 39,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1322,7 +1322,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9380.jpg",
         "encoding_theta_3": 0.413,
         "trial_id": 40,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1355,7 +1355,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9027.jpg",
         "encoding_theta_3": 0.057,
         "trial_id": 41,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1388,7 +1388,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9173.jpg",
         "encoding_theta_3": 3.762,
         "trial_id": 42,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1421,7 +1421,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9268.jpg",
         "encoding_theta_3": 0.757,
         "trial_id": 43,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1454,7 +1454,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9299.jpg",
         "encoding_theta_3": 2.556,
         "trial_id": 44,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1487,7 +1487,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9436.jpg",
         "encoding_theta_3": 5.36,
         "trial_id": 45,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1520,7 +1520,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9202.jpg",
         "encoding_theta_3": 5.208,
         "trial_id": 46,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -1546,7 +1546,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9487.jpg",
         "encoding_theta_1": 3.0603002920098343,
         "trial_id": 47,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1579,7 +1579,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9457.jpg",
         "encoding_theta_3": 5.752,
         "trial_id": 48,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1612,7 +1612,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9164.jpg",
         "encoding_theta_3": 0.252,
         "trial_id": 49,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1645,7 +1645,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9306.jpg",
         "encoding_theta_3": 0.289,
         "trial_id": 50,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1678,7 +1678,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9471.jpg",
         "encoding_theta_3": 2.241,
         "trial_id": 51,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1711,7 +1711,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9039.jpg",
         "encoding_theta_3": 3.21,
         "trial_id": 52,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1744,7 +1744,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9247.jpg",
         "encoding_theta_3": 1.413,
         "trial_id": 53,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1777,7 +1777,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9055.jpg",
         "encoding_theta_3": 2.309,
         "trial_id": 54,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1810,7 +1810,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9018.jpg",
         "encoding_theta_3": 0.773,
         "trial_id": 55,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -1836,7 +1836,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9551.jpg",
         "encoding_theta_1": 3.809199550911402,
         "trial_id": 56,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1869,7 +1869,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9351.jpg",
         "encoding_theta_3": 0.325,
         "trial_id": 57,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1902,7 +1902,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/066/1066.jpg",
         "encoding_theta_3": 1.412,
         "trial_id": 58,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1935,7 +1935,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9214.jpg",
         "encoding_theta_3": 0.556,
         "trial_id": 59,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -1968,7 +1968,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/007/1007.jpg",
         "encoding_theta_3": 5.768,
         "trial_id": 60,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2001,7 +2001,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9174.jpg",
         "encoding_theta_3": 4.105,
         "trial_id": 61,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2034,7 +2034,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9269.jpg",
         "encoding_theta_3": 0.109,
         "trial_id": 62,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2067,7 +2067,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9286.jpg",
         "encoding_theta_3": 4.02,
         "trial_id": 63,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2100,7 +2100,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9051.jpg",
         "encoding_theta_3": 5.786,
         "trial_id": 64,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2133,7 +2133,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9381.jpg",
         "encoding_theta_3": 4.247,
         "trial_id": 65,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -2159,7 +2159,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9568.jpg",
         "encoding_theta_1": 4.805441703820645,
         "trial_id": 66,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2192,7 +2192,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9138.jpg",
         "encoding_theta_3": 2.884,
         "trial_id": 67,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2225,7 +2225,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9347.jpg",
         "encoding_theta_3": 2.996,
         "trial_id": 68,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2258,7 +2258,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9363.jpg",
         "encoding_theta_3": 0.416,
         "trial_id": 69,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2291,7 +2291,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9028.jpg",
         "encoding_theta_3": 0.59,
         "trial_id": 70,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2324,7 +2324,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9403.jpg",
         "encoding_theta_3": 5.663,
         "trial_id": 71,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2357,7 +2357,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/069/1069.jpg",
         "encoding_theta_3": 1.604,
         "trial_id": 72,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2390,7 +2390,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9194.jpg",
         "encoding_theta_3": 4.055,
         "trial_id": 73,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2423,7 +2423,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9080.jpg",
         "encoding_theta_3": 2.204,
         "trial_id": 74,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2456,7 +2456,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9068.jpg",
         "encoding_theta_3": 3.126,
         "trial_id": 75,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -2482,7 +2482,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9522.jpg",
         "encoding_theta_1": 1.0985434939300724,
         "trial_id": 76,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2515,7 +2515,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/001/1001.jpg",
         "encoding_theta_3": 2.734,
         "trial_id": 77,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2548,7 +2548,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9367.jpg",
         "encoding_theta_3": 4.998,
         "trial_id": 78,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2581,7 +2581,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9213.jpg",
         "encoding_theta_3": 3.45,
         "trial_id": 79,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2614,7 +2614,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9410.jpg",
         "encoding_theta_3": 4.191,
         "trial_id": 80,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2647,7 +2647,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/045/1045.jpg",
         "encoding_theta_3": 4.285,
         "trial_id": 81,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2680,7 +2680,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9350.jpg",
         "encoding_theta_3": 1.707,
         "trial_id": 82,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2713,7 +2713,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9226.jpg",
         "encoding_theta_3": 5.444,
         "trial_id": 83,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2746,7 +2746,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9179.jpg",
         "encoding_theta_3": 4.728,
         "trial_id": 84,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2779,7 +2779,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9426.jpg",
         "encoding_theta_3": 6.003,
         "trial_id": 85,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -2805,7 +2805,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9604.jpg",
         "encoding_theta_1": 3.157715787521994,
         "trial_id": 86,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2838,7 +2838,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9440.jpg",
         "encoding_theta_3": 6.182,
         "trial_id": 87,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2871,7 +2871,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9386.jpg",
         "encoding_theta_3": 3.722,
         "trial_id": 88,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2904,7 +2904,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9102.jpg",
         "encoding_theta_3": 5.664,
         "trial_id": 89,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2937,7 +2937,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/082/1082.jpg",
         "encoding_theta_3": 1.993,
         "trial_id": 90,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -2970,7 +2970,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9456.jpg",
         "encoding_theta_3": 4.455,
         "trial_id": 91,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3003,7 +3003,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9412.jpg",
         "encoding_theta_3": 4.078,
         "trial_id": 92,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3036,7 +3036,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9106.jpg",
         "encoding_theta_3": 6.054,
         "trial_id": 93,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3069,7 +3069,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9370.jpg",
         "encoding_theta_3": 1.446,
         "trial_id": 94,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -3095,7 +3095,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9604.jpg",
         "encoding_theta_1": 2.504873678614725,
         "trial_id": 95,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3128,7 +3128,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/161/1161.jpg",
         "encoding_theta_3": 3.446,
         "trial_id": 96,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3161,7 +3161,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9352.jpg",
         "encoding_theta_3": 1.334,
         "trial_id": 97,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3194,7 +3194,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9291.jpg",
         "encoding_theta_3": 4.281,
         "trial_id": 98,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3227,7 +3227,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9472.jpg",
         "encoding_theta_3": 3.153,
         "trial_id": 99,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3260,7 +3260,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/062/1062.jpg",
         "encoding_theta_3": 4.771,
         "trial_id": 100,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3293,7 +3293,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9458.jpg",
         "encoding_theta_3": 5.502,
         "trial_id": 101,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3326,7 +3326,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9042.jpg",
         "encoding_theta_3": 5.744,
         "trial_id": 102,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3359,7 +3359,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9248.jpg",
         "encoding_theta_3": 0.684,
         "trial_id": 103,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3392,7 +3392,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9167.jpg",
         "encoding_theta_3": 1.214,
         "trial_id": 104,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -3418,7 +3418,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9601.jpg",
         "encoding_theta_1": 0.9196949169070635,
         "trial_id": 105,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3451,7 +3451,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9430.jpg",
         "encoding_theta_3": 0.901,
         "trial_id": 106,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3484,7 +3484,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9361.jpg",
         "encoding_theta_3": 5.546,
         "trial_id": 107,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3517,7 +3517,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9065.jpg",
         "encoding_theta_3": 2.401,
         "trial_id": 108,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3550,7 +3550,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9281.jpg",
         "encoding_theta_3": 3.073,
         "trial_id": 109,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3583,7 +3583,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9237.jpg",
         "encoding_theta_3": 5.634,
         "trial_id": 110,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3616,7 +3616,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9316.jpg",
         "encoding_theta_3": 3.904,
         "trial_id": 111,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3649,7 +3649,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9172.jpg",
         "encoding_theta_3": 0.379,
         "trial_id": 112,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3682,7 +3682,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9435.jpg",
         "encoding_theta_3": 4.304,
         "trial_id": 113,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3715,7 +3715,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9006.jpg",
         "encoding_theta_3": 3.053,
         "trial_id": 114,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -3741,7 +3741,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9657.jpg",
         "encoding_theta_1": 2.3092868820248875,
         "trial_id": 115,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3774,7 +3774,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9343.jpg",
         "encoding_theta_3": 4.21,
         "trial_id": 116,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3807,7 +3807,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9401.jpg",
         "encoding_theta_3": 5.439,
         "trial_id": 117,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3840,7 +3840,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9449.jpg",
         "encoding_theta_3": 0.32,
         "trial_id": 118,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3873,7 +3873,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9267.jpg",
         "encoding_theta_3": 1.948,
         "trial_id": 119,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3906,7 +3906,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9134.jpg",
         "encoding_theta_3": 1.188,
         "trial_id": 120,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3939,7 +3939,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9255.jpg",
         "encoding_theta_3": 3.305,
         "trial_id": 121,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -3972,7 +3972,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9292.jpg",
         "encoding_theta_3": 5.349,
         "trial_id": 122,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4005,7 +4005,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9476.jpg",
         "encoding_theta_3": 4.985,
         "trial_id": 123,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4038,7 +4038,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9310.jpg",
         "encoding_theta_3": 1.578,
         "trial_id": 124,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -4064,7 +4064,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9664.jpg",
         "encoding_theta_1": 0.42833925268743417,
         "trial_id": 125,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4097,7 +4097,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9251.jpg",
         "encoding_theta_3": 5.125,
         "trial_id": 126,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4130,7 +4130,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9373.jpg",
         "encoding_theta_3": 0.706,
         "trial_id": 127,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4163,7 +4163,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9130.jpg",
         "encoding_theta_3": 4.009,
         "trial_id": 128,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4196,7 +4196,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9108.jpg",
         "encoding_theta_3": 5.824,
         "trial_id": 129,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4229,7 +4229,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9263.jpg",
         "encoding_theta_3": 6.157,
         "trial_id": 130,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4262,7 +4262,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9182.jpg",
         "encoding_theta_3": 5.277,
         "trial_id": 131,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4295,7 +4295,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/149/1149.jpg",
         "encoding_theta_3": 3.701,
         "trial_id": 132,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4328,7 +4328,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9168.jpg",
         "encoding_theta_3": 3.074,
         "trial_id": 133,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -4354,7 +4354,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9511.jpg",
         "encoding_theta_1": 0.16218099449530327,
         "trial_id": 134,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4387,7 +4387,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9020.jpg",
         "encoding_theta_3": 2.992,
         "trial_id": 135,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4420,7 +4420,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9275.jpg",
         "encoding_theta_3": 5.129,
         "trial_id": 136,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4453,7 +4453,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9431.jpg",
         "encoding_theta_3": 0.961,
         "trial_id": 137,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4486,7 +4486,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9077.jpg",
         "encoding_theta_3": 5.462,
         "trial_id": 138,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4519,7 +4519,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9448.jpg",
         "encoding_theta_3": 5.458,
         "trial_id": 139,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4552,7 +4552,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9315.jpg",
         "encoding_theta_3": 6.151,
         "trial_id": 140,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4585,7 +4585,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/004/1004.jpg",
         "encoding_theta_3": 5.484,
         "trial_id": 141,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4618,7 +4618,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9048.jpg",
         "encoding_theta_3": 1.614,
         "trial_id": 142,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4651,7 +4651,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9378.jpg",
         "encoding_theta_3": 0.367,
         "trial_id": 143,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -4677,7 +4677,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9496.jpg",
         "encoding_theta_1": 0.8492748420435698,
         "trial_id": 144,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4710,7 +4710,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9133.jpg",
         "encoding_theta_3": 5.914,
         "trial_id": 145,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4743,7 +4743,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9153.jpg",
         "encoding_theta_3": 0.058,
         "trial_id": 146,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4776,7 +4776,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9418.jpg",
         "encoding_theta_3": 2.801,
         "trial_id": 147,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4809,7 +4809,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9434.jpg",
         "encoding_theta_3": 2.194,
         "trial_id": 148,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4842,7 +4842,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9207.jpg",
         "encoding_theta_3": 5.885,
         "trial_id": 149,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4875,7 +4875,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/108/1108.jpg",
         "encoding_theta_3": 5.69,
         "trial_id": 150,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4908,7 +4908,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9062.jpg",
         "encoding_theta_3": 1.664,
         "trial_id": 151,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4941,7 +4941,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9118.jpg",
         "encoding_theta_3": 3.743,
         "trial_id": 152,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -4974,7 +4974,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9253.jpg",
         "encoding_theta_3": 4.4,
         "trial_id": 153,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -5000,7 +5000,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9527.jpg",
         "encoding_theta_1": 6.0514307182597245,
         "trial_id": 154,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5033,7 +5033,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9206.jpg",
         "encoding_theta_3": 3.878,
         "trial_id": 155,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5066,7 +5066,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/089/1089.jpg",
         "encoding_theta_3": 5.227,
         "trial_id": 156,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5099,7 +5099,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9235.jpg",
         "encoding_theta_3": 1.468,
         "trial_id": 157,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5132,7 +5132,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9045.jpg",
         "encoding_theta_3": 1.341,
         "trial_id": 158,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5165,7 +5165,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9277.jpg",
         "encoding_theta_3": 3.349,
         "trial_id": 159,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5198,7 +5198,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9024.jpg",
         "encoding_theta_3": 4.187,
         "trial_id": 160,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5231,7 +5231,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9186.jpg",
         "encoding_theta_3": 2.058,
         "trial_id": 161,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5264,7 +5264,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9218.jpg",
         "encoding_theta_3": 5.599,
         "trial_id": 162,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5297,7 +5297,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9447.jpg",
         "encoding_theta_3": 5.017,
         "trial_id": 163,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -5323,7 +5323,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9529.jpg",
         "encoding_theta_1": 3.4527959057967874,
         "trial_id": 164,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5356,7 +5356,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9433.jpg",
         "encoding_theta_3": 0.558,
         "trial_id": 165,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5389,7 +5389,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9076.jpg",
         "encoding_theta_3": 1.895,
         "trial_id": 166,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5422,7 +5422,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9091.jpg",
         "encoding_theta_3": 3.166,
         "trial_id": 167,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5455,7 +5455,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9276.jpg",
         "encoding_theta_3": 0.561,
         "trial_id": 168,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5488,7 +5488,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/104/1104.jpg",
         "encoding_theta_3": 4.197,
         "trial_id": 169,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5521,7 +5521,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9391.jpg",
         "encoding_theta_3": 0.309,
         "trial_id": 170,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5554,7 +5554,7 @@
         "encoding_file_3": "stimuli/exp_stimuli_pilot/117/1117.jpg",
         "encoding_theta_3": 1.932,
         "trial_id": 171,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5587,7 +5587,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9446.jpg",
         "encoding_theta_3": 4.632,
         "trial_id": 172,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5620,7 +5620,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9058.jpg",
         "encoding_theta_3": 0.031,
         "trial_id": 173,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "subject_id": 1,
@@ -5646,7 +5646,7 @@
         "encoding_file_1": "stimuli/dist_stimuli_pilot/images/9612.jpg",
         "encoding_theta_1": 6.068439612306346,
         "trial_id": 174,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5679,7 +5679,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9075.jpg",
         "encoding_theta_3": 4.749,
         "trial_id": 175,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5712,7 +5712,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9293.jpg",
         "encoding_theta_3": 2.897,
         "trial_id": 176,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5745,7 +5745,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9044.jpg",
         "encoding_theta_3": 0.264,
         "trial_id": 177,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5778,7 +5778,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9340.jpg",
         "encoding_theta_3": 3.999,
         "trial_id": 178,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5811,7 +5811,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9264.jpg",
         "encoding_theta_3": 2.263,
         "trial_id": 179,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5844,7 +5844,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9021.jpg",
         "encoding_theta_3": 5.887,
         "trial_id": 180,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5877,7 +5877,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9131.jpg",
         "encoding_theta_3": 4.014,
         "trial_id": 181,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "wm",
@@ -5910,7 +5910,7 @@
         "encoding_file_3": "stimuli/dist_stimuli_pilot/images/9354.jpg",
         "encoding_theta_3": 1.732,
         "trial_id": 182,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -5929,7 +5929,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9549.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -5948,7 +5948,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9040.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -5967,7 +5967,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9335.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -5986,7 +5986,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9345.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6005,7 +6005,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9565.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6024,7 +6024,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9151.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6043,7 +6043,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9562.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6062,7 +6062,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9659.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6081,7 +6081,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9501.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6100,7 +6100,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9109.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6119,7 +6119,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9029.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6138,7 +6138,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9613.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6157,7 +6157,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9033.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6176,7 +6176,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9563.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6195,7 +6195,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9423.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6214,7 +6214,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9357.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6233,7 +6233,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9295.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6252,7 +6252,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9515.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6271,7 +6271,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9311.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6290,7 +6290,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9473.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6309,7 +6309,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9093.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6328,7 +6328,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9523.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6347,7 +6347,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9233.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6366,7 +6366,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9320.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6385,7 +6385,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9177.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6404,7 +6404,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9555.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6423,7 +6423,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9096.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6442,7 +6442,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9114.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6461,7 +6461,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9067.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6480,7 +6480,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9392.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6499,7 +6499,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9111.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6518,7 +6518,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9120.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6537,7 +6537,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9156.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6556,7 +6556,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9012.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6575,7 +6575,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9324.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6594,7 +6594,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9249.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6613,7 +6613,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9408.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6632,7 +6632,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9279.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6651,7 +6651,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9481.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6670,7 +6670,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9573.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6689,7 +6689,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9583.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6708,7 +6708,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9121.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6727,7 +6727,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9393.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6746,7 +6746,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9594.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6765,7 +6765,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9087.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6784,7 +6784,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9144.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6803,7 +6803,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9318.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6822,7 +6822,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9283.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6841,7 +6841,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9355.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6860,7 +6860,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9489.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6879,7 +6879,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9615.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6898,7 +6898,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9371.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6917,7 +6917,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9149.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6936,7 +6936,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9303.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6955,7 +6955,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9285.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6974,7 +6974,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9190.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -6993,7 +6993,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9389.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7012,7 +7012,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9003.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7031,7 +7031,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9022.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7050,7 +7050,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9441.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7069,7 +7069,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9016.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7088,7 +7088,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9059.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7107,7 +7107,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9183.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7126,7 +7126,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9224.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7145,7 +7145,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9395.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7164,7 +7164,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9404.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7183,7 +7183,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9630.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7202,7 +7202,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9229.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7221,7 +7221,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9046.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7240,7 +7240,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9154.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7259,7 +7259,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9592.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7278,7 +7278,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9188.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7297,7 +7297,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9454.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7316,7 +7316,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9165.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7335,7 +7335,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9427.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7354,7 +7354,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9337.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7373,7 +7373,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9004.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7392,7 +7392,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9107.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7411,7 +7411,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9519.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7430,7 +7430,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9322.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7449,7 +7449,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9399.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7468,7 +7468,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9239.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7487,7 +7487,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9383.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7506,7 +7506,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9136.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7525,7 +7525,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9577.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7544,7 +7544,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9014.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7563,7 +7563,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9413.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7582,7 +7582,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9467.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7601,7 +7601,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9333.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7620,7 +7620,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9196.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7639,7 +7639,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9505.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7658,7 +7658,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9086.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7677,7 +7677,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9369.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7696,7 +7696,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9198.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7715,7 +7715,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9623.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7734,7 +7734,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9375.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7753,7 +7753,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9509.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7772,7 +7772,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9243.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7791,7 +7791,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9493.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7810,7 +7810,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9036.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7829,7 +7829,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9643.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7848,7 +7848,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9104.jpg",
         "left_target": 0,
         "correct_response": 1,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7867,7 +7867,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9475.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7886,7 +7886,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9063.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7905,7 +7905,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9364.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7924,7 +7924,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9338.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7943,7 +7943,7 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9656.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     },
     {
         "trial_type": "lm",
@@ -7962,6 +7962,6 @@
         "recognition_foil_file": "stimuli/dist_stimuli_pilot/images/9307.jpg",
         "left_target": 1,
         "correct_response": 0,
-        "session_id": "M-PC-999-A"
+        "session_id": "M-PC-999-C"
     }
 ]

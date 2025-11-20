@@ -20,7 +20,7 @@
         "wm_trials": 162,
         "lm_trials": 108,
         "ncatch": 18,
-        "serial": 1,
+        "serial": 0,
         "position_weights": [
             0.45,
             0.45,
@@ -38,8 +38,10 @@
         "encoding_time_catch": 3000
     },
     "spatial": {
-        "radius_x": 240,
-        "radius_y": 180
+        "radius_x": 215,
+        "radius_y": 190,
+        "n": 2, 
+        "button_pos":70
     },
     "break": {
         "duration": 120000

@@ -82,8 +82,10 @@
 
 .image-object {
     position: absolute;
-    width: 130px;
-    height: 130px;
+    /* width: 130px;
+    height: 130px; */
+    width: 126px;
+    height: 126px;
     transform: translate(-50%, -50%);
     border-radius: 10px;
 }
@@ -119,13 +121,17 @@
 
 .square {
     position:absolute;
-    width: 130px;
-    height: 130px;
+    /* width: 130px;
+    height: 130px; */
+    width: 100px;
+    height: 100px;
     transform: translate(-50%, -50%);
     border-radius: 10px;
     background-color: transparent;
     border: .5px solid black;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25), 0 1.5px 4px rgba(80,80,80,0.18);
+    box-shadow: 
+        0 4px 32px rgba(0,0,0,0.25), 
+        0 1.5px 8px rgba(80,80,80,0.18);
 }
 
 .square.large {

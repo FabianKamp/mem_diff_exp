@@ -1,6 +1,6 @@
 // consent
 
-function check_consent(jsPsych, version_id) {
+function checkConsent(jsPsych, version_id) {
     var participantConsentStatus = null;
     
     var check_consent_html = function(elem) {

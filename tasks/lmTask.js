@@ -10,12 +10,15 @@ function createLMInstructions() {
             pages:[[
                 `<div>
                     <p class="instruction-header">
-                        <strong>Instructions</strong>
+                        <strong>Follow-up task</strong>
                     </p>
                     <p class="instruction-paragraph"> 
                         <strong>Great, you are almost done!</strong>
                         <br><br><br>
-                        In the last task we will show you again some images. We want to know if you still remember the images from the first task.
+                        In the follow-up task we will show you again some images. 
+                        We want to know if you still remember the images from the first task.
+                        <br><br>
+                        The following instructions will explain the task in detail.
                         <br><br>
                     </p>
                 </div>`

@@ -8,7 +8,7 @@ async function createTimeline(jsPsych){
     const backup = session_id.at(-1);
 
     // SETTINGS - Load and make globally accessible
-    window.experimentSettings = await fetch(`input_data/${wave_id}/settings.json`)
+    window.experimentSettings = await fetch(`input_data/${wave_id}/_settings.json`)
         .then(response => response.json())
         .catch(error => console.error(error));
 
@@ -54,7 +54,7 @@ async function createTimeline(jsPsych){
         // starting
         experiment_timeline.push({
             timeline: [
-                check_consent(jsPsych, version_id),
+                checkConsent(jsPsych, version_id),
                 startingExperiment(jsPsych),
                 createDemographics(),
             ],
@@ -64,6 +64,7 @@ async function createTimeline(jsPsych){
         // WM instructions
         experiment_timeline.push({
             timeline: [
+                checkTime(jsPsych, 15),
                 createWMInstructions()
             ],
             name: 'wm_instructions'
@@ -83,6 +84,7 @@ async function createTimeline(jsPsych){
         // WM block 1
         experiment_timeline.push({
             timeline: [
+                checkTime(jsPsych, 20),
                 startingWM(),
                 fullscreen_tracker.check(),
                 countdown(3),
@@ -94,6 +96,7 @@ async function createTimeline(jsPsych){
         // WM block 2
         experiment_timeline.push({
             timeline: [
+                checkTime(jsPsych, 35),
                 createBreak(label=1),
                 fullscreen_tracker.check(),
                 countdown(3),
@@ -105,6 +108,7 @@ async function createTimeline(jsPsych){
         // WM block 3
         experiment_timeline.push({
             timeline: [
+                checkTime(jsPsych, 45),
                 createBreak(label=2),
                 fullscreen_tracker.check(),
                 countdown(3),
@@ -114,20 +118,10 @@ async function createTimeline(jsPsych){
             name: "wm_block_3"
         })
 
-        // distractor task
-        experiment_timeline.push({
-            timeline: [
-                createDistractorInstructions(),
-                fullscreen_tracker.check(),
-                countdown(3),
-                createDistractorTask()
-            ],
-            name: "distractor_task"
-        })
-
         // LM Instructions
         experiment_timeline.push({
             timeline: [
+                checkTime(jsPsych, 50),
                 createLMInstructions()
             ],
             name: "lm_instructions"
@@ -155,35 +149,36 @@ async function createTimeline(jsPsych){
     } else if (version_id == 'V') {
         console.log("starting vision task")
         var experiment_timeline = [];
+        
+        // needs to be updated
+        // // starting
+        // experiment_timeline.push({
+        //     timeline: [
+        //         checkConsent(jsPsych, version_id),
+        //         startingExperiment(jsPsych),
+        //         createDemographics(),
+        //     ],
+        //     name: 'exp_start'
+        // })
 
-        // starting
-        experiment_timeline.push({
-            timeline: [
-                check_consent(jsPsych, version_id),
-                startingExperiment(jsPsych),
-                createDemographics(),
-            ],
-            name: 'exp_start'
-        })
+        // // INSTRUCTIONS
+        // experiment_timeline.push({
+        //     timeline: [
+        //         createVisionInstructions(),
+        //     ],
+        //     name: 'instructions'
+        // })
 
-        // INSTRUCTIONS
-        experiment_timeline.push({
-            timeline: [
-                createVisionInstructions(),
-            ],
-            name: 'instructions'
-        })
-
-        // vision task
-        experiment_timeline.push({
-            timeline: [
-                startingVisionTask(),
-                fullscreen_tracker.check(),
-                countdown(3),
-                createVisionTask(input_data, jsPsych),
-            ],
-            name: 'vision_task'
-        })
+        // // vision task
+        // experiment_timeline.push({
+        //     timeline: [
+        //         startingVisionTask(),
+        //         fullscreen_tracker.check(),
+        //         countdown(3),
+        //         createVisionTask(input_data, jsPsych),
+        //     ],
+        //     name: 'vision_task'
+        // })
 
         // ENDING
         experiment_timeline.push({

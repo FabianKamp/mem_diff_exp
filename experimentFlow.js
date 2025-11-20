@@ -17,7 +17,7 @@ function startingExperiment(jsPsych) {
                     <strong>remain in fullscreen mode during the entire experiment</strong>.
                     <br><br>
                     Once the experiment is over, you will be redirected to Prolific automatically. 
-                    Please, don\'t close the experiment until this happens.
+                    Please don\'t close the experiment until this happens.
                     </br><br><br>
                     To enter fullscreen mode, please click <strong>Continue</strong>.
                 </p>
@@ -40,72 +40,32 @@ function startingExperiment(jsPsych) {
     return start_experiment
 }
 
-// BREAK TRIAL
-function createBreak(label) {
-    // break
-    var break_trial = {
-        type: jsPsychHtmlKeyboardResponse,
-        trial_duration: 121000,
-        choices: ['Enter'],
-        post_trial_gap: 200,
-        min_viewing_time: 10000,
-        stimulus: function() {
-            html = 
-            `
-            <div>
-                <p class="instruction-header"><strong>Break #${label}</strong></p>
-                <p class="instruction-paragraph"> 
-                    If you need a break, you can take one now.<br><br>
-                    Please allow yourself a maximum of <strong>2 minutes</strong>.<br>
-                    Press <strong>enter</strong> to continue.<br><br>
-                    <strong>The task will continue automatically after 2 minutes.</strong>
-                </p>
-                <p class="continue-prompt">
-                    To continue press <strong>Enter</strong>
-                </p>
-            </div>
-            `
-            return html
-        },
-        
-        on_load: function() {
-            startTimer(
-                radius=12,
-                delay=100,
-                duration=120000, 
-                top=80, 
-                color="#4682B4"//"#00000021"
-            );
-        },
-        
-        on_finish: function(data) {
-            resetTimer();
-
-            if(data.rt === null) {
-                data.break_ending = "ended by timeout after 2 minutes";
-            } 
-            else {
-                data.break_ending = "ended by participant's action after " + data.rt + " ms";
-            }
-            data.stimulus = null;
-            data.trial_type = "break";
-            data.timestamp = new Date().toLocaleTimeString()
-        }
-    }
-    return break_trial;
-}
-
 // ENDING EXPERIMENT
 function endingExperiment(jsPsych) {
     // end experiment
     var end_experiment = {
         type: jsPsychHtmlKeyboardResponse,
-        trial_duration: 10000,
+        trial_duration: 15000,
         stimulus:
-            `<p><strong>End Of Experiment</strong></p><br>
-            <p>Thank you for participating!</p>
-            <p>Press <strong>Enter</strong> to continue to the last slide. 
-            From there you will be automatically redirected to Prolific.</p>`, 
+            `<div>
+            <p class="instruction-header">
+                <strong>Ending the experiment</strong>
+            </p>
+            <p class="instruction-paragraph">
+                Great! You have successfully finished the experiment. 
+                <br><br>
+                Thank you for your time and effort in participating in our study!
+                <br><br>
+                Press <strong>Enter</strong> to continue to the last slide. 
+                From there you will be automatically redirected to Prolific.
+                <br><br>
+                <strong>Please don\'t close the experiment until your redirected to Prolific.</strong>
+            </p>
+            <p class="continue-prompt">
+                To end the experiment press <strong>Enter</strong>
+            </p>
+            </div>
+            `, 
         key_forward: 'Enter',
         on_start: async function() {
             jsPsych.data.addProperties({ 
@@ -119,6 +79,58 @@ function endingExperiment(jsPsych) {
         }
     };
     return end_experiment;
+}
+
+// Abort experiment if the max duration (in minutes) has been reached
+function checkTime(jsPsych, max_duration) {
+    var end_experiment = {
+        timeline: [{
+            type: jsPsychHtmlKeyboardResponse,
+            trial_duration: 30000,
+            stimulus:
+                `<div>
+                <p class="instruction-header">
+                    <strong>Ending the experiment</strong>
+                </p>
+                <p class="instruction-paragraph">
+                    Thank you for your time and effort in participating in our experiment.
+                    <br><br>
+                    Unfortunately, the time limit for the previous section has been exceeded,
+                    so we are unable to continue with the remainder of the study.
+                    <br><br>
+                    Press <strong>Enter</strong> to continue to the last slide. 
+                    From there you will be automatically redirected to Prolific.
+                    <br><br>
+                    <strong>Please don\'t close the experiment until your redirected to Prolific.</strong>
+                </p>
+                <p class="continue-prompt">
+                    To end the experiment press <strong>Enter</strong>
+                </p>
+                </div>`, 
+            key_forward: 'Enter',
+            on_start: function() {
+                jsPsych.data.addProperties({ 
+                    time_limited_reached: true,
+                    experiment_aborted: true,
+                    experiment_complete: false,
+                    abort_time: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                    endTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                });
+            },
+            on_finish: function(data){
+                data.stimulus = null;
+                data.trial_type = "time-check";
+                jsPsych.abortExperiment('The experiment was ended because time limit was reached.');
+                console.log("Time limit reached.")
+            }
+        }], 
+        conditional_function: function() {
+            var time_elapsed = jsPsych.data.get().last(1).values()[0].time_elapsed;
+            var minutes_elapsed = time_elapsed/60e3
+            return minutes_elapsed>max_duration
+        }
+    }
+    return end_experiment
 }
 
 // COUNTDOWN
@@ -150,3 +162,4 @@ function countdown(seconds) {
     }
     return {timeline:counter}; 
 }
+

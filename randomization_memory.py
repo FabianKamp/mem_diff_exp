@@ -30,7 +30,7 @@ def generate_random_angles(n):
         next_angle = (random_angles[-1] + angle_between) % (np.pi * 2)
         random_angles.append(next_angle)
     random_angles = np.random.permutation(random_angles)
-    random_angles = np.round(random_angles).astype(int)
+    random_angles = np.round(random_angles,3)
     return random_angles
 
 def randomized_set_ids():
@@ -275,7 +275,7 @@ def insert_catch_trials():
         set_id = np.repeat(nan,ncatch),
         wm_block_id = catch_block_ids,
         n_encoding = 1,
-        wm_sample_position = 1,
+        sample_position = 1,
         trial_type = "catch",
         encoding_time = encoding_time_catch,
         condition = nan,
@@ -370,12 +370,11 @@ def save_input_data():
         with open(file_path, 'w') as file:
             json.dump(input_data, file, indent=4)
         
-        # save testing session
-        if subject_id == 1: 
+    # save testing sessions
+    if subject_id == 1: 
+        for backup_code in ["A","B","C"]:
             session_id = f"{wave_id}-999-{backup_code}" 
             _ = [trial_dict.update(session_id = session_id) for trial_dict in input_data]
-            
-            # save
             file_path = os.path.join(out_dir, f"input_{session_id}.json")
             with open(file_path, 'w') as file:
                 json.dump(input_data, file, indent=4)
@@ -404,7 +403,7 @@ if __name__ == "__main__":
     os.mkdir(out_dir)
 
     # save snapshot of the experimental settings
-    snapshot_path = os.path.join(out_dir, "settings.json")
+    snapshot_path = os.path.join(out_dir, "_settings.json")
     with open(snapshot_path, "w") as file: 
         json.dump(settings, file, indent=4)
 

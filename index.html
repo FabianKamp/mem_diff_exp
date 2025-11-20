@@ -42,15 +42,14 @@
         on_finish: function(data){            
             // Serialize the data
             var promise = new Promise(function(resolve, reject) {
-                var data = JSON.stringify(jsPsych.data);
-                resolve(data);
+                var data_string = JSON.stringify(data);
+                resolve(data_string);
             })
-
-            promise.then(function(data) {
+            promise.then(function(data_string) {
                 $.ajax({
                     type: "POST",
                     url: '/save',
-                    data: { "data": data },
+                    data: { "data": data_string },
                     success: function(){ document.location = "/next" },
                     dataType: "application/json",
 
@@ -60,14 +59,14 @@
                             document.location = "/next";
                         } else {
                             // If error, assue local save
-                            jsPsych.data.get().localSave('json', 'out_data.json');
+                            jsPsych.data.get().localSave('csv', 'out_data.csv');
                         }
                     }
                 });
             })
         }
-        });
+    });
     runExperiment(jsPsych);
-
+    
 </script>
 </html>

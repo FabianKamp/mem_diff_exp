@@ -1,7 +1,7 @@
 // KEYBOARD SHORTCUTS FOR TESTING
 function setupShortcuts(jsPsych) {
     document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+        if (e.shiftKey && e.key === 'ArrowRight') {
             e.preventDefault();
 
             let currentNode = jsPsych.timeline?.getLatestNode();
