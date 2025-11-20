@@ -4,7 +4,7 @@ import glob
 import os
 import numpy as np
 
-prefix = "M-PB"
+prefix = "M-PC"
 files = sorted(glob.glob(f"./input_data/{prefix}/*{prefix}*.json"))
 files = [f for f in files if '999' not in os.path.basename(f)]
 
@@ -70,16 +70,25 @@ for suffix in ["A","B"]:
     file_list = [f for f in files if os.path.basename(f).endswith(f"{suffix}.json")]
     while len(file_list)>0:
         conditions = []
+        set_id = []
+        print(f"Latin square check:", end="\t", flush=True)
         for i in range(3): 
             last_check = []
             current_file = file_list[0]
-            print(f"Latin square check: {os.path.basename(current_file)}  ", end="", flush=True)
-            
+            print(f"{os.path.basename(current_file)} ", end="\t", flush=True)
+            # check conditions
             wm_data = pd.read_json(current_file)
             wm_data = wm_data.loc[data.trial_type=="wm"]
             conditions.append(wm_data.condition.to_numpy()[:,np.newaxis])
+            # check set ids
+            if (i == 0) & (len(set_id)!=0):
+                assert not np.all(set_id == wm_data.set_id), "Randomization Error"
+            elif i>0:
+                assert np.all(set_id == wm_data.set_id), "Randomization Error"
+            set_id = wm_data.set_id.copy()
             last_check.append(current_file)
             file_list.pop(0)
+
         conditions = np.hstack(conditions)
         nconditions = [len(np.unique(trial)) for trial in conditions]
         

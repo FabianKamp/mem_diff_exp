@@ -66,14 +66,13 @@ def generate_wm_mat():
                                    for m in block_mat[2,:]])
 
         # wm left/right randomization
-        n_left = int(trials_per_condition/2)
-        left_target = np.repeat([0,1], [trials_per_condition-n_left, n_left])
-        block_mat[4,:] = np.concatenate([np.random.permutation(left_target) 
-                                         for _ in range(n_conditions_total)])
+        repeats = [int(trials_per_condition/2), trials_per_condition-int(trials_per_condition/2)]
+        target_position = [np.repeat([0,1], repeats[::(-1)**(block+c)]) 
+                       for c in range(n_conditions_total)]
+        block_mat[4,:] = np.concatenate([np.random.permutation(p) for p in target_position]) 
 
         # lm left/right randomization
-        block_mat[5,:] = np.concatenate([np.random.permutation(left_target) 
-                                         for _ in range(n_conditions_total)])
+        block_mat[5,:] = np.concatenate([np.random.permutation(p) for p in target_position])
         
         # block id
         block_id = block+1
@@ -276,7 +275,6 @@ def insert_catch_trials():
         set_id = np.repeat(nan,ncatch),
         wm_block_id = catch_block_ids,
         n_encoding = 1,
-        wm_sample_id = nan,
         wm_sample_position = 1,
         trial_type = "catch",
         encoding_time = encoding_time_catch,
