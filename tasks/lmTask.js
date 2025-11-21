@@ -14,11 +14,9 @@ function createLMInstructions() {
                     </p>
                     <p class="instruction-paragraph"> 
                         <strong>Great, you are almost done!</strong>
-                        <br><br><br>
-                        In the follow-up task we will show you again some images. 
-                        We want to know if you still remember the images from the first task.
                         <br><br>
-                        The following instructions will explain the task in detail.
+                        In our second task we want to know 
+                        if you can still recognize the images from the first task.
                         <br><br>
                     </p>
                 </div>`
@@ -33,11 +31,11 @@ function createLMInstructions() {
                 </div>
                 
                 <p class="instruction-paragraph-left">
-                    <strong>1/4 Have you seen this image?</strong><br><br>
-                    Now we would like to know if you can still remember the images from the task before. <br><br>
-                    You will see two images. <strong>One image was shown in the task before, the other image is new</strong>. <br><br>
-                    In this task, one of the images has appeared in the previous task, 
-                    i.e. <strong>there is always a correct answer</strong>. 
+                    <strong>1/3 Have you seen this image previously?</strong>
+                    <br><br>
+                    In this task you will see a series of images pairs. 
+                    <br><br>
+                    <strong>One image was shown in the task before, the other image is new</strong>. 
                     <br><br>
                     Please, try to remember which image you have seen in the previous task and select it.
                     </p>
@@ -53,30 +51,12 @@ function createLMInstructions() {
                 </div>
                 
                 <p class="instruction-paragraph-left">
-                    <strong>2/4 What if you don't recognize any of the images?</strong><br><br>
-                    If you don't recognize either image - that's okay. 
-                    This task is designed to be challenging.
+                    <strong>2/3 What if you don't recognize any of the images?</strong><br><br>
+                    It's okay, if you don't recognize either image.
+                    This task was designed to be challenging!
                     <br><br>
-                    When unsure, just choose whichever one feels more familiar.
+                    When unsure, choose whichever one feels more familiar.
                 </p>
-                </div>`
-            ], 
-            [
-                `<div style="width:500px; height: 60vh;">
-                <div class="rectangle"></div>
-                
-                <div>
-                    <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                    <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
-                </div>
-                
-                <p class="instruction-paragraph-left">
-                    <strong>3/4 Timing</strong><br><br>
-                    As before, you will have <strong>30 seconds</strong> to select an image on each trial. 
-                    <br><br>
-                    Please try to respond within this time window.
-                    <br><br>
-                    </p>
                 </div>`
             ], 
             [
@@ -95,8 +75,8 @@ function createLMInstructions() {
                 </div>
                 
                 <p class="instruction-paragraph-left">
-                    <strong>4/4 What about breaks?</strong><br><br>
-                    This is the final task of the experiment, which will take only 5-10 minutes. 
+                    <strong>3/3 What about breaks?</strong><br><br>
+                    This is the final task of the experiment, which will take only <strong>~10 minutes</strong>. 
                     <br><br>
                     Therefore, there will be no breaks in this task. 
                     <br><br>
@@ -252,13 +232,13 @@ function createLM(timeline_variables, jsPsych) {
                 }
             
                 left_button = 
-                    `<div style="cursor: pointer; width: 130px; height: 130px; 
+                    `<div style="cursor: pointer; width: 126px; height: 126px; 
                                 position: absolute; top: 50%; left: calc( 50% - 75px); transform: translate(-50%, -50%);">
                     <img src="${left_image}" class="image-button" />
                     </div>`
 
                 right_button = 
-                    `<div style="cursor: pointer; width: 130px; height: 130px; 
+                    `<div style="cursor: pointer; width: 126px; height: 126px; 
                                 position: absolute; top: 50%; left: calc( 50% + 75px); transform: translate(-50%, -50%);">
                     <img src="${right_image}" class="image-button"/>
                     </div>`
@@ -274,7 +254,7 @@ function createLM(timeline_variables, jsPsych) {
                 var html =
                     `<div style="width:500px; height: 60vh;">
                     <p style="font-family: 'Courier New', monospace; font-size: x-large; 
-                        position: absolute; top: 20%; left: 50%; max-width: 350px;
+                        position: absolute; top: 20%; left: 50%; max-width: 400px;
                         transform: translateX(-50%); color:#4682B4; text-align: center;">
                         <strong>Which image do you remember from the previous task?</strong>
                     </p>
@@ -358,12 +338,11 @@ function createLM(timeline_variables, jsPsych) {
                     var html =
                         `<div style="width:500px; height: 60vh;">
                         <p style="font-family: 'Courier New', monospace; font-size: x-large; position: absolute; top: 20%; left: 50%;
-                            transform: translateX(-50%); color:#4682B4; text-align: center;  max-width: 350px;">
+                            transform: translateX(-50%); color:#4682B4; text-align: center;  max-width: 400px;">
                             <strong>Which image do you remember from the previous task?</strong>
                         </p>
                         `
                     
-                    // Only show feedback if response was correct 
                     var last_trial = jsPsych.data.get().last(1).values()[0]
                     var last_response = last_trial.response
 
