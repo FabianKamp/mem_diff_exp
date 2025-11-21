@@ -12,13 +12,14 @@ function startingExperiment(jsPsych) {
                 <p class="instruction-paragraph">
                     We will now enter <strong>fullscreen mode</strong>.
                     <br><br>
-                    To ensure the quality of the results, we'd ask you to 
-                    <br>
-                    <strong>remain in fullscreen mode during the entire experiment</strong>.
+                    We'd ask you to <strong>remain in fullscreen mode during the entire experiment</strong>.
+                    <br><br>
+                    This experiment is time-sensitive. To ensure data quality, 
+                    the session will be automatically terminated if you take significantly 
+                    longer than expected.
                     <br><br>
                     Once the experiment is over, you will be redirected to Prolific automatically. 
-                    Please don\'t close the experiment until this happens.
-                    </br><br><br>
+                    </br><br>
                     To enter fullscreen mode, please click <strong>Continue</strong>.
                 </p>
             </div>
@@ -127,6 +128,9 @@ function checkTime(jsPsych, max_duration) {
         conditional_function: function() {
             var time_elapsed = jsPsych.data.get().last(1).values()[0].time_elapsed;
             var minutes_elapsed = time_elapsed/60e3
+            console.log(
+                `Time-check: Time elapsed ${Math.round(minutes_elapsed)} -- Max duration ${max_duration}`
+            )
             return minutes_elapsed>max_duration
         }
     }
@@ -156,7 +160,7 @@ function countdown(seconds) {
             }, 
             on_finish: function(data){
                 data.stimulus = null;
-                data.trial_type = "countdown"
+                data.trial_type = `countdown-${i+1}`
             }
         })
     }
