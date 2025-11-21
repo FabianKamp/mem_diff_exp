@@ -32,17 +32,17 @@
         "lm_inter_trial_delay": 1000,
         "wm_isi": 200,
         "memory_delay": 3000,
-        "catch_delay": 500,
+        "catch_delay": 750,
         "encoding_time_short": 1200,
         "encoding_time_long": 2000,
         "encoding_time_catch": 3000
     },
     
     "spatial": {
-        "radius_x": 210,
-        "radius_y": 190,
+        "radius_x": 215,
+        "radius_y": 200,
         "n": 2, 
-        "button_pos":70
+        "button_pos":50
     },
     
     "break": {
