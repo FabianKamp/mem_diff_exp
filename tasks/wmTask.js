@@ -225,11 +225,11 @@ function startingWM() {
                 <p class="instruction-paragraph">
                     Great! We will now start the experiment.
                     <br><br>
-                    As a reminder, the images can match the original image in various ways.
+                    <strong>Reminder</strong>: The images can match the original image in various ways.
                     If you're uncertain which image matches the original better, 
                     make your best guess. 
                     <br><br>
-                    <strong>Attention</strong>, there will be no feedback during the experiment and
+                    There will be <strong>no feedback</strong> during the experiment and
                     the next trial will start automatically as soon as you responded.
                     <br><br>
                     The next break will be in ~8 minutes.
