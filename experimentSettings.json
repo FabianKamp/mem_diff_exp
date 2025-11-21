@@ -23,7 +23,7 @@
         "wm_trials": 162,
         "lm_trials": 108, 
         "ncatch": 18, 
-        "serial": 0, 
+        "serial": 1, 
         "position_weights": [0.45, 0.45, 0.10]
     },
 
