@@ -170,8 +170,6 @@ function createLM(timeline_variables, jsPsych) {
             var recognition_time = jsPsych.data.get().last(2).values()[0].time_elapsed
             var preload_delay = (preload_time-recognition_time)
             var delay = Math.max(experimentSettings.timing.lm_inter_trial_delay-preload_delay,0)
-            console.log(preload_delay)
-            console.log(delay)
             return delay
         }, 
 

@@ -5,10 +5,6 @@ function convert2cartesian(theta) {
     const ry = experimentSettings.spatial.radius_y;
     const n = experimentSettings.spatial.n;
 
-    console.log(theta)
-    // console.log(rx)
-    // console.log(ry)
-
     const cos_t = Math.cos(theta);
     const sin_t = Math.sin(theta);
 
