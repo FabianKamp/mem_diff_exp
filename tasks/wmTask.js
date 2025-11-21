@@ -47,7 +47,7 @@ function createWMInstructions() {
     encoding_slide += 
         `<div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
             <p class="instruction-paragraph-left">
-                <strong>1/6 Memorize</strong><br><br>
+                <strong>1/5 Memorize</strong><br><br>
                 We will ask you to memorize <strong>${experimentSettings.memory_experiment.load} images</strong>.<br><br>
                 ${experimentSettings.memory_experiment.serial === 1 ? 'The images will appear <strong>sequentially</strong> on the screen.<br><br>' : ''}
                 You'll have <strong>1-3 seconds</strong> to memorize all images.
@@ -67,11 +67,10 @@ function createWMInstructions() {
                 <p class="instruction-paragraph">
                     During this experiment, we will ask you to memorize images that appear on your the screen.
                     <br><br>
-                    The following instructions will explain in detail how the task works.
-                    <br><br><br>
                     <strong>The instructions are self-paced</strong>. 
                     You can navigate back and forth through the instructions using the buttons below 
                     or using the arrow keys on your keyboard.
+                    <br><br>
                 </p>
                 
             </div>`
@@ -81,7 +80,7 @@ function createWMInstructions() {
             `<div>
                 <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>       
                 <p class="instruction-paragraph-left">
-                    <strong>2/6 Delay</strong><br><br> 
+                    <strong>2/5 Delay</strong><br><br> 
                     Afterwards there will be a short delay. <br><br>
                     The delay will take a couple of seconds. <br><br>
                     Please focus on the cross on the screen.
@@ -97,9 +96,8 @@ function createWMInstructions() {
                 <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
                 <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
             </div>
-
             <p class="instruction-paragraph-left">
-                <strong>3/6 Which image matches the original image better?</strong>
+                <strong>3/5 Which image matches the original image better?</strong>
                 <br><br> 
                 After the delay you will see <strong>2 new images</strong>.
                 You haven't seen either of the images before.
@@ -108,10 +106,6 @@ function createWMInstructions() {
                 by clicking on it.
                 <br><br>
                 The square indicates the position of the original image.
-                <div class="cross">
-                    <div class="cross-vertical" style="opacity: .1;"></div>
-                    <div class="cross-horizontal" style="opacity: .1;"></div>
-                </div>
             </p>
             `
             ],
@@ -126,41 +120,13 @@ function createWMInstructions() {
             </div>
 
             <p class="instruction-paragraph-left">
-                <strong>4/6 What if you're uncertain?</strong>
+                <strong>4/5 What if you're uncertain?</strong>
                 <br><br>
                 The images can match the original image in various ways.
                 <br><br> 
                 If you're uncertain which image matches the original better, 
                 that's okay - just make your best guess.
             </p>
-
-            <div class="cross">
-                <div class="cross-vertical" style="opacity: .1;"></div>
-                <div class="cross-horizontal" style="opacity: .1;"></div>
-            </div>
-            `
-            ],
-            [
-            `<div class="square" 
-                style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
-            </div>
-                
-            <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% + 70px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - 70px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
-             </div>
-            
-            <p class="instruction-paragraph-left">
-                <strong>5/6 Response timing</strong><br><br> 
-                You will have <strong>30 seconds</strong> to select an image on each trial. 
-                <br><br>
-                Please try to respond within this time window.
-            </p>
-
-            <div class="cross">
-                <div class="cross-vertical" style="opacity: .1;"></div>
-                <div class="cross-horizontal" style="opacity: .1;"></div>
-            </div>
             `
             ],
             [
@@ -182,19 +148,14 @@ function createWMInstructions() {
             </div>
             
             <p class="instruction-paragraph-left">
-                <strong>6/6 What about breaks?</strong><br><br> 
+                <strong>5/5 What about breaks?</strong><br><br> 
                 You will have <strong>2 breaks</strong>, each lasting up to two minutes. 
                 Each block between breaks takes ~8 minutes to complete.
                 <br><br>
                 At the bottom of your screen, 
-                you'll see a progress bar to help you track your progress through the task. 
+                you'll see a progress bar to help you track your progress during the task. 
                 <br>
             </p>
-
-            <div class="cross">
-                <div class="cross-vertical" style="opacity: .1;"></div>
-                <div class="cross-horizontal" style="opacity: .1;"></div>
-            </div>
             `
             ],
         ], 
@@ -263,9 +224,16 @@ function startingWM() {
                 </p>
                 <p class="instruction-paragraph">
                     Great! We will now start the experiment.
-                    The next break will be in ~8 minutes.<br><br>
+                    <br><br>
+                    As a reminder, the images can match the original image in various ways.
+                    If you're uncertain which image matches the original better, 
+                    make your best guess. 
+                    <br><br>
                     <strong>Attention</strong>, there will be no feedback during the experiment and
                     the next trial will start automatically as soon as you responded.
+                    <br><br>
+                    The next break will be in ~8 minutes.
+                    <br>
                 </p>
                 <p class="continue-prompt">
                     To continue press <strong>Enter</strong>
@@ -540,7 +508,8 @@ function createWM(timeline_variables, jsPsych) {
                             stimulus: function(){
                                 var html =
                                 `<div style="width:250px; height:80vh;">
-                                    <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
+                                    <div class="cross"><div class="cross-vertical"></div><div 
+                                    class="cross-horizontal"></div></div>
                                 </div>`
                                 html += getProgressBarHTML();
                                 return html;
@@ -653,12 +622,6 @@ function createWM(timeline_variables, jsPsych) {
                             <div class="square"
                                 style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
                             </div>
-
-                            <div class="cross">
-                                <div class="cross-vertical" style="opacity: .05;"></div>
-                                <div class="cross-horizontal" style="opacity: .05;"></div>
-                            </div>
-
                         </div>
                     </div>
                     `
@@ -809,12 +772,6 @@ function createWM(timeline_variables, jsPsych) {
                                     position: absolute; top: 50%; left: calc( 50% - ${button_pos}px); transform: translate(-50%, -50%);">
                                     <img src="${left_image}" class="image-button" />
                             </div>
-
-                            <div class="cross">
-                                <div class="cross-vertical" style="opacity: .05;"></div>
-                                <div class="cross-horizontal" style="opacity: .05;"></div>
-                            </div>
-
                         </div>`
                     return html;
                 },
@@ -867,7 +824,7 @@ function createBreak(label) {
                 delay=100,
                 duration=120000,
                 top=80,
-                color="#87CEEB"//"#00000021"
+                color="#f0f0f0  "
             );
         },
         
