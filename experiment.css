@@ -222,8 +222,8 @@
 
 .feedback-correct {
     animation: correctBounce 0.75s ease-out forwards;
-    border: 3px solid rgba(76, 175, 80, 0.8);
-    box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+    border: 3px solid rgba(159, 197, 164, 0.8);
+    box-shadow: 0 0 8px rgba(159, 197, 164, 0.4);
 }
 
 @keyframes incorrectBounce {
@@ -240,8 +240,8 @@
 
 .feedback-incorrect {
     animation: incorrectBounce 0.75s ease-out forwards;
-    border: 3px solid rgba(211, 47, 47, 0.8);
-    box-shadow: 0 0 8px rgba(211, 47, 47, 0.4);
+    border: 3px solid rgba(197, 159, 164, 0.8);
+    box-shadow: 0 0 8px rgba(197, 159, 164, 0.4);
 }
 
 .jspsych-instructions-nav {
