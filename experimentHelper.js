@@ -48,7 +48,6 @@ class fullscreenTracker {
         this.fullscreenExits = 0;
         this.reenterScreen = this.createReenterScreen();
     }
-
     createReenterScreen() {
         return {
             type: jsPsychFullscreen,
@@ -129,7 +128,6 @@ function resetTimer() {
         clearTimeout(timerId);
         timerId = null;
     }
-
     const countdown = document.getElementById('countdown');
     if (countdown) countdown.remove();
 }
