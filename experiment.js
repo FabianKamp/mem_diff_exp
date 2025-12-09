@@ -25,6 +25,7 @@ async function createTimeline(jsPsych){
         startTime : new Date().toISOString().replace('T', ' ').slice(0, 19),
         OS : window.navigator.platform,
         fullscreen_mode: true,
+        experiment_complete: false
     });
 
     // initialize the fullscreen tracker
@@ -84,7 +85,6 @@ async function createTimeline(jsPsych){
         // WM block 1
         experiment_timeline.push({
             timeline: [
-                checkTime(jsPsych, 20),
                 startingWM(),
                 fullscreen_tracker.check(),
                 countdown(3),
@@ -96,7 +96,7 @@ async function createTimeline(jsPsych){
         // WM block 2
         experiment_timeline.push({
             timeline: [
-                checkTime(jsPsych, 35),
+                checkTime(jsPsych, 45),
                 createBreak(label=1),
                 fullscreen_tracker.check(),
                 countdown(3),
@@ -121,7 +121,7 @@ async function createTimeline(jsPsych){
         // LM Instructions
         experiment_timeline.push({
             timeline: [
-                checkTime(jsPsych, 50),
+                checkTime(jsPsych, 45),
                 createLMInstructions()
             ],
             name: "lm_instructions"
