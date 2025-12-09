@@ -1,3 +1,54 @@
+"""
+Memory Experiment Randomization and Input Data Generationxw
+
+Experimental Design:
+-------------------
+- Working Memory Task: Participants encode multiple stimuli in a circular array and
+  later recognize target items under three conditions (mixed, semantic, visual)
+- Long Memory Task: Recognition test for stimuli from earlier WM trials
+- Catch Trials: Single-item recognition trials to ensure attention
+- Practice Trials: Initial trials to familiarize participants with the task
+
+Key Features:
+-------------
+- Counterbalanced experimental conditions across blocks
+- Latin square randomization for between-subjects condition assignment
+- Separate distractor stimulus pools for WM, LM, and catch trials
+- Encoding time manipulation (short/long)
+- Position-based sampling with configurable weights
+- Backup session codes (A/B) for each subject
+
+Main Functions:
+--------------
+- generate_wm_mat(): Creates the design matrix for working memory trials
+- assemble_wm_trial_data(): Assembles complete WM trial data with stimuli
+- insert_catch_trials(): Generates and inserts catch trials into WM sequence
+- assemble_lm_trial_data(): Creates randomized long memory trial data
+- save_input_data(): Saves trial sequences to JSON files
+
+Usage:
+------
+Run from terminal:
+    python randomization_memory.py
+
+The script reads configuration 'experimentSettings.json' and generates input
+files for all subjects in the specified wave. Output files are saved to
+'input_data/{wave_id}/input_{session_id}.json'
+
+Requirements:
+------------
+- experimentSettings.json: Configuration file with experiment parameters
+- Stimulus directories with experimental and distractor images
+- generate_token module for creating session tokens
+
+Output:
+-------
+- JSON files containing trial-by-trial data for jsPsych experiment
+- Backup copies (A/B codes) for each subject
+- Test sessions (subject 999) for debugging
+- Settings snapshot for reproducibility
+"""
+
 import numpy as np
 import pandas as pd
 import os
