@@ -14,7 +14,7 @@ function startingExperiment(jsPsych) {
                     <br><br>
                     We'd ask you to <strong>remain in fullscreen mode during the entire experiment</strong>.
                     <br><br>
-                    This experiment is time-sensitive. To ensure data quality, 
+                    This experiment is time sensitive. To ensure data quality, 
                     the session will be automatically terminated if you take significantly 
                     longer than expected.
                     <br><br>
@@ -24,14 +24,12 @@ function startingExperiment(jsPsych) {
                 </p>
             </div>
             `,
-            on_start: async function() {
-                jsPsych.data.addProperties({ 
-                    startTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
-                });
-            },
             on_finish: function(data){
                 data.stimulus = null
-                data.trial_type = "fullscreen-slide"
+                data.trial_type = "fullscreen-slide", 
+                jsPsych.data.addProperties({ 
+                    experimentStart: jsPsych.data.get().last(1).values()[0].time_elapsed
+                });
             }
         },
         {
@@ -114,7 +112,7 @@ function checkTime(jsPsych, max_duration) {
                     time_limited_reached: true,
                     experiment_aborted: true,
                     experiment_complete: false,
-                    abort_time: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                    abortTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
                     endTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
                 });
             },
@@ -127,6 +125,8 @@ function checkTime(jsPsych, max_duration) {
         }], 
         conditional_function: function() {
             var time_elapsed = jsPsych.data.get().last(1).values()[0].time_elapsed;
+            time_elapsed = time_elapsed-jsPsych.data.dataProperties.experimentStart;
+            
             var minutes_elapsed = time_elapsed/60e3
             console.log(
                 `Time-check: Time elapsed ${Math.round(minutes_elapsed)} -- Max duration ${max_duration}`
@@ -136,6 +136,7 @@ function checkTime(jsPsych, max_duration) {
     }
     return end_experiment
 }
+
 
 // COUNTDOWN
 function countdown(seconds) {
@@ -166,4 +167,3 @@ function countdown(seconds) {
     }
     return {timeline:counter}; 
 }
-
