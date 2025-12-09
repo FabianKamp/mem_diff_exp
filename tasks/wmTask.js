@@ -26,11 +26,42 @@ function generate_instruction_angles(load) {
 }
 
 function createWMInstructions() {   
+    var instruction_timeline = []
+     // preload
+    instruction_timeline.push(
+        {
+            type: jsPsychPreload,
+            record_data: true,
+            show_progress_bar: false,
+            message:  
+                `<div>
+                    <p class="instruction-header"><strong>Loading Experiment</strong></p>
+                    <p class="instruction-paragraph">
+                        We are loading the experiment.
+                        Please have a moment of patience.
+                        <br><br>
+                    </p>
+                </div>`
+            ,
+            images: [
+                "stimuli/instructions/dist1.jpg", 
+                "stimuli/instructions/dist2.jpg", 
+                "stimuli/instructions/sample1.jpg", 
+                "stimuli/instructions/sample2.jpg",
+                "stimuli/instructions/sample4.jpg"
+            ],
+            on_finish: function(data) { 
+                data.stimulus = null;
+                data.trial_type = "preload";
+            }
+        }
+    ) 
+
     // instruction angles
     const button_pos = experimentSettings.spatial.button_pos
     var instruction_angles = generate_instruction_angles(experimentSettings.memory_experiment.load)
     var sample_pos = convert2cartesian(instruction_angles[1])
-    var instruction_files = ["dist1.jpg", "sample1.jpg", "dist2.jpg", "dist3.jpg", "dist4.jpg", "dist5.jpg", "dist6.jpg"]
+    var instruction_files = ["dist1.jpg", "sample1.jpg", "dist2.jpg"] // "dist3.jpg", "dist4.jpg", "dist5.jpg", "dist6.jpg"
     var encoding_slide = `<div>`
     for (let i = 0; i < instruction_angles.length; i++) {
         var pos = convert2cartesian(instruction_angles[i])
@@ -50,7 +81,7 @@ function createWMInstructions() {
             </p>
             </div>`
     
-    var wm_instruction = {
+    instruction_timeline.push({
         type: jsPsychInstructions,
         key_forward: 'ArrowRight',
         key_backward: 'ArrowLeft',
@@ -68,7 +99,6 @@ function createWMInstructions() {
                     or using the arrow keys on your keyboard.
                     <br><br>
                 </p>
-                
             </div>`
             ],
             encoding_slide,
@@ -159,8 +189,8 @@ function createWMInstructions() {
             data.stimulus = null;
             data.trial_type = "instructions";
         }
-    }
-    return wm_instruction
+    })
+    return instruction_timeline
 }
 
 // STARTING PRACTICE
@@ -332,6 +362,9 @@ function createWM(timeline_variables, jsPsych) {
                 data.trial_type = "preload";
                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id');
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
+
+                var preload_duration = jsPsych.data.get().last(1).values()[0].time_elapsed - jsPsych.data.get().last(2).values()[0].time_elapsed
+                console.log(preload_duration)
             }
         }
     )
