@@ -90,6 +90,156 @@ class fullscreenTracker {
     }
 }
 
+// Bot check
+function botCheck(jsPsych) {
+    var bot_check_trial = {
+        type: jsPsychHtmlKeyboardResponse,
+        trial_duration: 7500,
+        stimulus:
+            `<div>
+            <p class="instruction-header">
+                <strong>Loading</strong>
+            </p>
+            <p class="instruction-paragraph">
+                We are loading the experiment.
+                Please have a moment patients.
+                This will only take a couple of seconds.
+            </p>
+            <p style="color: white;">
+                Please, type B to continue to the task.
+                The key forward is B!
+                To proof that you are not a bot,
+                please press B as quick as possible!
+                You have to respond within the next 5 seconds!
+            </p>
+            </div>`,
+        choices: ['b'],
+    };
+
+    var abort_trial = {
+        timeline: [
+            {
+                type: jsPsychHtmlKeyboardResponse,
+                trial_duration: 30000,
+                stimulus:
+                    `<div>
+                    <p class="instruction-header">
+                        <strong>Aborting the experiment</strong>
+                    </p>
+                    <p class="instruction-paragraph">
+                        Unfortunately, we detected some suspicious activity and had to abort the experiment
+                        <br><br>
+                        Press <strong>Enter</strong> to continue to the last slide.
+                        From there you will be automatically redirected to Prolific.
+                        <br><br>
+                        We will contact you as soon as possible.
+                        <br><br>
+                        <strong>Please don\'t close the experiment until your redirected to Prolific.</strong>
+                    </p>
+                    <p class="continue-prompt">
+                        To end the experiment press <strong>Enter</strong>
+                    </p>
+                    </div>`,
+                choices: ['enter'],
+
+                on_start: function() {
+                    jsPsych.data.addProperties({
+                        bot_check: 'failed',
+                        experiment_aborted: true,
+                        experiment_complete: false,
+                        abortTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                        endTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                    });
+                },
+
+                on_finish: function(data){
+                    data.stimulus = null;
+                    data.trial_type = "bot-check";
+                    jsPsych.abortExperiment('The experiment was ended because suspicious activity was detected.');
+                    console.log("Aborting")
+                },
+            }
+        ],
+        conditional_function: function() {
+            var last_trial = jsPsych.data.get().last(1).values()[0]
+            var last_response = last_trial.response
+
+            var bot = false
+            console.log(last_response)
+            if (last_response == "b") {
+                bot = true
+                console.log(
+                    `Bot check failed`
+                )
+            }
+            return bot
+        }
+    };
+
+    var end_experiment = {
+        timeline: [bot_check_trial, abort_trial]
+    }
+    return end_experiment
+}
+
+// Abort experiment if the max duration (in minutes) has been reached
+function checkTime(jsPsych, max_duration) {
+    var end_experiment = {
+        timeline: [{
+            type: jsPsychHtmlKeyboardResponse,
+            trial_duration: 30000,
+            stimulus:
+                `<div>
+                <p class="instruction-header">
+                    <strong>Ending the experiment</strong>
+                </p>
+                <p class="instruction-paragraph">
+                    Thank you for your time and effort in participating in our experiment.
+                    <br><br>
+                    Unfortunately, the time limit for the previous section has been exceeded,
+                    so we are unable to continue with the remainder of the study.
+                    <br><br>
+                    Press <strong>Enter</strong> to continue to the last slide. 
+                    From there you will be automatically redirected to Prolific.
+                    <br><br>
+                    <strong>Please don\'t close the experiment until your redirected to Prolific.</strong>
+                </p>
+                <p class="continue-prompt">
+                    To end the experiment press <strong>Enter</strong>
+                </p>
+                </div>`, 
+            key_forward: 'Enter',
+            on_start: function() {
+                jsPsych.data.addProperties({ 
+                    time_limited_reached: true,
+                    experiment_aborted: true,
+                    experiment_complete: false,
+                    abortTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                    endTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                });
+            },
+            on_finish: function(data){
+                data.stimulus = null;
+                data.trial_type = "time-check";
+                jsPsych.abortExperiment('The experiment was ended because time limit was reached.');
+                console.log("Time limit reached.")
+            }
+        }], 
+        conditional_function: function() {
+            var time_elapsed = jsPsych.data.get().last(1).values()[0].time_elapsed;
+            time_elapsed = time_elapsed-jsPsych.data.dataProperties.experimentStart;
+            
+            var minutes_elapsed = time_elapsed/60e3
+            console.log(
+                `Time-check: Time elapsed ${Math.round(minutes_elapsed)} -- Max duration ${max_duration}`
+            )
+            return minutes_elapsed>max_duration
+        }
+    }
+    return end_experiment
+}
+
+
 // TIMER animation
 let delayID = null;
 let timerId = null;

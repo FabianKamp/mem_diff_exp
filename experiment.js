@@ -56,6 +56,7 @@ async function createTimeline(jsPsych){
         experiment_timeline.push({
             timeline: [
                 checkConsent(jsPsych, version_id),
+                botCheck(jsPsych),
                 startingExperiment(jsPsych),
                 createDemographics(),
             ],

@@ -80,64 +80,6 @@ function endingExperiment(jsPsych) {
     return end_experiment;
 }
 
-// Abort experiment if the max duration (in minutes) has been reached
-function checkTime(jsPsych, max_duration) {
-    var end_experiment = {
-        timeline: [{
-            type: jsPsychHtmlKeyboardResponse,
-            trial_duration: 30000,
-            stimulus:
-                `<div>
-                <p class="instruction-header">
-                    <strong>Ending the experiment</strong>
-                </p>
-                <p class="instruction-paragraph">
-                    Thank you for your time and effort in participating in our experiment.
-                    <br><br>
-                    Unfortunately, the time limit for the previous section has been exceeded,
-                    so we are unable to continue with the remainder of the study.
-                    <br><br>
-                    Press <strong>Enter</strong> to continue to the last slide. 
-                    From there you will be automatically redirected to Prolific.
-                    <br><br>
-                    <strong>Please don\'t close the experiment until your redirected to Prolific.</strong>
-                </p>
-                <p class="continue-prompt">
-                    To end the experiment press <strong>Enter</strong>
-                </p>
-                </div>`, 
-            key_forward: 'Enter',
-            on_start: function() {
-                jsPsych.data.addProperties({ 
-                    time_limited_reached: true,
-                    experiment_aborted: true,
-                    experiment_complete: false,
-                    abortTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
-                    endTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
-                });
-            },
-            on_finish: function(data){
-                data.stimulus = null;
-                data.trial_type = "time-check";
-                jsPsych.abortExperiment('The experiment was ended because time limit was reached.');
-                console.log("Time limit reached.")
-            }
-        }], 
-        conditional_function: function() {
-            var time_elapsed = jsPsych.data.get().last(1).values()[0].time_elapsed;
-            time_elapsed = time_elapsed-jsPsych.data.dataProperties.experimentStart;
-            
-            var minutes_elapsed = time_elapsed/60e3
-            console.log(
-                `Time-check: Time elapsed ${Math.round(minutes_elapsed)} -- Max duration ${max_duration}`
-            )
-            return minutes_elapsed>max_duration
-        }
-    }
-    return end_experiment
-}
-
-
 // COUNTDOWN
 function countdown(seconds) {
     var counter = []; 
