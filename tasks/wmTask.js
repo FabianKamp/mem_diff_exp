@@ -119,8 +119,8 @@ function createWMInstructions() {
             </div>
                 
             <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
             </div>
             <p class="instruction-paragraph-left">
                 <strong>3/5 Which image matches the original image better?</strong>
@@ -141,16 +141,18 @@ function createWMInstructions() {
             </div>
                 
             <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
             </div>
 
             <p class="instruction-paragraph-left">
                 <strong>4/5 What if you're uncertain?</strong>
                 <br><br>
-                The images can match the original image in various ways.
+                The images can match the original image in various ways. 
+                <br><br>
+                Furthermore, in some trials there is no clearly correct answer. 
                 <br><br> 
-                If you're uncertain which image matches the original better, 
+                So, if you're uncertain which image matches the original better, 
                 that's okay - just make your best guess.
             </p>
             `
@@ -161,8 +163,8 @@ function createWMInstructions() {
             </div>
                 
             <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/sample4.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
+                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
              </div>
             
              <div class="progress-bar" style="bottom: 140px;">
@@ -406,6 +408,7 @@ function createWM(timeline_variables, jsPsych) {
             choices: "NO_KEYS",
             trial_duration: function() {
                 var encoding_time = jsPsych.evaluateTimelineVariable(`encoding_time`)
+                console.log(encoding_time)
                 return encoding_time
             },
             stimulus: function() {
@@ -448,7 +451,6 @@ function createWM(timeline_variables, jsPsych) {
                     data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
                     data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
                     data.trial_type = jsPsych.evaluateTimelineVariable('trial_type')
-                    data.long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
                     data.encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
                     data.stimulus = file
                     data.theta = theta
@@ -509,14 +511,12 @@ function createWM(timeline_variables, jsPsych) {
                                 var file = jsPsych.evaluateTimelineVariable(`encoding_file_${encodingIndex}`)
                                 var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${encodingIndex}`)
                                 var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
-                                var long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
                                 var encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
 
                                 data.phase = 'encoding';
                                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                                 data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
                                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
-                                data.long_encoding = long_encoding
                                 data.encoding_time = encoding_time/n_encoding
                                 data.stimulus = file
                                 data.theta = theta
@@ -688,13 +688,7 @@ function createWM(timeline_variables, jsPsych) {
                 }
 
                 // encoding time
-                var long_encoding = jsPsych.evaluateTimelineVariable(`long_encoding`)
-                if (long_encoding == 1) {
-                    data.encoding_time = experimentSettings.timing.encoding_time_long
-                } else {
-                    data.encoding_time = experimentSettings.timing.encoding_time_short
-                }
-
+                data.encoding_time = jsPsych.evaluateTimelineVariable(`encoding_time`)
                 data.phase = 'recognition'
                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')

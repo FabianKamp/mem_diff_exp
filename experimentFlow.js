@@ -7,10 +7,10 @@ function startingExperiment(jsPsych) {
             choices: ['Continue'],
             message:         
             `
-            <p class="instruction-header"><strong>Welcome to the experiment!</strong></p>
+            <p class="instruction-header"><strong>Entering Fullscreen Mode</strong></p>
             <div style="height: 80vh; position: relative;">
                 <p class="instruction-paragraph">
-                    We will now enter <strong>fullscreen mode</strong>.
+                    Great! We will now enter <strong>fullscreen mode</strong>.
                     <br><br>
                     We'd ask you to <strong>remain in fullscreen mode during the entire experiment</strong>.
                     <br><br>

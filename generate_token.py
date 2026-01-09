@@ -24,6 +24,7 @@ def generate_token(session_ids=None):
                        if i.endswith(".json") and not i.startswith("settings")]
         session_ids = sorted(session_ids)
     
+    session_ids = [sid + "-" + suffix for sid in session_ids if sid != "setting" for suffix in "ABC"]
     token = [str(uuid.uuid4()) for _ in session_ids]
     token_df = pd.DataFrame(dict(
         exp_id = "mem_diff", 

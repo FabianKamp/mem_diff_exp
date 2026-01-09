@@ -1,14 +1,20 @@
 async function createTimeline(jsPsych){
     // load session/subject/wave id
     // const session_id = "V-PA-001"
-    const session_id = jsPsych.data.getURLVariable('sid') ||  "M-PC-999-A"
-    const version_id = session_id[0];
-    const wave_id = session_id.slice(0, 4);
-    const subject_id = parseInt(session_id.slice(5,-2), 10);
-    const backup = session_id.at(-1);
+
+
+    const session_id = jsPsych.data.getURLVariable('sid') ||  "M-PD-999-A"
+
+    // const version_id = session_id[0];
+    // const wave_id = session_id.slice(0, 4);
+    // const subject_id = parseInt(session_id.slice(5,-2), 10);
+    // const backup = session_id.at(-1);
+
+    var [version_id, wave_id, subject_id, backup] = session_id.split('-');  
+    subject_id = parseInt(subject_id, 10);
 
     // SETTINGS - Load and make globally accessible
-    window.experimentSettings = await fetch(`input_data/${wave_id}/_settings.json`)
+    window.experimentSettings = await fetch(`input_data/${version_id}-${wave_id}/_settings.json`)
         .then(response => response.json())
         .catch(error => console.error(error));
 
@@ -30,9 +36,9 @@ async function createTimeline(jsPsych){
 
     // initialize the fullscreen tracker
     fullscreen_tracker = new fullscreenTracker(jsPsych);
-
+    
     // load data
-    var input_data = await fetch(`input_data/${wave_id}/input_${session_id}.json`)
+    var input_data = await fetch(`input_data/${version_id}-${wave_id}/input_${session_id.slice(0,-2)}.json`)
         .then(response => response.json())
         .catch(error => console.error(error));
 
@@ -119,25 +125,28 @@ async function createTimeline(jsPsych){
             name: "wm_block_3"
         })
 
-        // LM Instructions
-        experiment_timeline.push({
-            timeline: [
-                checkTime(jsPsych, 45),
-                createLMInstructions()
-            ],
-            name: "lm_instructions"
-        })
+        // don't run LM in the piloting phase
+        if ( wave_id[0] !== "P" ) { 
+            // LM Instructions
+            experiment_timeline.push({
+                timeline: [
+                    checkTime(jsPsych, 45),
+                    createLMInstructions()
+                ],
+                name: "lm_instructions"
+            })
 
-        // LM task
-        experiment_timeline.push({
-            timeline: [
-                startingLM(),
-                fullscreen_tracker.check(),
-                countdown(3),
-                createLM(lm_input_data, jsPsych),
-            ],
-            name: "lm_task"
-        })
+            // LM task
+            experiment_timeline.push({
+                timeline: [
+                    startingLM(),
+                    fullscreen_tracker.check(),
+                    countdown(3),
+                    createLM(lm_input_data, jsPsych),
+                ],
+                name: "lm_task"
+            })
+        }
 
         // Ending experiment
         experiment_timeline.push({

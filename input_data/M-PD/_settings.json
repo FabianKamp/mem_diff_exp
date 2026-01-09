@@ -4,35 +4,44 @@
         "wave_id": "M-PD",
         "subject_number": 30
     },
-
     "stimuli": {
         "exp_stimuli_dir": "stimuli/exp_stimuli_pilot",
         "dist_stimuli_dir": "stimuli/dist_stimuli_pilot"
     },
-
     "vision_experiment": {
         "vision_trials": 177,
         "enable_button_after": 1200,
-        "ncatch": 20, 
+        "ncatch": 20,
         "inter_trial_delay": 150
     },
-
     "memory_experiment": {
-        "encoding_conditions": ["mixed", "semantic", "visual"],
+        "encoding_conditions": [
+            "mixed",
+            "semantic",
+            "visual"
+        ],
         "load": 3,
         "practice_trials": 3,
-        "wm_trials": 156, 
+        "wm_trials": 156,
         "wm_block1_trials": 60,
         "wm_block2_trials": 60,
         "wm_block3_trials": 36,
-        "lm_trials": 120, 
-        "ncatch": 18, 
-        "serial": 0, 
-        "position_weights": [0.45, 0.45, 0.10]
+        "lm_trials": 120,
+        "ncatch": 18,
+        "serial": 0,
+        "position_weights": [
+            0.45,
+            0.45,
+            0.1
+        ]
     },
-
     "timing": {
-        "encoding_times": [900,1400,1900,2400], 
+        "encoding_times": [
+            900,
+            1400,
+            1900,
+            2400
+        ],
         "memory_delay": 3000,
         "wm_inter_trial_delay": 2000,
         "lm_inter_trial_delay": 1000,
@@ -40,22 +49,18 @@
         "catch_delay": 750,
         "encoding_time_catch": 3000
     },
-    
     "spatial": {
         "radius_x": 215,
         "radius_y": 200,
-        "n": 2, 
+        "n": 2,
         "button_pos": 68
     },
-    
     "break": {
         "duration": 120000
     },
-    
     "countdown": {
         "interval": 1000
     },
-
     "distractor": {
         "initial_number": 100,
         "random_min": 2,
@@ -66,7 +71,6 @@
         "rounds": 3,
         "operations_per_round": 5
     },
-
     "feedback": {
         "duration": 10000
     }

@@ -94,14 +94,15 @@ class fullscreenTracker {
 function botCheck(jsPsych) {
     var bot_check_trial = {
         type: jsPsychHtmlKeyboardResponse,
-        trial_duration: 7500,
+        trial_duration: 10000,
         stimulus:
             `<div>
             <p class="instruction-header">
-                <strong>Loading</strong>
+                <strong>Welcome to the experiment!</strong>
             </p>
             <p class="instruction-paragraph">
-                We are loading the experiment.
+                We are <strong>loading the experiment</strong>.
+                <br><br>
                 Please have a moment patients.
                 This will only take a couple of seconds.
             </p>
@@ -109,11 +110,20 @@ function botCheck(jsPsych) {
                 Please, type B to continue to the task.
                 The key forward is B!
                 To proof that you are not a bot,
-                please press B as quick as possible!
-                You have to respond within the next 5 seconds!
+                please press B!
+                You have to respond within 5 seconds!
             </p>
             </div>`,
         choices: ['b'],
+        on_load: function() {
+            startTimer(
+                radius=12,
+                delay=100,
+                duration=10000,
+                top=80,
+                color="#f0f0f0  "
+            );
+        },
     };
 
     var abort_trial = {
@@ -127,7 +137,7 @@ function botCheck(jsPsych) {
                         <strong>Aborting the experiment</strong>
                     </p>
                     <p class="instruction-paragraph">
-                        Unfortunately, we detected some suspicious activity and had to abort the experiment
+                        Unfortunately, we detected suspicious activity and had to abort the experiment
                         <br><br>
                         Press <strong>Enter</strong> to continue to the last slide.
                         From there you will be automatically redirected to Prolific.
@@ -227,6 +237,8 @@ function checkTime(jsPsych, max_duration) {
         }], 
         conditional_function: function() {
             var time_elapsed = jsPsych.data.get().last(1).values()[0].time_elapsed;
+            console.log(time_elapsed)
+            console.log(jsPsych.data.dataProperties.experimentStart)
             time_elapsed = time_elapsed-jsPsych.data.dataProperties.experimentStart;
             
             var minutes_elapsed = time_elapsed/60e3

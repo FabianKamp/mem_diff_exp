@@ -1,54 +1,3 @@
-"""
-Memory Experiment Randomization and Input Data Generationxw
-
-Experimental Design:
--------------------
-- Working Memory Task: Participants encode multiple stimuli in a circular array and
-  later recognize target items under three conditions (mixed, semantic, visual)
-- Long Memory Task: Recognition test for stimuli from earlier WM trials
-- Catch Trials: Single-item recognition trials to ensure attention
-- Practice Trials: Initial trials to familiarize participants with the task
-
-Key Features:
--------------
-- Counterbalanced experimental conditions across blocks
-- Latin square randomization for between-subjects condition assignment
-- Separate distractor stimulus pools for WM, LM, and catch trials
-- Encoding time manipulation (short/long)
-- Position-based sampling with configurable weights
-- Backup session codes (A/B) for each subject
-
-Main Functions:
---------------
-- generate_wm_mat(): Creates the design matrix for working memory trials
-- assemble_wm_trial_data(): Assembles complete WM trial data with stimuli
-- insert_catch_trials(): Generates and inserts catch trials into WM sequence
-- assemble_lm_trial_data(): Creates randomized long memory trial data
-- save_input_data(): Saves trial sequences to JSON files
-
-Usage:
-------
-Run from terminal:
-    python randomization_memory.py
-
-The script reads configuration 'experimentSettings.json' and generates input
-files for all subjects in the specified wave. Output files are saved to
-'input_data/{wave_id}/input_{session_id}.json'
-
-Requirements:
-------------
-- experimentSettings.json: Configuration file with experiment parameters
-- Stimulus directories with experimental and distractor images
-- generate_token module for creating session tokens
-
-Output:
--------
-- JSON files containing trial-by-trial data for jsPsych experiment
-- Backup copies (A/B codes) for each subject
-- Test sessions (subject 999) for debugging
-- Settings snapshot for reproducibility
-"""
-
 import numpy as np
 import pandas as pd
 import os
@@ -86,31 +35,41 @@ def generate_random_angles(n):
 
 def randomized_set_ids():
     """Generate randomized stimulus set IDs for all encoding trials."""
-    set_ids = np.random.permutation(np.arange(all_encoding_trials) + 1)
+    set_ids = np.hstack([
+        np.arange(practice_trials),
+        np.random.permutation(np.arange(wm_trials) + practice_trials)
+        ])
+    set_ids += 1
     return set_ids
 
 def generate_wm_mat():
     """Generate the working memory design matrix with counterbalanced conditions, 
     encoding times, and trial parameters."""
     
+    # initialize the design mat
     design_mat = []
-    for block in range(num_blocks):
+
+    for block in range(3):
+        n_trials = trials_per_block[block]
+        n_conditions = len(a_levels) * len(b_levels)
+        trials_per_condition = n_trials//n_conditions
+        
         # initialize block mat
-        block_mat = np.empty((7,trials_per_block))
+        block_mat = np.empty((7,n_trials))
         
-        # conditions
-        block_mat[0,:] = np.repeat(list(condition_codes.keys()), trials_per_stimuli_condition)
+        # factor stimulus (a)
+        trials_per_a = n_trials//len(a_levels)
+        block_mat[0,:] = np.repeat(a_index, trials_per_a)
         
-        # long/short encoding time
-        block_mat[1,:] = np.concatenate([np.repeat([0,1], trials_per_condition) for _ in range(n_conditions)])
+        # factor encoding time (b). Conditions are stimulus X time
+        block_mat[1,:] = np.concatenate([np.repeat(b_index, trials_per_condition) for _ in range(len(a_levels))])
         
         ## counterbalancing across condition*encoding time
         # 1. wm sample positions
         assert len(position_weights) == load, "Position weights must match load"
         position_repeats = [int(trials_per_condition * weight) for weight in position_weights[:-1]]
         positions = np.repeat(np.arange(load), position_repeats + [trials_per_condition - np.sum(position_repeats)])
-        block_mat[2,:] = np.concatenate([np.random.permutation(positions) 
-                                         for _ in range(n_conditions_total)])
+        block_mat[2,:] = np.concatenate([np.random.permutation(positions) for _ in range(n_conditions)])
         
         # lm sample positions
         block_mat[3,:] = np.array([np.random.choice([n for n in [0,1,2] if n != m], p=[.9,.1]) 
@@ -118,8 +77,7 @@ def generate_wm_mat():
 
         # wm left/right randomization
         repeats = [int(trials_per_condition/2), trials_per_condition-int(trials_per_condition/2)]
-        target_position = [np.repeat([0,1], repeats[::(-1)**(block+c)]) 
-                       for c in range(n_conditions_total)]
+        target_position = [np.repeat([0,1], repeats[::(-1)**(block+c)]) for c in range(n_conditions)]
         block_mat[4,:] = np.concatenate([np.random.permutation(p) for p in target_position]) 
 
         # lm left/right randomization
@@ -127,10 +85,10 @@ def generate_wm_mat():
         
         # block id
         block_id = block+1
-        block_mat[6,:] = np.repeat(block_id, trials_per_block)
+        block_mat[6,:] = np.repeat(block_id, n_trials)
 
         # randomize order 
-        random_trial_idx = np.random.permutation(np.arange(trials_per_block))
+        random_trial_idx = np.random.permutation(np.arange(n_trials))
         block_mat = block_mat[:, random_trial_idx]
         design_mat.append(block_mat.copy())
 
@@ -139,10 +97,11 @@ def generate_wm_mat():
     design_mat = np.vstack([encoding_trial_id, design_mat]) 
     design_mat = design_mat.astype(int)
     
+    # convert to df
     row_names = [
         "encoding_trial_id",
-        "condition",
-        "long_encoding",
+        "stimulus_condition_index",
+        "encoding_time_index",
         "wm_sample_position",
         "lm_sample_position",
         "wm_left_target",
@@ -157,8 +116,8 @@ def generate_practice_mat():
     """Generate the practice trial design matrix with hard-coded trial parameters."""
     practice_mat = np.vstack([
         np.repeat(nan,3),
-        np.array([3,2,1]), 
-        np.array([0,1,0]),  
+        np.array([2,1,0]), 
+        np.array([1,0,2]),  
         np.array([2,1,0]),
         np.repeat(nan,3),
         np.array([1,1,0]),  
@@ -168,13 +127,13 @@ def generate_practice_mat():
     practice_mat = practice_mat.astype(int)
     row_names = [
         "encoding_trial_id",
-        "condition",
-        "long_encoding",
+        "stimulus_condition_index",
+        "encoding_time_index",
         "wm_sample_position",
         "lm_sample_position",
         "wm_left_target",
         "lm_left_target",
-        "wm_block_id"
+        "wm_block_id",
     ]
     practice_mat = pd.DataFrame(practice_mat, index=row_names)
     return practice_mat
@@ -226,9 +185,9 @@ def generate_encoding_id_mat():
 def map_conditions2stimuli(conditions):
     """Map experimental conditions to target and foil stimulus codes for recognition trials."""
     condition_mapping = {
-        1: (4, 3),
-        2: (4, 5),
-        3: (3, 5)
+        0: (4, 3),
+        1: (4, 5),
+        2: (3, 5)
     }
     target_codes = np.array([condition_mapping[c][0] for c in conditions])
     foil_codes = np.array([condition_mapping[c][1] for c in conditions])
@@ -242,16 +201,16 @@ def assemble_wm_trial_data():
 
     # recognition
     # get ids and files
-    target_codes, foil_codes = map_conditions2stimuli(design_mat.loc["condition",:])
+    target_codes, foil_codes = map_conditions2stimuli(design_mat.loc["stimulus_condition_index",:])
     wm_recognition_target = set_ids + target_codes * 1e3
     wm_recognition_target_files = np.array([get_file_path(i) for i in wm_recognition_target.flatten()])
     wm_recognition_foil = set_ids + foil_codes * 1e3
     wm_recognition_foil_files = np.array([get_file_path(i) for i in wm_recognition_foil.flatten()])
 
     # assign correct response (mixed condition --> both options are correct)
-    target_correct = (design_mat.loc["condition",:] != 1).astype(int)
+    target_correct = (design_mat.loc["stimulus_condition_index",:] != 1).astype(int)
     wm_correct_response = (design_mat.loc["wm_left_target",:]==0).astype(int)
-    wm_correct_response[design_mat.loc["condition",:] == 1] = nan
+    wm_correct_response[design_mat.loc["stimulus_condition_index",:] == 1] = nan
 
     # display
     # generate angles 
@@ -268,12 +227,9 @@ def assemble_wm_trial_data():
         set_id = set_ids.astype(int),
         sample_file = wm_sample_files,
         sample_position = design_mat.loc["wm_sample_position",:].to_numpy() + 1,
-        long_encoding = design_mat.loc["long_encoding"].to_numpy(),
-        encoding_time = np.where(design_mat.loc["long_encoding"]==1, 
-                                 encoding_time_long, 
-                                 encoding_time_short).astype(int),
-        condition = design_mat.loc["condition"].to_numpy(),
-        condition_name = np.array([condition_codes[i] for i in design_mat.loc["condition"]]),
+        encoding_time = np.array([b_levels[i] for i in design_mat.loc["encoding_time_index"]]).astype(int),
+        condition = design_mat.loc["stimulus_condition_index"].to_numpy(),
+        condition_name = np.array([a_levels[i] for i in design_mat.loc["stimulus_condition_index"]]),
         recognition_theta = recognition_thetas,
         recognition_target_id = wm_recognition_target.astype(int),
         recognition_target_file = wm_recognition_target_files,
@@ -300,7 +256,7 @@ def insert_catch_trials():
     """Generate catch trial data and insert them at evenly-spaced positions into the WM trial sequence."""
     catch_ids = distractors["catch"]
     ncatch = len(catch_ids)
-    
+    encoding_time_catch = settings["timing"]["encoding_time_catch"]
     # encoding/recognition slides
     encoding_ids = np.random.permutation(catch_ids)
     encoding_files = np.array([get_file_path(i) for i in encoding_ids])    
@@ -315,9 +271,12 @@ def insert_catch_trials():
     left_target = np.random.choice([0,1], ncatch, replace=True).astype(int)
     correct_response = (left_target==0).astype(int)
 
-    # block ids
-    n_per_block = ncatch // num_blocks
-    catch_block_ids = np.repeat(np.arange(num_blocks)+1, [n_per_block, n_per_block, ncatch - 2*n_per_block])
+    # catch positions and block ids
+    catch_positions = np.linspace(practice_trials+5, wm_trials-5, ncatch).astype(int)
+    catch_block_ids = np.digitize(
+        catch_positions, 
+        bins=[wm_block1_trials, wm_block1_trials+wm_block2_trials]
+        ) + 1
 
     # assemble
     catch_trial_data = dict(
@@ -349,7 +308,6 @@ def insert_catch_trials():
 
     ## insert the catch trials into the wm_trial_data
     # in reverse order --> index doesn't shift
-    catch_positions = np.linspace(practice_trials+5, wm_trials-5, ncatch).astype(int)
     for p, catch_trial in zip(reversed(catch_positions), reversed(catch_trial_data)):
         wm_trial_data.insert(p,catch_trial)
 
@@ -357,10 +315,10 @@ def insert_catch_trials():
 
 def get_lm_target_ids():
     """Identify long memory target stimuli from cued and uncued WM encoding trials."""
-    cued_trials = np.where((wm_mat.loc["condition"] != 1) & (wm_mat.loc["wm_block_id"] < 3))[0]
+    cued_trials = np.where((wm_mat.loc["stimulus_condition_index"] != 0) & (wm_mat.loc["wm_block_id"] < 3))[0]
     lm_ids_cued = encoding_ids[cued_trials, wm_mat.loc["lm_sample_position", cued_trials]]
     
-    uncued_trials = np.where((wm_mat.loc["condition"] == 1) & (wm_mat.loc["wm_block_id"] < 3))[0]
+    uncued_trials = np.where((wm_mat.loc["stimulus_condition_index"] == 0) & (wm_mat.loc["wm_block_id"] < 3))[0]
     lm_ids_uncued = encoding_ids[uncued_trials, wm_mat.loc["lm_sample_position", uncued_trials]]
     
     lm_encoding_trials = np.concat([cued_trials, uncued_trials])
@@ -390,12 +348,10 @@ def assemble_lm_trial_data():
         encoding_trial_id = lm_encoding_trials_random,
         set_id = set_ids,
         sample_position = lm_sample_positions,
-        long_encoding = wm_mat.loc["long_encoding",lm_encoding_trials_random],
-        encoding_time = np.where(wm_mat.loc["long_encoding",lm_encoding_trials_random], 
-                            encoding_time_long, 
-                            encoding_time_short).astype(int),
-        condition = wm_mat.loc["condition",lm_encoding_trials_random],
-        condition_name = np.array([condition_codes[i] for i in wm_mat.loc["condition",lm_encoding_trials_random]]),
+        encoding_time = np.array([b_levels[i] for i in wm_mat.loc["encoding_time_index", lm_encoding_trials_random]]
+                                  ).astype(int),
+        condition = wm_mat.loc["stimulus_condition_index",lm_encoding_trials_random],
+        condition_name = np.array([a_levels[i] for i in wm_mat.loc["stimulus_condition_index", lm_encoding_trials_random]]), 
         recognition_target_id = lm_recognition_target_random.astype(int),
         recognition_target_file = lm_recognition_target_files,
         recognition_foil_id = distractors["lm"].astype(int),
@@ -411,25 +367,22 @@ def assemble_lm_trial_data():
 
 def save_input_data():
     """Save trial data to JSON files with A/B backup codes and create test session for first subject."""
-    for backup_code in ["A","B"]:
-        # create session id
-        session_id = f"{wave_id}-{subject_id:03d}-{backup_code}" 
+    session_id = f"{wave_id}-{subject_id:03d}" 
+    _ = [trial_dict.update(session_id = session_id) for trial_dict in input_data]
+    
+    # save
+    file_path = os.path.join(out_dir, f"input_{session_id}.json")
+    with open(file_path, 'w') as file:
+        json.dump(input_data, file, indent=4)
+    
+    # save testing version
+    if subject_id == 1: 
+        session_id = f"{wave_id}-999" 
         _ = [trial_dict.update(session_id = session_id) for trial_dict in input_data]
-        
-        # save
         file_path = os.path.join(out_dir, f"input_{session_id}.json")
         with open(file_path, 'w') as file:
             json.dump(input_data, file, indent=4)
-        
-    # save testing sessions
-    if subject_id == 1: 
-        for backup_code in ["A","B","C"]:
-            session_id = f"{wave_id}-999-{backup_code}" 
-            _ = [trial_dict.update(session_id = session_id) for trial_dict in input_data]
-            file_path = os.path.join(out_dir, f"input_{session_id}.json")
-            with open(file_path, 'w') as file:
-                json.dump(input_data, file, indent=4)
-   
+
 if __name__ == "__main__":
     # set seed
     np.random.seed(42) 
@@ -466,34 +419,36 @@ if __name__ == "__main__":
     # trial numbers
     practice_trials = settings["memory_experiment"]["practice_trials"]
     wm_trials = settings["memory_experiment"]["wm_trials"]
+    wm_block1_trials = settings["memory_experiment"]["wm_block1_trials"]
+    wm_block2_trials = settings["memory_experiment"]["wm_block2_trials"]
+    wm_block3_trials = settings["memory_experiment"]["wm_block3_trials"]
+    trials_per_block = [wm_block1_trials, wm_block2_trials, wm_block3_trials]
     lm_trials = settings["memory_experiment"]["lm_trials"]
     ncatch = settings["memory_experiment"]["ncatch"]
 
-    num_blocks = 3
-    all_encoding_trials = wm_trials + practice_trials
-    trials_per_block = wm_trials//num_blocks
-    assert lm_trials == 2*trials_per_block, "LM trials not twice the WM block length"
+    all_encoding_trials = practice_trials + wm_trials
+    # trials_per_block = wm_trials//num_blocks
+
+    assert lm_trials == wm_block1_trials + wm_block2_trials, "LM trials not twice the WM block 1+2 length"
    
     # set up conditions and condition codes 
-    conditions = ["mixed", "semantic", "visual"]
-    condition_codes = {i+1: k for i,k in enumerate(conditions)}
-    n_conditions = len(conditions)
-    n_conditions_total = n_conditions*2
-    assert wm_trials%(n_conditions_total*num_blocks) == 0, f"Number of wm trials must be divisible by {n_conditions_total*num_blocks}"
+    a_levels = settings["memory_experiment"]["encoding_conditions"]
+    a_index = [0,1,2] 
+    b_levels = settings["timing"]["encoding_times"]
+    b_index = [0,1,2,3]
+    n_conditions = len(a_levels)*len(b_levels)
 
-    trials_per_stimuli_condition = (wm_trials//n_conditions)//num_blocks
-    trials_per_condition = trials_per_stimuli_condition//2
+    assert wm_block1_trials%(n_conditions) == 0, f"Number of wm trials must be divisible by {n_conditions}"
+    assert wm_block2_trials%(n_conditions) == 0, f"Number of wm trials must be divisible by {n_conditions}"
+    assert wm_block3_trials%(n_conditions) == 0, f"Number of wm trials must be divisible by {n_conditions}"
 
     # weightings for sequential presentation
     position_weights = settings["memory_experiment"]["position_weights"]
 
     # load and encoding time 
     load = settings["memory_experiment"]["load"]
-    encoding_time_short = settings["timing"]["encoding_time_short"]
-    encoding_time_long = settings["timing"]["encoding_time_long"]
-    encoding_time_catch = settings["timing"]["encoding_time_catch"]
 
-    if subject_number%len(conditions)!=0:
+    if subject_number%len(a_levels)!=0:
         print("Subject number will be higher due to latin square randomization")
 
     # start randomization
@@ -515,9 +470,10 @@ if __name__ == "__main__":
         lm_random_idx = np.random.permutation(np.arange(lm_trials))
 
         ## latin square randomization of conditions
-        condition_wheel = wm_mat.loc["condition"].to_numpy().copy()
+        condition_wheel = wm_mat.loc["stimulus_condition_index"].to_numpy().copy()
 
-        for i in range(n_conditions):  
+        n_latin_sq = len(a_levels)
+        for i in range(n_latin_sq):  
             subject_id += 1
             print(f"{wave_id} - Generating input data for {subject_id} .. ")
 
@@ -525,8 +481,8 @@ if __name__ == "__main__":
             condition_wheel += 1
 
             # get current conditions & update the wm mat
-            current_conditions = (condition_wheel % n_conditions) + 1
-            wm_mat.loc["condition"] = current_conditions
+            current_condition_indices = (condition_wheel % n_latin_sq)
+            wm_mat.loc["stimulus_condition_index"] = current_condition_indices
 
             # assemble trial data for the wm trials
             design_mat = practice_mat.join(wm_mat, lsuffix="_practice") 
