@@ -8,19 +8,23 @@ function convert2cartesian(theta) {
     const cos_t = Math.cos(theta);
     const sin_t = Math.sin(theta);
 
-    const x = rx * Math.sign(cos_t) * Math.pow(Math.abs(cos_t), 2/n);
-    const y = ry * Math.sign(sin_t) * Math.pow(Math.abs(sin_t), 2/n);
+    const angleInDegrees = (theta * 180 / Math.PI) % 90;
+    const effectiveAngle = Math.min(angleInDegrees, 90 - angleInDegrees) * Math.PI / 180;
+    const correctionFactor = 1 / Math.cos(effectiveAngle);
+    const corrected_rx = rx * correctionFactor;
+    const corrected_ry = ry * correctionFactor;
+
+    const x = corrected_rx * Math.sign(cos_t) * Math.pow(Math.abs(cos_t), 2/n);
+    const y = corrected_ry * Math.sign(sin_t) * Math.pow(Math.abs(sin_t), 2/n);
 
     return {x:x, y:y};
 }
 
 // INSTRUCTIONS
 function generate_instruction_angles(load) {
-    var result = [];
-    var step = (2 * Math.PI) / load;
-    var offset = Math.PI / 6; // 30 degree offset
+    var result = [1,3,6];
     for (let i = 0; i < load; i++) {
-        result.push(i * step + offset);
+        result[i] *= Math.PI/4;
     }
     return result;
 }
@@ -58,7 +62,8 @@ function createWMInstructions() {
     ) 
 
     // instruction angles
-    const button_pos = experimentSettings.spatial.button_pos
+    const button_x = experimentSettings.spatial.button_x
+    const button_y = experimentSettings.spatial.button_y
     var instruction_angles = generate_instruction_angles(experimentSettings.memory_experiment.load)
     var sample_pos = convert2cartesian(instruction_angles[1])
     var instruction_files = ["dist1.jpg", "sample1.jpg", "dist2.jpg"] // "dist3.jpg", "dist4.jpg", "dist5.jpg", "dist6.jpg"
@@ -77,7 +82,11 @@ function createWMInstructions() {
                 <strong>1/5 Memorize</strong><br><br>
                 We will ask you to memorize <strong>${experimentSettings.memory_experiment.load} images</strong>.<br><br>
                 ${experimentSettings.memory_experiment.serial === 1 ? 'The images will appear <strong>sequentially</strong> on the screen.<br><br>' : ''}
+                <strong>Important:</strong> Keep your eyes focused on the cross in the center of the screen while memorizing the images.
+                <br><br>
                 You'll have <strong>1-3 seconds</strong> to memorize all images.
+                <br><br>
+
             </p>
             </div>`
     
@@ -113,15 +122,26 @@ function createWMInstructions() {
                 </p>
             </div>`
             ],
+            // 3/5
             [
             `<div class="square" 
                 style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
             </div>
-                
+               
             <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
+                <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
+                <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
             </div>
+            
+            <div class="cross">
+                <div class="cross-vertical"></div>
+                <div class="cross-horizontal"></div>
+            </div>
+
+            <div class="rectangle"
+                style="top: calc(50% + ${button_y}px);">
+            </div>
+            
             <p class="instruction-paragraph-left">
                 <strong>3/5 Which image matches the original image better?</strong>
                 <br><br> 
@@ -131,41 +151,59 @@ function createWMInstructions() {
                 Your task is to <strong>select the image that matches the original image better</strong> 
                 by clicking on it.
                 <br><br>
-                The square indicates the position of the original image.
+                The square with the ? mark indicates the location of the original image.
             </p>
             `
             ],
+            // 4/5
             [
             `<div class="square" 
                 style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
             </div>
                 
             <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
+                <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
+                <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
+            </div>
+
+            <div class="cross">
+                <div class="cross-vertical"></div>
+                <div class="cross-horizontal"></div>
+            </div>
+
+            <div class="rectangle"
+                style="top: calc(50% + ${button_y}px);">
             </div>
 
             <p class="instruction-paragraph-left">
                 <strong>4/5 What if you're uncertain?</strong>
                 <br><br>
-                The images can match the original image in various ways. 
+                Importantly, the images can match the original image in various ways. 
                 <br><br>
-                Furthermore, in some trials there is no clearly correct answer. 
-                <br><br> 
-                So, if you're uncertain which image matches the original better, 
+                If you're uncertain which image matches the original better, 
                 that's okay - just make your best guess.
             </p>
             `
             ],
+            // 5/5
             [
             `<div class="square" 
                 style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
             </div>
                 
             <div>
-                <img style="position: absolute; top: 50%; left: calc( 50% + ${button_pos}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
-                <img style="position: absolute; top: 50%; left: calc( 50% - ${button_pos}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
+                <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
+                <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
              </div>
+
+            <div class="cross">
+                <div class="cross-vertical"></div>
+                <div class="cross-horizontal"></div>
+            </div>
+
+            <div class="rectangle"
+                style="top: calc(50% + ${button_y}px);">
+            </div>
             
              <div class="progress-bar" style="bottom: 140px;">
                 <div class="progress-bar-track">
@@ -315,7 +353,8 @@ function createWM(timeline_variables, jsPsych) {
     const block_size = (wm_trials + ncatch) / 3;
     const first_break = 100 * (practice_trials + block_size) / total_trials;
     const second_break = 100 * (practice_trials + 2 * block_size) / total_trials;
-    const button_pos = experimentSettings.spatial.button_pos
+    const button_x = experimentSettings.spatial.button_x
+    const button_y = experimentSettings.spatial.button_y
 
     // Helper function to generate progress bar HTML
     const getProgressBarHTML = () => {
@@ -624,13 +663,13 @@ function createWM(timeline_variables, jsPsych) {
             
                 left_button = 
                     `<div style="cursor: pointer; width: 126px; height: 126px; 
-                                position: absolute; top: 50%; left: calc( 50% - ${button_pos}px); transform: translate(-50%, -50%);">
+                                position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px); transform: translate(-50%, -50%);">
                     <img src="${left_image}" class="image-button" />
                     </div>`
 
                 right_button = 
                     `<div style="cursor: pointer; width: 126px; height: 126px; 
-                                position: absolute; top: 50%; left: calc( 50% + ${button_pos}px); transform: translate(-50%, -50%);">
+                                position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% + ${button_x}px); transform: translate(-50%, -50%);">
                     <img src="${right_image}" class="image-button"/>
                     </div>`
             
@@ -650,6 +689,12 @@ function createWM(timeline_variables, jsPsych) {
                         <div>
                             <div class="square"
                                 style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
+                            </div>
+                            <div class="cross"><div class="cross-vertical"></div>
+                            <div class="cross-horizontal"></div></div>
+
+                            <div class="rectangle"
+                                style="top: calc(50% + ${button_y}px);">
                             </div>
                         </div>
                     </div>
@@ -781,18 +826,25 @@ function createWM(timeline_variables, jsPsych) {
                                 </div>
                             </div>
 
+                            <div class="cross"><div class="cross-vertical"></div>
+                            <div class="cross-horizontal"></div></div>
+
+                            <div class="rectangle"
+                                style="top: calc(50% + ${button_y}px);">
+                            </div>
+                            
                             <div>
                                 <img src="${sample_file}" class="image-object feedback-blink"
-                                style="width: 100px; height: 100px; top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
+                                style="width: 126px; height: 126px; top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
                             </div>
 
                             <div style="cursor: pointer; width: 126px; height: 126px;
-                                    position: absolute; top: 50%; left: calc( 50% + ${button_pos}px); transform: translate(-50%, -50%);">
+                                    position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% + ${button_x}px); transform: translate(-50%, -50%);">
                                     <img src="${right_image}" class="image-button"/>
                             </div>
 
                             <div style="cursor: pointer; width: 126px; height: 126px;
-                                    position: absolute; top: 50%; left: calc( 50% - ${button_pos}px); transform: translate(-50%, -50%);">
+                                    position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px); transform: translate(-50%, -50%);">
                                     <img src="${left_image}" class="image-button" />
                             </div>
                         </div>`

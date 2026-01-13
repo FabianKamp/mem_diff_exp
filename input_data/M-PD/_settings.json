@@ -2,7 +2,7 @@
     "wave": {
         "version_id": "M",
         "wave_id": "M-PD",
-        "subject_number": 30
+        "subject_number": 6
     },
     "stimuli": {
         "exp_stimuli_dir": "stimuli/exp_stimuli_pilot",
@@ -37,10 +37,10 @@
     },
     "timing": {
         "encoding_times": [
-            900,
-            1400,
-            1900,
-            2400
+            700,
+            1200,
+            1700,
+            2200
         ],
         "memory_delay": 3000,
         "wm_inter_trial_delay": 2000,
@@ -50,10 +50,11 @@
         "encoding_time_catch": 3000
     },
     "spatial": {
-        "radius_x": 215,
-        "radius_y": 200,
+        "radius_x": 80,
+        "radius_y": 80,
         "n": 2,
-        "button_pos": 68
+        "button_x": 70,
+        "button_y": 290
     },
     "break": {
         "duration": 120000

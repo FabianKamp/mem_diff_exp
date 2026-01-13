@@ -24,13 +24,22 @@ def get_file_path(image_id):
 
 def generate_random_angles(n):
     """Generate a list of random angles evenly distributed around a circle."""
-    angle_between = np.pi * 2 / n
-    random_angles = [np.random.rand() * (np.pi * 2)]
-    for _ in range(n-1):
-        next_angle = (random_angles[-1] + angle_between) % (np.pi * 2)
-        random_angles.append(next_angle)
+    # angle_between = np.pi * 2 / n
+    # random_angles = [np.random.choice(8,1)/8 * (np.pi * 2)]
+    #random_angles = [np.random.rand() * (np.pi * 2)]
+    # for _ in range(n-1):
+    #     next_angle = (random_angles[-1] + angle_between) % (np.pi * 2)
+    #     random_angles.append(next_angle)
+    random_angles = np.array([
+        [0,3,5],
+        [1,4,7], 
+        [1,3,6],
+        [2,5,7], 
+    ])
+    random_angles = np.pi * random_angles/4 
+    random_angles = random_angles[np.random.choice(4)]
     random_angles = np.random.permutation(random_angles)
-    random_angles = np.round(random_angles,3)
+    random_angles = np.round(random_angles,4)
     return random_angles
 
 def randomized_set_ids():
