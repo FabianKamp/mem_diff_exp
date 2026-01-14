@@ -54,7 +54,7 @@
         "radius_y": 80,
         "n": 2,
         "button_x": 70,
-        "button_y": 290
+        "button_y": 260
     },
     "break": {
         "duration": 120000

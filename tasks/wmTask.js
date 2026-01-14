@@ -176,10 +176,7 @@ function createWMInstructions() {
                 Your task is to <strong>select the image that matches the original image better</strong> 
                 by clicking on it.
                 <br><br>
-                The square with the ? mark indicates the location of the original image.
-                <br><br>
-                <strong>Note</strong>: Before selecting any image you have to move your mouse 
-                to enable the buttons.
+                The <strong>?</strong> mark indicates the location of the original image.
             </p>
             `
             ],
@@ -210,6 +207,9 @@ function createWMInstructions() {
                 <br><br>
                 If you're uncertain which image matches the original better, 
                 that's okay - just make your best guess.
+                <br><br><br>
+                <strong>Note</strong>: Before selecting any image you have to move your mouse 
+                to enable the buttons.
             </p>
             `
             ],
@@ -233,21 +233,10 @@ function createWMInstructions() {
                 style="top: calc(50% + ${button_y}px);">
             </div>
             
-             <div class="progress-bar" style="bottom: 140px;">
-                <div class="progress-bar-track">
-                    <div class="progress-bar-fill" style="width: 10%;"></div>
-                    <div class="progress-marker" style="left: 33%"></div>
-                    <div class="progress-marker" style="left: 66%"></div>
-                </div>
-            </div>
-            
             <p class="instruction-paragraph-left">
                 <strong>5/5 What about breaks?</strong><br><br> 
                 You will have <strong>2 breaks</strong> during the task, each lasting up to two minutes. 
                 Each block between breaks takes 8-12 minutes to complete.
-                <br><br>
-                At the bottom of your screen, 
-                you'll see a progress bar to help you track your progress during the task. 
                 <br>
             </p>
             `
@@ -326,7 +315,7 @@ function startingWM() {
                     There will be <strong>no feedback</strong> during the experiment and
                     the next trial will start automatically as soon as you responded.
                     <br><br>
-                    The next break will be in ~8 minutes.
+                    The next break will be in 8-12 minutes.
                     <br>
                 </p>
                 <p class="continue-prompt">

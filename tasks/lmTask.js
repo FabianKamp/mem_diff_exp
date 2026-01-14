@@ -2,6 +2,7 @@
 function createLMInstructions() {
     // instructions long term memory 
     var lm_instruction_timeline = []
+    const button_x = experimentSettings.spatial.button_x
 
     // initial break
     lm_instruction_timeline.push(
@@ -77,8 +78,8 @@ function createLMInstructions() {
                 <div class="rectangle"></div>
                 
                 <div>
-                    <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                    <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
+                    <img style="position: absolute; top: 50%; left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                    <img style="position: absolute; top: 50%; left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
                 </div>
                 
                 <p class="instruction-paragraph-left">
@@ -89,7 +90,7 @@ function createLMInstructions() {
                     <strong>One image was shown in the task before, the other image is new</strong>. 
                     <br><br>
                     Please, try to remember which image you have seen in the previous task and select it.
-                    <br><br>
+                    <br><br><br>
                     <strong>Note</strong>: Before selecting any image you have to move your mouse 
                     to enable the buttons.
                     </p>
@@ -100,8 +101,8 @@ function createLMInstructions() {
                 <div class="rectangle"></div>
                 
                 <div>
-                    <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                    <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
+                    <img style="position: absolute; top: 50%; left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                    <img style="position: absolute; top: 50%; left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
                 </div>
                 
                 <p class="instruction-paragraph-left">
@@ -121,14 +122,8 @@ function createLMInstructions() {
                 <div class="rectangle"></div>
                 
                 <div>
-                    <img style="position: absolute; top: 50%; left: calc( 50% + 80px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
-                    <img style="position: absolute; top: 50%; left: calc( 50% - 80px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
-                </div>
-
-                <div class="progress-bar" style="bottom: 140px;">
-                    <div class="progress-bar-track">
-                        <div class="progress-bar-fill" style="width: 10%;"></div>
-                    </div>
+                    <img style="position: absolute; top: 50%; left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample2.jpg" class="image-object"/>
+                    <img style="position: absolute; top: 50%; left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
                 </div>
                 
                 <p class="instruction-paragraph-left">
@@ -136,8 +131,6 @@ function createLMInstructions() {
                     This is the final task of the experiment, which will take only <strong>~10 minutes</strong>. 
                     <br><br>
                     Therefore, there will be no breaks in this task. 
-                    <br><br>
-                    But you can track your progress on the progress bar at the bottom of the screen.
                 </p>
                 </div>`
             ], 
@@ -181,6 +174,7 @@ function createLM(timeline_variables, jsPsych) {
     var lm_timeline = [];  
     const { lm_trials } = experimentSettings.memory_experiment;
     const total_trials = lm_trials;
+    const button_x = experimentSettings.spatial.button_x
     
     // preload
     lm_timeline.push(
@@ -288,11 +282,11 @@ function createLM(timeline_variables, jsPsych) {
 
                     <!-- Disabled buttons that look like the real ones -->
                     <div style="width: 126px; height: 126px; 
-                                position: absolute; top: 50%; left: calc( 50% - 75px); transform: translate(-50%, -50%);">
+                                position: absolute; top: 50%; left: calc( 50% - ${button_x}px); transform: translate(-50%, -50%);">
                         <img src="${left_image}" class="image-button" style="pointer-events: none;"/>
                     </div>
                     <div style="width: 126px; height: 126px; 
-                                position: absolute; top: 50%; left: calc( 50% + 75px); transform: translate(-50%, -50%);">
+                                position: absolute; top: 50%; left: calc( 50% + ${button_x}px); transform: translate(-50%, -50%);">
                         <img src="${right_image}" class="image-button" style="pointer-events: none;"/>
                     </div>`
                 
@@ -346,13 +340,13 @@ function createLM(timeline_variables, jsPsych) {
             
                 left_button = 
                     `<div style="cursor: pointer; width: 126px; height: 126px; 
-                                position: absolute; top: 50%; left: calc( 50% - 75px); transform: translate(-50%, -50%);">
+                                position: absolute; top: 50%; left: calc( 50% - ${button_x}px); transform: translate(-50%, -50%);">
                     <img src="${left_image}" class="image-button" />
                     </div>`
 
                 right_button = 
                     `<div style="cursor: pointer; width: 126px; height: 126px; 
-                                position: absolute; top: 50%; left: calc( 50% + 75px); transform: translate(-50%, -50%);">
+                                position: absolute; top: 50%; left: calc( 50% + ${button_x}px); transform: translate(-50%, -50%);">
                     <img src="${right_image}" class="image-button"/>
                     </div>`
             
@@ -482,8 +476,8 @@ function createLM(timeline_variables, jsPsych) {
                             <strong></strong>
                         </p>
                         <div class="rectangle"></div>
-                        <img src="${left_image}" class="${left_class}" style="top: 50%; left: calc(50% - 75px);"/>
-                        <img src="${right_image}" class="${right_class}" style="top: 50%; left: calc(50% + 75px);"/>
+                            <img src="${left_image}" class="${left_class}" style="top: 50%; left: calc(50% - ${button_x}px);"/>
+                            <img src="${right_image}" class="${right_class}" style="top: 50%; left: calc(50% + ${button_x}px);"/>
                         </div>
                         `
                     } else {
@@ -495,8 +489,8 @@ function createLM(timeline_variables, jsPsych) {
                         html +=
                         `
                         <div class="rectangle"></div>
-                        <img src="${left_image}" class="${left_class}" style="top: 50%; left: calc(50% - 75px);"/>
-                        <img src="${right_image}" class="${right_class}" style="top: 50%; left: calc(50% + 75px);"/>
+                            <img src="${left_image}" class="${left_class}" style="top: 50%; left: calc(50% - ${button_x}px);"/>
+                            <img src="${right_image}" class="${right_class}" style="top: 50%; left: calc(50% + ${button_x}px);"/>
                         </div>
                         `
                     }
