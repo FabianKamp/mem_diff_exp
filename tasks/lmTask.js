@@ -1,7 +1,58 @@
 // LM INSTRUCTIONS
 function createLMInstructions() {
     // instructions long term memory 
-    var lm_instructions =         
+    var lm_instruction_timeline = []
+
+    // initial break
+    lm_instruction_timeline.push(
+        {
+            type: jsPsychHtmlKeyboardResponse, 
+            trial_duration: 121000,
+            stimulus: 
+                `<div>
+                    <p class="instruction-header"><strong>Last Break</strong></p>
+                    <p class="instruction-paragraph"> 
+                        <strong>Congratulations, you have successfully completed the first task!</strong><br><br>
+
+                        You are now free to take a short break (max. 2 minutes) before 
+                        beginning the next task.
+                        This will be the last task of the experiment and it will be much shorter
+                        than the previous one. <br><br>
+                        
+                        The following slides will have the detailed instructions.
+                    </p>
+                    <p class="continue-prompt">
+                        To continue press <strong>Enter</strong>
+                    </p>
+                </div>`,
+            choices: ['Enter'],
+            on_load: function() {
+                startTimer(
+                    radius=12,
+                    delay=100,
+                    duration=120000,
+                    top=80,
+                    color="#f0f0f0  "
+                );
+            },
+            on_finish: function(data) {
+                resetTimer();
+
+                if(data.rt === null) {
+                    data.break_ending = "ended by timeout after 2 minutes";
+                } 
+                else {
+                    data.break_ending = "ended by participant's action after " + data.rt + " ms";
+                }
+                data.stimulus = null;
+                data.trial_type = "starting-lm-instructions";
+                data.timestamp = new Date().toLocaleTimeString()
+            }
+        }
+    )
+
+    // instruction
+    lm_instruction_timeline.push(        
         {
             type: jsPsychInstructions,
             key_forward: 'ArrowRight',
@@ -10,14 +61,14 @@ function createLMInstructions() {
             pages:[[
                 `<div>
                     <p class="instruction-header">
-                        <strong>Follow-up task</strong>
+                        <strong>Instructions</strong>
                     </p>
                     <p class="instruction-paragraph"> 
-                        <strong>Great, you are almost done!</strong>
+                        Great, in our second task we want to know 
+                        if you can still recognize the images from the previous task.
                         <br><br>
-                        In our second task we want to know 
-                        if you can still recognize the images from the first task.
-                        <br><br>
+                        Just as before you can navigate back and forth through the instructions using the buttons below 
+                        or using the arrow keys on your keyboard.
                     </p>
                 </div>`
             ], 
@@ -38,6 +89,9 @@ function createLMInstructions() {
                     <strong>One image was shown in the task before, the other image is new</strong>. 
                     <br><br>
                     Please, try to remember which image you have seen in the previous task and select it.
+                    <br><br>
+                    <strong>Note</strong>: Before selecting any image you have to move your mouse 
+                    to enable the buttons.
                     </p>
                 </div>`
             ], 
@@ -56,7 +110,10 @@ function createLMInstructions() {
                     This task was designed to be challenging!
                     <br><br>
                     When unsure, choose whichever one feels more familiar.
+                    <br><br>
+                    You will get feedback during this task. 
                 </p>
+
                 </div>`
             ], 
             [
@@ -85,8 +142,9 @@ function createLMInstructions() {
                 </div>`
             ], 
             ],
-        };
-    return lm_instructions
+        }
+    )
+    return lm_instruction_timeline
 }
 
 // STARTING LM
@@ -198,23 +256,80 @@ function createLM(timeline_variables, jsPsych) {
         }
     })
     
-    // recognition
+    // Mouse Movement Check (same as the recognition slide, but with disabled buttons)
+    lm_timeline.push(
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            choices: "NO_KEYS",
+            trial_duration: null,
+
+            stimulus: function() {
+                var foil_file = jsPsych.evaluateTimelineVariable(`recognition_foil_file`)
+                var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
+                var left_target = jsPsych.evaluateTimelineVariable(`left_target`) 
+
+                if (left_target === 1) {
+                    var left_image = target_file
+                    var right_image = foil_file
+                } else {
+                    var left_image = foil_file
+                    var right_image = target_file 
+                }
+
+                var html =
+                    `<div style="width:500px; height: 60vh;">
+                    <p style="font-family: 'Courier New', monospace; font-size: x-large; 
+                        position: absolute; top: 20%; left: 50%; max-width: 400px;
+                        transform: translateX(-50%); color:#4682B4; text-align: center;">
+                        <strong>Which image do you remember from the previous task?</strong>
+                    </p>
+                    <div class="rectangle"></div>
+                    </div>
+
+                    <!-- Disabled buttons that look like the real ones -->
+                    <div style="width: 126px; height: 126px; 
+                                position: absolute; top: 50%; left: calc( 50% - 75px); transform: translate(-50%, -50%);">
+                        <img src="${left_image}" class="image-button" style="pointer-events: none;"/>
+                    </div>
+                    <div style="width: 126px; height: 126px; 
+                                position: absolute; top: 50%; left: calc( 50% + 75px); transform: translate(-50%, -50%);">
+                        <img src="${right_image}" class="image-button" style="pointer-events: none;"/>
+                    </div>`
+                
+                // progress bar
+                var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                var progress_percent = (trial_id / total_trials) * 100      
+
+                var progress_bar = 
+                    `<div class="progress-bar">
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
+                        </div>
+                    </div>`
+                html += progress_bar
+                return html;
+            },
+
+            on_load: function() {
+                const mouseHandler = createMouseHandler(jsPsych, 50, downsample_mouse_history);
+                document.addEventListener('mousemove', mouseHandler);
+            },
+
+            on_finish: function(data) {
+                data.trial_type = "mouse-movement-check"
+                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                data.timestamp = new Date().toLocaleTimeString()
+            }
+        }
+    )
+
+    // Recognition Slide
     lm_timeline.push(
         {
             type: jsPsychHtmlButtonResponse,
             choices: ["left", "right"],
             button_layout: 'grid',
             trial_duration: 31000,
-            
-            on_load: function() {
-                startTimer(
-                    radius=4,
-                    delay=25000,
-                    duration=5000, 
-                    top=50, 
-                    color="#f57c00"
-                );
-            },
 
             button_html: (choice) => {
                 var foil_file = jsPsych.evaluateTimelineVariable(`recognition_foil_file`)
@@ -274,6 +389,16 @@ function createLM(timeline_variables, jsPsych) {
                 return html;
             },
 
+            on_load: function() {
+                startTimer(
+                    radius=4,
+                    delay=25000,
+                    duration=5000, 
+                    top=50, 
+                    color="#f57c00"
+                );
+            },
+
             on_finish: function(data) {  
                 // reset timer
                 resetTimer();             
@@ -298,7 +423,6 @@ function createLM(timeline_variables, jsPsych) {
                 data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
                 data.set_id = jsPsych.evaluateTimelineVariable('set_id')
                 data.sample_position = jsPsych.evaluateTimelineVariable('sample_position')
-                data.long_encoding = jsPsych.evaluateTimelineVariable('long_encoding')
                 data.encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
                 data.condition = jsPsych.evaluateTimelineVariable('condition')
                 data.condition_name = jsPsych.evaluateTimelineVariable('condition_name')

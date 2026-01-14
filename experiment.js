@@ -120,13 +120,13 @@ async function createTimeline(jsPsych){
                 fullscreen_tracker.check(),
                 countdown(3),
                 createWM(wm_input_data_block3, jsPsych),
-                endingWM()
             ],
             name: "wm_block_3"
         })
 
-        // don't run LM in the piloting phase
-        if ( wave_id[0] !== "P" ) { 
+        // LM is not run during the piloting phase
+        if ( wave_id[0] !== "P" || subject_id === 999 ) { 
+            
             // LM Instructions
             experiment_timeline.push({
                 timeline: [

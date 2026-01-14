@@ -22,7 +22,7 @@ def get_file_path(image_id):
     file_path = image_paths.loc[image_paths.image_id == image_id, "image_path"]
     return file_path.iloc[0]
 
-def generate_random_angles(n):
+def generate_random_angles():
     """Generate a list of random angles evenly distributed around a circle."""
     # angle_between = np.pi * 2 / n
     # random_angles = [np.random.choice(8,1)/8 * (np.pi * 2)]
@@ -217,13 +217,13 @@ def assemble_wm_trial_data():
     wm_recognition_foil_files = np.array([get_file_path(i) for i in wm_recognition_foil.flatten()])
 
     # assign correct response (mixed condition --> both options are correct)
-    target_correct = (design_mat.loc["stimulus_condition_index",:] != 1).astype(int)
+    target_correct = (design_mat.loc["stimulus_condition_index",:] != 0).astype(int) # 0 == mixed condition
     wm_correct_response = (design_mat.loc["wm_left_target",:]==0).astype(int)
-    wm_correct_response[design_mat.loc["stimulus_condition_index",:] == 1] = nan
+    wm_correct_response[design_mat.loc["stimulus_condition_index",:] == 0] = nan # 0 == mixed condition
 
     # display
     # generate angles 
-    encoding_thetas = np.vstack([generate_random_angles(load) for _ in range(all_encoding_trials)])
+    encoding_thetas = np.vstack([generate_random_angles() for _ in range(all_encoding_trials)])
     recognition_thetas = encoding_thetas[np.arange(all_encoding_trials), design_mat.loc["wm_sample_position",:]].flatten()
     
     # data dict --> wmTask.js
@@ -274,7 +274,7 @@ def insert_catch_trials():
     recognition_foil_files = np.array([get_file_path(i) for i in recognition_foil_ids])
 
     # display angle
-    encoding_thetas = np.random.rand(ncatch) * (np.pi * 2) 
+    encoding_thetas = np.random.choice(8)/4 * np.pi 
     
     # left/right
     left_target = np.random.choice([0,1], ncatch, replace=True).astype(int)

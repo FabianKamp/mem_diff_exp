@@ -107,22 +107,26 @@ function botCheck(jsPsych) {
                 This will only take a couple of seconds.
             </p>
             <p style="color: white;">
-                Please, type B to continue to the task.
-                The key forward is B!
+                Type b to continue to the task within the next 5 seconds.
+                The key forward is b!
                 To proof that you are not a bot,
-                please press B!
+                please press b!
                 You have to respond within 5 seconds!
             </p>
             </div>`,
-        choices: ['b'],
+        choices: ["b"],
         on_load: function() {
             startTimer(
                 radius=12,
                 delay=100,
                 duration=10000,
                 top=80,
-                color="#f0f0f0  "
+                color="#8d8d8d  "
             );
+        },
+        on_finish: function(data){
+            data.stimulus = null;
+            data.trial_type = "bot-check";
         },
     };
 
@@ -161,7 +165,6 @@ function botCheck(jsPsych) {
                         endTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
                     });
                 },
-
                 on_finish: function(data){
                     data.stimulus = null;
                     data.trial_type = "bot-check";
@@ -175,7 +178,6 @@ function botCheck(jsPsych) {
             var last_response = last_trial.response
 
             var bot = false
-            console.log(last_response)
             if (last_response == "b") {
                 bot = true
                 console.log(
@@ -237,8 +239,6 @@ function checkTime(jsPsych, max_duration) {
         }], 
         conditional_function: function() {
             var time_elapsed = jsPsych.data.get().last(1).values()[0].time_elapsed;
-            console.log(time_elapsed)
-            console.log(jsPsych.data.dataProperties.experimentStart)
             time_elapsed = time_elapsed-jsPsych.data.dataProperties.experimentStart;
             
             var minutes_elapsed = time_elapsed/60e3
@@ -292,4 +292,71 @@ function resetTimer() {
     }
     const countdown = document.getElementById('countdown');
     if (countdown) countdown.remove();
+}
+
+// Mouse Movement Handler
+function createMouseHandler(jsPsych, requiredMovement = 50, downsampleFunction = null) {
+    let initialX = null;
+    let initialY = null;
+    let mouseX_history = [];
+    let mouseY_history = [];
+
+    const mouseHandler = function(e) {
+        if (initialX === null) {
+            initialX = e.clientX;
+            initialY = e.clientY;
+            mouseX_history.push(e.clientX);
+            mouseY_history.push(e.clientY);
+            return;
+        }
+
+        mouseX_history.push(e.clientX);
+        mouseY_history.push(e.clientY);
+
+        const dx = e.clientX - initialX;
+        const dy = e.clientY - initialY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance >= requiredMovement) {
+            document.removeEventListener('mousemove', mouseHandler);
+
+            let trialData = {};
+            if (downsampleFunction) {
+                const [downsampled_x, downsampled_y] = downsampleFunction(mouseX_history, mouseY_history);
+                trialData = {
+                    mouse_movement_x: downsampled_x,
+                    mouse_movement_y: downsampled_y
+                };
+            } else {
+                trialData = {
+                    mouse_movement_x: mouseX_history,
+                    mouse_movement_y: mouseY_history
+                };
+            }
+
+            jsPsych.finishTrial(trialData);
+        }
+    };
+    return mouseHandler;
+}
+
+// Toggle Cursor (hiding the cursor, if it is not moved)
+function hide_cursor() {
+    var cursor_off = {
+        type: jsPsychCallFunction,
+        func: function() {
+            document.body.style.cursor= "none";
+        }
+    }
+    return cursor_off
+}
+
+function show_cursor() {
+    var cursor_on = {
+        type: jsPsychCallFunction,
+        func: function() {
+            document.body.style.cursor= "auto";
+        }
+    }
+    return cursor_on
 }

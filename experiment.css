@@ -172,10 +172,10 @@
 }
 
 .cross-horizontal {
-    position: absolute; 
-    top: 50%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 15px;
     height: 2px;
     background-color: black;
@@ -222,7 +222,7 @@
 
 .feedback-correct {
     animation: correctBounce 0.75s ease-out forwards;
-    border: 3px solid rgba(159, 197, 164, 0.8);
+    border: 1px solid #00FF00;
     box-shadow: 0 0 8px rgba(159, 197, 164, 0.4);
 }
 
@@ -240,7 +240,7 @@
 
 .feedback-incorrect {
     animation: incorrectBounce 0.75s ease-out forwards;
-    border: 3px solid rgba(197, 159, 164, 0.8);
+    border: 1px solid #FF0000;
     box-shadow: 0 0 8px rgba(197, 159, 164, 0.4);
 }
 
