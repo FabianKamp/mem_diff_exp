@@ -40,17 +40,17 @@
   <body></body>
   <script>
     const jsPsych = initJsPsych({
-        on_finish: function(data){            
+        on_finish: function(){            
             // Serialize the data
             var promise = new Promise(function(resolve, reject) {
-                var data_string = JSON.stringify(data);
-                resolve(data_string);
+                var data = JSON.stringify(jsPsych.data);
+                resolve(data);
             })
-            promise.then(function(data_string) {
+            promise.then(function(data) {
                 $.ajax({
                     type: "POST",
                     url: '/save',
-                    data: { "data": data_string },
+                    data: { "data": data },
                     success: function(){ document.location = "/next" },
                     dataType: "application/json",
 
