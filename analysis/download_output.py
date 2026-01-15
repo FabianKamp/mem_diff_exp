@@ -10,7 +10,7 @@ user= os.getenv("EXP_USER")
 password= os.getenv("EXP_PASSWORD")
 root_url = os.getenv("EXP_URL")
 
-wave_id = "M-PC"
+wave_id = "M-PD"
 default_csv = f"./token/token_{wave_id}.csv"
 default_out_dir = f"./output_data/{wave_id}"
 
@@ -33,22 +33,35 @@ def get_data(token):
         return 
     
     parsed = json.loads(response.json()["data"])
-    dataProperties = parsed["dataProperties"]
-    session_id = dataProperties["session_id"]
-    
-    data = pd.DataFrame(parsed["results"]["trials"])
-    data.assign(**dataProperties)
 
-    interaction_records = pd.DataFrame(parsed["interactionRecords"]["trials"])
-    interaction_records["session_id"] = session_id
+    if "dataProperties" in parsed:
+        dataProperties = parsed["dataProperties"]
+        session_id = dataProperties["session_id"]
+        data = pd.DataFrame(parsed["results"]["trials"])
+        data.assign(**dataProperties)
+        interaction_records = pd.DataFrame(parsed["interactionRecords"]["trials"])
+        interaction_records["session_id"] = session_id
+        return dict(
+            session_id = session_id, 
+            data = data, 
+            interaction_records = interaction_records
+        )
     
-    return session_id, data, interaction_records
+    else:
+        data = pd.DataFrame(parsed["trials"])
+        return dict(
+            data = data
+        )
 
 token_df = pd.read_csv(args.token_csv)
 for token in token_df.token.unique():
     output = get_data(token)
     if output is None:
         continue
-    session_id, data, interaction_records = output
-    data.to_csv(f"{args.out_dir}/{session_id}.csv")
-    interaction_records.to_csv(f"{args.out_dir}/{session_id}_browser_records.csv")
+    
+    # save
+    if "session_id" in output:
+        output["data"].to_csv(f"{args.out_dir}/{output["session_id"]}.csv")
+        output["interaction_records"].to_csv(f"{args.out_dir}/{output["session_id"]}_browser_records.csv")
+    else: 
+        output["data"].to_csv(f"{args.out_dir}/{token}.csv")
