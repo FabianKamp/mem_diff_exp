@@ -3,149 +3,79 @@ import glob
 import os
 import numpy as np
 
-prefix = "M-PC"
-files = sorted(glob.glob(f"./input_data/{prefix}/*{prefix}*.json"))
-files = [f for f in files if '999' not in os.path.basename(f)]
+# Display all rows and columns
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
+pd.set_option('display.max_colwidth', None)
 
-old_dict = {}
-for i, f in enumerate(files):
-    print(f"Count check: {f} ...", end="", flush=True)
-    session_id = os.path.basename(f).rstrip(".json").lstrip("input_")
-    data = pd.read_json(f)
+def check_wm_input(file):
+    data = pd.read_json(file)
+    wm_data = data.loc[(data.trial_type=="wm")]
+    encoding_time_count = wm_data.groupby(["wm_block_id", "condition"]).value_counts(subset=["encoding_time"]).reset_index()
+    left_target_count = wm_data.groupby(["wm_block_id", "condition", "encoding_time"]).value_counts(subset=["left_target"]).reset_index()
+    left_target_count = left_target_count.sort_values(by=["wm_block_id", "condition", "encoding_time", "left_target"])
+    recognition_theta = wm_data.groupby(["wm_block_id", "condition"]).value_counts(subset=["recognition_theta"]).reset_index()
 
-    new_dict = {
-        f"n_wm_trials": np.sum(data.trial_type=="wm"),
-        f"n_lm_trials": np.sum(data.trial_type=="lm"),
-    }
+    print("\nEncoding Time Count:")
+    print(encoding_time_count)
+    print("\nLeft Target Count:")
+    print(left_target_count)
+    print("\nRecognition Theta:")
+    print(recognition_theta)
 
-    for condition in range(1, 4):
-        for long_enc in range(2):
-            # Filter data for current condition and encoding
-            mask = (data.condition == condition) & \
-                   (data.long_encoding == long_enc) & \
-                   (data.trial_type == "wm")
-            wm_data = data.loc[mask]
+def check_lm_input(file):
+    data = pd.read_json(file)
+    lm_data = data.loc[(data.trial_type=="lm")]
+    encoding_time_count = lm_data.groupby("condition").value_counts(subset=["encoding_time"]).reset_index()
+    left_target_count = lm_data.groupby(["condition", "encoding_time"]).value_counts(subset=["left_target"]).reset_index()
+    left_target_count = left_target_count.sort_values(by=["condition", "encoding_time", "left_target"])
+ 
+    print("\nEncoding Time Count:")
+    print(encoding_time_count)
+    print("\nLeft Target Count:")
+    print(left_target_count)
 
-            # Calculate counts
-            key_prefix = f"condition_{condition}{long_enc}"
-            new_dict.update({
-                f"{key_prefix}_count": len(wm_data),
-                f"{key_prefix}_left_target": wm_data.left_target.sum(),
-                f"{key_prefix}_right_target": len(wm_data)-wm_data.left_target.sum(),
-                f"{key_prefix}_sample_position_1": (wm_data.sample_position == 1).sum(),
-                f"{key_prefix}_sample_position_2": (wm_data.sample_position == 2).sum(),
-                f"{key_prefix}_sample_position_3": (wm_data.sample_position == 3).sum(),
-            })
-
-            # Filter data for current condition and encoding
-            mask = (data.condition == condition) & \
-                   (data.long_encoding == long_enc) & \
-                   (data.trial_type == "lm")
-            lm_data = data.loc[mask]
-
-            # Calculate counts
-            key_prefix = f"condition_{condition}{long_enc}"
-            new_dict.update({
-                f"{key_prefix}_lm_count": len(lm_data),
-                f"{key_prefix}_lm_left_target": lm_data.left_target.sum(),
-                f"{key_prefix}_lm_right_target": len(lm_data)-lm_data.left_target.sum(),
-            })
-
-    if i>0:
-        for key in new_dict.keys():
-            if not (old_dict[key] == new_dict[key]):
-                print(f"\n{key} {old_dict[key]}")
-                print(f"{key} {new_dict[key]}")
-                raise Exception("")
-
-    print(" -> ok")
-    old_dict = new_dict.copy()
-
-# ======================
-# Latin square check
-# ======================
-
-for suffix in ["A","B"]: 
-    file_list = [f for f in files if os.path.basename(f).endswith(f"{suffix}.json")]
-    while len(file_list)>0:
-        conditions = []
-        set_id = []
+def latin_square_check(file_list): 
         print(f"Latin square check:", end="\t", flush=True)
-        for i in range(3): 
-            last_check = []
-            current_file = file_list[0]
-            print(f"{os.path.basename(current_file)} ", end="\t", flush=True)
-            # check conditions
-            wm_data = pd.read_json(current_file)
-            wm_data = wm_data.loc[data.trial_type=="wm"]
+        conditions, set_ids = [],[]
+        for f in file_list: 
+            data = pd.read_json(f)
+            wm_data = data.loc[data.trial_type=="wm"]
             conditions.append(wm_data.condition.to_numpy()[:,np.newaxis])
             # check set ids
-            if (i == 0) & (len(set_id)!=0):
-                assert not np.all(set_id == wm_data.set_id), "Randomization Error"
-            elif i>0:
-                assert np.all(set_id == wm_data.set_id), "Randomization Error"
-            set_id = wm_data.set_id.copy()
-            last_check.append(current_file)
-            file_list.pop(0)
+            if len(set_ids)>0 :
+                assert np.all(set_ids == wm_data.set_id), "Randomization Error. Set ids should be the same."
+            set_ids = wm_data.set_id.copy()
 
         conditions = np.hstack(conditions)
         nconditions = [len(np.unique(trial)) for trial in conditions]
         
         if not all([trial==3 for trial in nconditions]):
-            print(f"\nLatin Square Error while checking f{last_check}")
+            session_id = os.path.basename(f).rstrip(".json").lstrip("input_")
+            print(f"\nLatin Square Error while checking f{session_id}")
             raise Exception("")
         
         print(" -> ok")
 
-# ======================
-# print count sumary 
-# ======================
-def print_summary_table(data_dict):
-    """Print formatted summary tables for all metrics."""
-    print(f"\n{'='*80}")
-    print(f"SUMMARY | WM trials: {data_dict['n_wm_trials']} | LM trials: {data_dict['n_lm_trials']}")
-    print('='*80)
+if __name__ == "__main__":
 
-    # All metrics in one row
-    metrics = [
-        ("count", "Count"),
-        ("left_target", "Left"),
-        ("right_target", "Right"),
-        ("lm_count", "LM Count"),
-        ("lm_left_target", "LM Left"),
-        ("lm_right_target", "LM Right"),
-        ("sample_position_1", "P1"),
-        ("sample_position_2", "P2"),
-        ("sample_position_3", "P3")
-    ]
+    prefix = "M-PD"
+    files = sorted(glob.glob(f"./input_data/{prefix}/*{prefix}*.json"))
+    files = [f for f in files if '999' not in os.path.basename(f)]
 
-    # Print header
-    header = "    |"
-    for _, label in metrics:
-        header += f"{label:^10}|"
-    print(f"\n{header}")
-
-    # Print column labels
-    cols = "    |"
-    for _ in metrics:
-        cols += "LE0|LE1|  |"
-    print(cols)
-
-    # Print separator
-    sep = "----+" + ("---+---+--+" * len(metrics))
-    print(sep)
-
-    # Print data for each condition
-    for condition in range(1, 4):
-        row = f"C{condition}  |"
-        for field_key, _ in metrics:
-            v0 = data_dict[f'condition_{condition}0_{field_key}']
-            v1 = data_dict[f'condition_{condition}1_{field_key}']
-            row += f"{v0:3d}|{v1:3d}|  |"
-        print(row)
-
-    print(sep)
-
-print_summary_table(new_dict)
+    old_dict = {}
+    latin_list = []
+    for i, f in enumerate(files):
+        print(f"Count check: {f} ...", end="", flush=True)
+        if i == 0:
+            check_wm_input(f)
+            check_lm_input(f)
+        
+        latin_list.append(f)
+        if len(latin_list) == 3:
+            latin_square_check(latin_list)
+            latin_list = []
+        
 
 

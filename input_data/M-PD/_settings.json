@@ -43,7 +43,7 @@
             2200
         ],
         "memory_delay": 3000,
-        "wm_inter_trial_delay": 2000,
+        "wm_inter_trial_delay": 2500,
         "lm_inter_trial_delay": 1000,
         "wm_isi": 200,
         "catch_delay": 750,
@@ -52,9 +52,8 @@
     "spatial": {
         "radius_x": 80,
         "radius_y": 80,
-        "n": 2,
         "button_x": 70,
-        "button_y": 260
+        "button_y": 290
     },
     "break": {
         "duration": 120000

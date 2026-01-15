@@ -1,21 +1,13 @@
-// superellipse version with n=3 for rounder edges
+// Circle with correction for square rotation perception
 function convert2cartesian(theta) {
-    
     const rx = experimentSettings.spatial.radius_x;
     const ry = experimentSettings.spatial.radius_y;
-    const n = experimentSettings.spatial.n;
 
-    const cos_t = Math.cos(theta);
-    const sin_t = Math.sin(theta);
+    const angleOffset = (theta % (Math.PI / 2));
+    const correctionFactor = 1 / Math.cos(Math.min(angleOffset, Math.PI / 2 - angleOffset));
 
-    const angleInDegrees = (theta * 180 / Math.PI) % 90;
-    const effectiveAngle = Math.min(angleInDegrees, 90 - angleInDegrees) * Math.PI / 180;
-    const correctionFactor = 1 / Math.cos(effectiveAngle);
-    const corrected_rx = rx * correctionFactor;
-    const corrected_ry = ry * correctionFactor;
-
-    const x = corrected_rx * Math.sign(cos_t) * Math.pow(Math.abs(cos_t), 2/n);
-    const y = corrected_ry * Math.sign(sin_t) * Math.pow(Math.abs(sin_t), 2/n);
+    const x = rx * correctionFactor * Math.cos(theta);
+    const y = ry * correctionFactor * Math.sin(theta);
 
     return {x:x, y:y};
 }
@@ -45,11 +37,8 @@ function downsample_mouse_history(mouseX_history, mouseY_history) {
             downsampled_y.push(mouseY_history[index]);
         }
     }
-
     return [downsampled_x, downsampled_y]
 }
-
-
 
 function createWMInstructions() {   
     var instruction_timeline = []
@@ -373,8 +362,8 @@ function createWM(timeline_variables, jsPsych) {
                 html = 
                 `<div style="width:250px; height:80vh;">
                     <div class="cross">
-                    <div class="cross-vertical" style="opacity: 0.5;"></div>
-                    <div class="cross-horizontal" style="opacity: 0.5;"></div>
+                    <div class="cross-vertical" style="opacity: 0.4;"></div>
+                    <div class="cross-horizontal" style="opacity: 0.4;"></div>
                     </div>
                 </div>`
                 html += getProgressBarHTML()
@@ -425,8 +414,8 @@ function createWM(timeline_variables, jsPsych) {
                 var html =
                 `<div style="width:250px; height:80vh;">
                     <div class="cross">
-                        <div class="cross-vertical" style="opacity: 0.5;"></div>
-                        <div class="cross-horizontal" style="opacity: 0.5;"></div>
+                        <div class="cross-vertical" style="opacity: 0.4;"></div>
+                        <div class="cross-horizontal" style="opacity: 0.4;"></div>
                     </div>
                 </div>`
                 html += getProgressBarHTML();
@@ -501,7 +490,6 @@ function createWM(timeline_variables, jsPsych) {
                     file.push(jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`))
                     theta.push(jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`))
                 }
-                
                 data.phase = 'encoding'
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
