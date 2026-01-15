@@ -176,6 +176,9 @@ function createLM(timeline_variables, jsPsych) {
     const total_trials = lm_trials;
     const button_x = experimentSettings.spatial.button_x
     
+    // hide cursor
+    lm_timeline.push(hide_cursor())
+
     // preload
     lm_timeline.push(
     {
@@ -249,6 +252,9 @@ function createLM(timeline_variables, jsPsych) {
             data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
         }
     })
+    
+    // Show cursor
+    lm_timeline.push(show_cursor())
     
     // Mouse Movement Check (same as the recognition slide, but with disabled buttons)
     lm_timeline.push(

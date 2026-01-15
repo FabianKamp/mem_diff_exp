@@ -37,16 +37,19 @@ def check_lm_input(file):
     print(left_target_count)
 
 def latin_square_check(file_list): 
-        print(f"Latin square check:", end="\t", flush=True)
-        conditions, set_ids = [],[]
+        conditions, previous_set_ids, previous_encoding_times = [],[], []
         for f in file_list: 
             data = pd.read_json(f)
             wm_data = data.loc[data.trial_type=="wm"]
             conditions.append(wm_data.condition.to_numpy()[:,np.newaxis])
             # check set ids
-            if len(set_ids)>0 :
-                assert np.all(set_ids == wm_data.set_id), "Randomization Error. Set ids should be the same."
-            set_ids = wm_data.set_id.copy()
+            if len(previous_set_ids)>0 :
+                assert np.all(previous_set_ids == wm_data.set_id), "Latin Square Error: Set ids are not idential."
+            if len(previous_encoding_times)>0 :
+                assert np.all(previous_encoding_times == wm_data.encoding_time), "Latin Square Error: Encoding times are not identical."
+            
+            previous_set_ids = wm_data.set_id.copy()
+            previous_encoding_times = wm_data.encoding_time.copy()
 
         conditions = np.hstack(conditions)
         nconditions = [len(np.unique(trial)) for trial in conditions]
@@ -67,13 +70,14 @@ if __name__ == "__main__":
     old_dict = {}
     latin_list = []
     for i, f in enumerate(files):
-        print(f"Count check: {f} ...", end="", flush=True)
         if i == 0:
+            print(f"Count check: {f} ...", end="", flush=True)
             check_wm_input(f)
             check_lm_input(f)
         
         latin_list.append(f)
         if len(latin_list) == 3:
+            print("Latin square check: ", latin_list, end="\t", flush=True)
             latin_square_check(latin_list)
             latin_list = []
         
