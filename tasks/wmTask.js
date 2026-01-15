@@ -91,12 +91,12 @@ function createWMInstructions() {
         `<div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
             <p class="instruction-paragraph-left">
                 <strong>1/5 Memorize</strong><br><br>
-                We will ask you to memorize <strong>${experimentSettings.memory_experiment.load} images</strong>.<br><br>
+                In each trial we will ask you to memorize <strong>${experimentSettings.memory_experiment.load} images</strong>.<br><br>
                 ${experimentSettings.memory_experiment.serial === 1 ? 'The images will appear <strong>sequentially</strong> on the screen.<br><br>' : ''}
+                The images will be shown for about <strong>0.5 to 2 seconds</strong>. 
+                The time varies from trial to trial — some trials are fast, others are slower.
+                <br><br><br>
                 <strong>Important:</strong> Keep your eyes focused on the cross in the center of the screen while memorizing the images.
-                <br><br>
-                You'll have <strong>1-3 seconds</strong> to memorize all images.
-                <br><br>
 
             </p>
             </div>`

@@ -107,14 +107,13 @@ function botCheck(jsPsych) {
                 This will only take a couple of seconds.
             </p>
             <p style="color: white;">
-                Type b to continue to the task within the next 5 seconds.
-                The key forward is b!
-                To proof that you are not a bot,
-                please press b!
+                Type "o" to continue to the task within the next 5 seconds.
+                The key forward is o!
+                To proof that you are not a bot, please press o!
                 You have to respond within 5 seconds!
             </p>
             </div>`,
-        choices: ["b"],
+        choices: ["o"],
         on_load: function() {
             startTimer(
                 radius=12,
@@ -178,7 +177,7 @@ function botCheck(jsPsych) {
             var last_response = last_trial.response
 
             var bot = false
-            if (last_response == "b") {
+            if (last_response == "o") {
                 bot = true
                 console.log(
                     `Bot check failed`

@@ -1,15 +1,6 @@
 async function createTimeline(jsPsych){
     // load session/subject/wave id
-    // const session_id = "V-PA-001"
-
-
     const session_id = jsPsych.data.getURLVariable('sid') ||  "M-PD-999-A"
-
-    // const version_id = session_id[0];
-    // const wave_id = session_id.slice(0, 4);
-    // const subject_id = parseInt(session_id.slice(5,-2), 10);
-    // const backup = session_id.at(-1);
-
     var [version_id, wave_id, subject_id, backup] = session_id.split('-');  
     subject_id = parseInt(subject_id, 10);
 
@@ -38,7 +29,7 @@ async function createTimeline(jsPsych){
     fullscreen_tracker = new fullscreenTracker(jsPsych);
     
     // load data
-    var input_data = await fetch(`input_data/${version_id}-${wave_id}/input_${session_id.slice(0,-2)}.json`)
+    var input_data = await fetch(`input_data/${version_id}-${wave_id}/input_${session_id.slice(0,-2)}.json`) // excluding the trialing ABC
         .then(response => response.json())
         .catch(error => console.error(error));
 
@@ -155,49 +146,7 @@ async function createTimeline(jsPsych){
             ],
             name: "exp_end"
         })
-
-    } else if (version_id == 'V') {
-        console.log("starting vision task")
-        var experiment_timeline = [];
-        
-        // needs to be updated
-        // // starting
-        // experiment_timeline.push({
-        //     timeline: [
-        //         checkConsent(jsPsych, version_id),
-        //         startingExperiment(jsPsych),
-        //         createDemographics(),
-        //     ],
-        //     name: 'exp_start'
-        // })
-
-        // // INSTRUCTIONS
-        // experiment_timeline.push({
-        //     timeline: [
-        //         createVisionInstructions(),
-        //     ],
-        //     name: 'instructions'
-        // })
-
-        // // vision task
-        // experiment_timeline.push({
-        //     timeline: [
-        //         startingVisionTask(),
-        //         fullscreen_tracker.check(),
-        //         countdown(3),
-        //         createVisionTask(input_data, jsPsych),
-        //     ],
-        //     name: 'vision_task'
-        // })
-
-        // ENDING
-        experiment_timeline.push({
-            timeline: [
-                endingExperiment(jsPsych),
-            ],
-            name: 'exp_ending'
-        })
-    }
+    } 
     return experiment_timeline;
 }
 
