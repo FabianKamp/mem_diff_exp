@@ -28,7 +28,7 @@ def get_data(token):
     head_response = requests.head(url, auth=(user, password))
     if head_response.status_code == 200: 
         response = requests.get(url, auth=(user, password))
-        print(f"Downloading {token} ...")
+        print(f"\nDownloading {token} ...")
     else: 
         return 
     
@@ -54,7 +54,10 @@ def get_data(token):
         )
 
 token_df = pd.read_csv(args.token_csv)
-for token in token_df.token.unique():
+unique_token = token_df.token.unique()
+for i, token in enumerate(unique_token):
+    print(f'\rChecking tokens: {i+1}/{len(unique_token)}', end='', flush=True)
+    
     output = get_data(token)
     if output is None:
         continue
