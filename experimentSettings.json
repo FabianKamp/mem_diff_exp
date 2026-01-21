@@ -7,7 +7,10 @@
 
     "stimuli": {
         "exp_stimuli_dir": "stimuli/exp_stimuli_pilot",
-        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot"
+        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot", 
+        "n_set_ids": 165,
+        "excluded_set_ids": [18, 33, 66, 93, 120, 159],
+        "practice_set_ids": [13, 19, 30]
     },
 
     "vision_experiment": {

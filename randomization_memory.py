@@ -36,13 +36,16 @@ def generate_random_angles():
     random_angles = np.random.permutation(random_angles)
     return random_angles
 
-def randomized_set_ids():
+def randomize_set_ids(n_set_ids, excluded_set_ids, practice_set_ids):
     """Generate randomized stimulus set IDs for all encoding trials."""
+    assert type(excluded_set_ids) == list, "Type error: excluded_set_ids should be a list."
+    assert type(practice_set_ids) == list, "Type error: practice_set_ids should be a list."
+    set_ids = np.arange(n_set_ids) + 1
+    set_ids = set_ids[~np.isin(set_ids, excluded_set_ids+practice_set_ids)]
     set_ids = np.hstack([
-        np.arange(practice_trials),
-        np.random.permutation(np.arange(wm_trials) + practice_trials)
+        np.array(practice_set_ids),
+        np.random.permutation(set_ids)
         ])
-    set_ids += 1
     return set_ids
 
 def generate_wm_mat():
@@ -413,9 +416,12 @@ if __name__ == "__main__":
     with open(snapshot_path, "w") as file: 
         json.dump(settings, file, indent=4)
 
-    # stimuli paths
+    # stimuli and stimuli paths
     exp_stimuli_dir = settings["stimuli"]["exp_stimuli_dir"]
     dist_stimuli_dir = settings["stimuli"]["dist_stimuli_dir"]
+    n_set_ids = settings["stimuli"]["n_set_ids"]
+    practice_set_ids = settings["stimuli"]["practice_set_ids"]
+    excluded_set_ids = settings["stimuli"]["excluded_set_ids"]
     image_paths = get_image_paths()
     
     # trial numbers
@@ -459,7 +465,7 @@ if __name__ == "__main__":
 
     while subject_id < subject_number:    
         # randomize image ids
-        set_ids = randomized_set_ids()
+        set_ids = randomize_set_ids(n_set_ids, excluded_set_ids, practice_set_ids)
 
         # generate the design mat for wm and practice trials
         wm_mat = generate_wm_mat()
