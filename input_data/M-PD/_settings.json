@@ -6,7 +6,21 @@
     },
     "stimuli": {
         "exp_stimuli_dir": "stimuli/exp_stimuli_pilot",
-        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot"
+        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot",
+        "n_set_ids": 165,
+        "excluded_set_ids": [
+            18,
+            33,
+            66,
+            93,
+            120,
+            159
+        ],
+        "practice_set_ids": [
+            13,
+            19,
+            30
+        ]
     },
     "vision_experiment": {
         "vision_trials": 177,
@@ -28,12 +42,7 @@
         "wm_block3_trials": 36,
         "lm_trials": 120,
         "ncatch": 18,
-        "serial": 0,
-        "position_weights": [
-            0.45,
-            0.45,
-            0.1
-        ]
+        "serial": 0
     },
     "timing": {
         "encoding_times": [
@@ -44,7 +53,7 @@
         ],
         "memory_delay": 3000,
         "wm_inter_trial_delay": 2500,
-        "lm_inter_trial_delay": 1000,
+        "lm_inter_trial_delay": 2000,
         "wm_isi": 200,
         "catch_delay": 750,
         "encoding_time_catch": 3000

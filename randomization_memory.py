@@ -22,24 +22,18 @@ def get_file_path(image_id):
     file_path = image_paths.loc[image_paths.image_id == image_id, "image_path"]
     return file_path.iloc[0]
 
-def generate_random_angles(n):
-    """Generate a list of random angles for n trials -> triangle layout"""
-    angles = np.array([
+def generate_encoding_thetas(layout_ids):
+    """Convert layouts to angles using a triangle layout"""
+    layouts = np.array([
+        [0,3,5],
         [1,3,6],
+        [1,4,7], 
         [2,5,7], 
-        [3,0,5],
-        [4,7,1], 
     ])
-    angles = np.pi * angles/4 
-    angles = np.round(angles,4)
-    
-    assert type(n)==int, "Type Error: n must be an integer."
-    repeats = np.ceil(n/4).astype(int)
-    indices = np.tile(np.arange(4), repeats)[n]
-
-    # randomize
-    random_angles = angles[np.random.permutation(indices)]
-    return random_angles
+    encoding_layouts = layouts[layout_ids]
+    encoding_thetas = np.pi * encoding_layouts/4 
+    encoding_thetas = np.round(encoding_thetas,4)
+    return encoding_thetas
 
 def randomize_set_ids(n_set_ids, excluded_set_ids, practice_set_ids):
     """Generate randomized stimulus set IDs for all encoding trials."""
@@ -66,7 +60,7 @@ def generate_wm_mat():
         trials_per_condition = n_trials//n_conditions
         
         # initialize block mat
-        block_mat = np.empty((7,n_trials))
+        block_mat = np.empty((8,n_trials))
         
         # factor stimulus (a)
         trials_per_a = n_trials//len(a_levels)
@@ -76,17 +70,16 @@ def generate_wm_mat():
         block_mat[1,:] = np.concatenate([np.repeat(b_index, trials_per_condition) for _ in range(len(a_levels))])
         
         ## counterbalancing across condition*encoding time
-        # 1. wm sample positions (spatial)
-        position_repeats = np.ceil(n_trials/load).astype(int)
-        positions = np.tile(np.arange(load), position_repeats)[:n_trials]
-        positions = positions.reshape(n_conditions, trials_per_condition)
-        block_mat[2,:] = np.concatenate([np.random.permutation(p) for p in range(positions)])
+        # sample positions (spatial)
+        wm_position = np.concatenate([np.random.choice(3, trials_per_condition, replace=True) for _ in range(n_conditions)])
+        block_mat[2,:] = wm_position        
         
         # lm sample positions
-        block_mat[3,:] = np.array([np.random.choice([n for n in np.arange(load) if n != m]) 
-                                   for m in block_mat[2,:]])
-
-        # wm left/right randomization
+        lm_position = np.array([np.random.choice([n for n in np.arange(load) if n != m]) 
+                                   for m in wm_position])
+        block_mat[3,:] = lm_position
+        
+        # wm left/right randomization 
         left_repeats = [int(trials_per_condition/2), trials_per_condition-int(trials_per_condition/2)]
         target_position = [np.repeat([0,1], left_repeats[::(-1)**(block+c)]) for c in range(n_conditions)]
         block_mat[4,:] = np.concatenate([np.random.permutation(p) for p in target_position]) 
@@ -97,6 +90,10 @@ def generate_wm_mat():
         # block id
         block_id = block+1
         block_mat[6,:] = np.repeat(block_id, n_trials)
+
+        # encoding layout id
+        encoding_layout_id = np.concatenate([np.random.choice(4, trials_per_condition, replace=True) for _ in range(n_conditions)])
+        block_mat[7,:] = encoding_layout_id
 
         # randomize order 
         random_trial_idx = np.random.permutation(np.arange(n_trials))
@@ -120,6 +117,7 @@ def generate_wm_mat():
         "wm_left_target",
         "lm_left_target",
         "wm_block_id",
+        "encoding_layout_id",
     ]
     design_mat = pd.DataFrame(design_mat, index=row_names)
     
@@ -136,7 +134,9 @@ def generate_practice_mat():
         np.array([1,1,0]),  
         np.repeat(nan,3),
         np.repeat(nan,3),
+        np.arange(3)
     ])
+
     practice_mat = practice_mat.astype(int)
     row_names = [
         "encoding_trial_id",
@@ -147,6 +147,7 @@ def generate_practice_mat():
         "wm_left_target",
         "lm_left_target",
         "wm_block_id",
+        "encoding_layout_id",
     ]
     practice_mat = pd.DataFrame(practice_mat, index=row_names)
     return practice_mat
@@ -227,6 +228,7 @@ def assemble_wm_trial_data():
 
     # display
     # generate angles 
+    encoding_thetas = generate_encoding_thetas(design_mat.loc["encoding_layout_id",:])
     recognition_thetas = encoding_thetas[np.arange(all_encoding_trials), design_mat.loc["wm_sample_position",:]].flatten()
     
     # data dict --> wmTask.js
@@ -249,7 +251,8 @@ def assemble_wm_trial_data():
         recognition_foil_file = wm_recognition_foil_files,
         left_target = design_mat.loc["wm_left_target"].to_numpy(),
         target_correct = target_correct, 
-        correct_response = wm_correct_response
+        correct_response = wm_correct_response, 
+        encoding_layout_id = design_mat.loc["encoding_layout_id",:].to_numpy()
     )
 
     for i in range(load):
@@ -277,7 +280,7 @@ def insert_catch_trials():
     recognition_foil_files = np.array([get_file_path(i) for i in recognition_foil_ids])
 
     # display angle
-    encoding_thetas = np.round([np.random.choice(8)/4 * np.pi for _ in range(ncatch)], 4)
+    catch_thetas = np.round([np.random.choice(8)/4 * np.pi for _ in range(ncatch)], 4)
     
     # left/right
     left_target = np.random.choice([0,1], ncatch, replace=True).astype(int)
@@ -302,7 +305,7 @@ def insert_catch_trials():
         encoding_time = encoding_time_catch,
         condition = nan,
         condition_name = "no_catch", 
-        recognition_theta = encoding_thetas,
+        recognition_theta = catch_thetas,
         recognition_target_id = nan,
         recognition_target_file = encoding_files,
         recognition_foil_id = recognition_foil_ids,
@@ -312,8 +315,10 @@ def insert_catch_trials():
         correct_response = correct_response,
         encoding_1 = encoding_ids,
         encoding_file_1 = encoding_files,
-        encoding_theta_1 = encoding_thetas,
+        encoding_theta_1 = catch_thetas,
+        encoding_layout_id = nan
     )
+
     catch_trial_data = pd.DataFrame(catch_trial_data)
     catch_trial_data = catch_trial_data.to_dict(orient='records')
 
@@ -454,7 +459,7 @@ if __name__ == "__main__":
     
     ## factor b is the encoding time
     b_levels = settings["timing"]["encoding_times"]
-    assert len(a_levels)==4, "There must be 4 encoding time."
+    assert len(b_levels)==4, "There must be 4 encoding time."
     b_index = [0,1,2,3]
 
     # squared design (also within each experimental block)
@@ -470,9 +475,6 @@ if __name__ == "__main__":
     load = settings["memory_experiment"]["load"]
     assert load == 3, f"Load == {load} is not yet implemented. Set load to 3."
 
-    # weightings for sequential presentation
-    position_weights = settings["memory_experiment"]["position_weights"]
-
     # start randomization
     nan = 9999
     subject_id = 0
@@ -487,9 +489,6 @@ if __name__ == "__main__":
 
         # distractors
         distractors = get_distractor_stimuli()
-
-        # encoding thetas
-        encoding_thetas = np.vstack([generate_random_angles(n) for n in [practice_trials, *trials_per_block]])
 
         # lm randomization (used during lm data assambling)
         lm_random_idx = np.random.permutation(np.arange(lm_trials))

@@ -12,10 +12,15 @@ pd.set_option('display.max_colwidth', None)
 def check_wm_input(file):
     data = pd.read_json(file)
     wm_data = data.loc[(data.trial_type=="wm")]
-    encoding_time_count = wm_data.groupby(["wm_block_id", "condition"]).value_counts(subset=["encoding_time"]).reset_index()
-    left_target_count = wm_data.groupby(["wm_block_id", "condition", "encoding_time"]).value_counts(subset=["left_target"]).reset_index()
-    left_target_count = left_target_count.sort_values(by=["wm_block_id", "condition", "encoding_time", "left_target"])
-    recognition_theta = wm_data.groupby(["wm_block_id", "condition"]).value_counts(subset=["recognition_theta"]).reset_index()
+    encoding_time_count = wm_data.groupby(["condition"]).value_counts(subset=["encoding_time"]).reset_index()
+    left_target_count = wm_data.groupby(["condition", "encoding_time"]).value_counts(subset=["left_target"]).reset_index()
+    left_target_count = left_target_count.sort_values(by=["condition", "encoding_time", "left_target"])
+    recognition_theta = wm_data.groupby(["condition"]).value_counts(subset=["recognition_theta"]).reset_index()
+    recognition_theta = recognition_theta.sort_values(by=["condition","count"])
+
+    print("="*60)
+    print("WM data check")
+    print("="*60)
 
     print("\nEncoding Time Count:")
     print(encoding_time_count)
@@ -30,26 +35,65 @@ def check_lm_input(file):
     encoding_time_count = lm_data.groupby("condition").value_counts(subset=["encoding_time"]).reset_index()
     left_target_count = lm_data.groupby(["condition", "encoding_time"]).value_counts(subset=["left_target"]).reset_index()
     left_target_count = left_target_count.sort_values(by=["condition", "encoding_time", "left_target"])
- 
+    
+    print("="*60)
+    print("LM data check")
+    print("="*60)
+
     print("\nEncoding Time Count:")
     print(encoding_time_count)
     print("\nLeft Target Count:")
     print(left_target_count)
 
+    print("="*60)
+    print("\n")
+
 def latin_square_check(file_list): 
-        conditions, previous_set_ids, previous_encoding_times = [],[], []
+        conditions = []
+        
+        # check to previous 
+        previous_data = []
+        identical_columns = [
+            "set_id",
+            "encoding_time",
+            "encoding_1", 
+            "encoding_2", 
+            "encoding_3", 
+            "encoding_theta_1", 
+            "encoding_theta_2",
+            "encoding_theta_3",
+            "encoding_file_1", 
+            "encoding_file_2",
+            "encoding_file_3",
+            "recognition_theta", 
+            "sample_position",
+            "sample_file",
+        ]
+
+        latin_colums = [
+            "condition",
+            "condition_name"
+        ]
+
         for f in file_list: 
             data = pd.read_json(f)
-            wm_data = data.loc[data.trial_type=="wm"]
-            conditions.append(wm_data.condition.to_numpy()[:,np.newaxis])
-            # check set ids
-            if len(previous_set_ids)>0 :
-                assert np.all(previous_set_ids == wm_data.set_id), "Latin Square Error: Set ids are not idential."
-            if len(previous_encoding_times)>0 :
-                assert np.all(previous_encoding_times == wm_data.encoding_time), "Latin Square Error: Encoding times are not identical."
+            current_data = data.loc[data.trial_type=="wm"]
+            conditions.append(current_data.condition.to_numpy()[:,np.newaxis])
             
-            previous_set_ids = wm_data.set_id.copy()
-            previous_encoding_times = wm_data.encoding_time.copy()
+            if len(previous_data)==0 :
+                previous_data = current_data.copy()
+                continue
+
+            # check identical columns
+            for col in identical_columns: 
+                assert (previous_data[col] == current_data[col]).all(), f"Latin Square Error: {col} are not idential."            
+            
+            # check columns that should have been changed
+            for col in latin_colums: 
+                assert (previous_data[col] != current_data[col]).all(), f"Latin Square Error: {col} are idential."            
+            
+            previous_data = current_data.copy()
+
 
         conditions = np.hstack(conditions)
         nconditions = [len(np.unique(trial)) for trial in conditions]
