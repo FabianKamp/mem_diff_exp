@@ -22,18 +22,23 @@ def get_file_path(image_id):
     file_path = image_paths.loc[image_paths.image_id == image_id, "image_path"]
     return file_path.iloc[0]
 
-def generate_random_angles():
-    """Generate a list of random angles -> triangle layout"""
-    random_angles = np.array([
-        [0,3,5],
-        [1,4,7], 
+def generate_random_angles(n):
+    """Generate a list of random angles for n trials -> triangle layout"""
+    angles = np.array([
         [1,3,6],
         [2,5,7], 
+        [3,0,5],
+        [4,7,1], 
     ])
-    random_angles = np.pi * random_angles/4 
-    random_angles = np.round(random_angles,4)
-    random_angles = random_angles[np.random.choice(4)]
-    random_angles = np.random.permutation(random_angles)
+    angles = np.pi * angles/4 
+    angles = np.round(angles,4)
+    
+    assert type(n)==int, "Type Error: n must be an integer."
+    repeats = np.ceil(n/4).astype(int)
+    indices = np.tile(np.arange(4), repeats)[n]
+
+    # randomize
+    random_angles = angles[np.random.permutation(indices)]
     return random_angles
 
 def randomize_set_ids(n_set_ids, excluded_set_ids, practice_set_ids):
@@ -71,19 +76,19 @@ def generate_wm_mat():
         block_mat[1,:] = np.concatenate([np.repeat(b_index, trials_per_condition) for _ in range(len(a_levels))])
         
         ## counterbalancing across condition*encoding time
-        # 1. wm sample positions
-        assert len(position_weights) == load, "Position weights must match load"
-        position_repeats = [int(trials_per_condition * weight) for weight in position_weights[:-1]]
-        positions = np.repeat(np.arange(load), position_repeats + [trials_per_condition - np.sum(position_repeats)])
-        block_mat[2,:] = np.concatenate([np.random.permutation(positions) for _ in range(n_conditions)])
+        # 1. wm sample positions (spatial)
+        position_repeats = np.ceil(n_trials/load).astype(int)
+        positions = np.tile(np.arange(load), position_repeats)[:n_trials]
+        positions = positions.reshape(n_conditions, trials_per_condition)
+        block_mat[2,:] = np.concatenate([np.random.permutation(p) for p in range(positions)])
         
         # lm sample positions
-        block_mat[3,:] = np.array([np.random.choice([n for n in [0,1,2] if n != m], p=[.9,.1]) 
+        block_mat[3,:] = np.array([np.random.choice([n for n in np.arange(load) if n != m]) 
                                    for m in block_mat[2,:]])
 
         # wm left/right randomization
-        repeats = [int(trials_per_condition/2), trials_per_condition-int(trials_per_condition/2)]
-        target_position = [np.repeat([0,1], repeats[::(-1)**(block+c)]) for c in range(n_conditions)]
+        left_repeats = [int(trials_per_condition/2), trials_per_condition-int(trials_per_condition/2)]
+        target_position = [np.repeat([0,1], left_repeats[::(-1)**(block+c)]) for c in range(n_conditions)]
         block_mat[4,:] = np.concatenate([np.random.permutation(p) for p in target_position]) 
 
         # lm left/right randomization
@@ -484,7 +489,7 @@ if __name__ == "__main__":
         distractors = get_distractor_stimuli()
 
         # encoding thetas
-        encoding_thetas = np.vstack([generate_random_angles() for _ in range(all_encoding_trials)])
+        encoding_thetas = np.vstack([generate_random_angles(n) for n in [practice_trials, *trials_per_block]])
 
         # lm randomization (used during lm data assambling)
         lm_random_idx = np.random.permutation(np.arange(lm_trials))

@@ -30,8 +30,7 @@
         "wm_block3_trials": 36,
         "lm_trials": 120, 
         "ncatch": 18, 
-        "serial": 0, 
-        "position_weights": [0.45, 0.45, 0.10]
+        "serial": 0
     },
 
     "timing": {
