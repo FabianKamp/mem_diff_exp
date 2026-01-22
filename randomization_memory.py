@@ -99,6 +99,8 @@ def generate_wm_mat():
         design_mat.append(block_mat.copy())
 
     design_mat = np.hstack(design_mat)
+
+    # stacking encoding_trial_id on top
     encoding_trial_id = np.arange(design_mat.shape[1]).reshape(1,-1)
     design_mat = np.vstack([encoding_trial_id, design_mat]) 
     design_mat = design_mat.astype(int)
@@ -220,7 +222,6 @@ def assemble_wm_trial_data():
 
     # display
     # generate angles 
-    encoding_thetas = np.vstack([generate_random_angles() for _ in range(all_encoding_trials)])
     recognition_thetas = encoding_thetas[np.arange(all_encoding_trials), design_mat.loc["wm_sample_position",:]].flatten()
     
     # data dict --> wmTask.js
@@ -320,12 +321,15 @@ def insert_catch_trials():
 
 def get_lm_target_ids():
     """Identify long memory target stimuli from cued and uncued WM encoding trials."""
-    cued_trials = np.where((wm_mat.loc["stimulus_condition_index"] != 0) & (wm_mat.loc["wm_block_id"] < 3))[0]
-    lm_ids_cued = encoding_ids[cued_trials, wm_mat.loc["lm_sample_position", cued_trials]]
-    
+
+    # mixed trials -> lm_sample != wm_sample
     uncued_trials = np.where((wm_mat.loc["stimulus_condition_index"] == 0) & (wm_mat.loc["wm_block_id"] < 3))[0]
     lm_ids_uncued = encoding_ids[uncued_trials, wm_mat.loc["lm_sample_position", uncued_trials]]
-    
+
+    # other trials -> lm_sample == wm_sample
+    cued_trials = np.where((wm_mat.loc["stimulus_condition_index"] != 0) & (wm_mat.loc["wm_block_id"] < 3))[0]
+    lm_ids_cued = encoding_ids[cued_trials, wm_mat.loc["wm_sample_position", cued_trials]]
+
     lm_encoding_trials = np.concat([cued_trials, uncued_trials])
     lm_recognition_target = np.concat([lm_ids_cued, lm_ids_uncued])
 
@@ -425,39 +429,44 @@ if __name__ == "__main__":
     image_paths = get_image_paths()
     
     # trial numbers
+    ncatch = settings["memory_experiment"]["ncatch"]
     practice_trials = settings["memory_experiment"]["practice_trials"]
     wm_trials = settings["memory_experiment"]["wm_trials"]
     wm_block1_trials = settings["memory_experiment"]["wm_block1_trials"]
     wm_block2_trials = settings["memory_experiment"]["wm_block2_trials"]
     wm_block3_trials = settings["memory_experiment"]["wm_block3_trials"]
-    trials_per_block = [wm_block1_trials, wm_block2_trials, wm_block3_trials]
     lm_trials = settings["memory_experiment"]["lm_trials"]
-    ncatch = settings["memory_experiment"]["ncatch"]
-
-    all_encoding_trials = practice_trials + wm_trials
-    # trials_per_block = wm_trials//num_blocks
-
     assert lm_trials == wm_block1_trials + wm_block2_trials, "LM trials not twice the WM block 1+2 length"
+
+    trials_per_block = [wm_block1_trials, wm_block2_trials, wm_block3_trials]
+    all_encoding_trials = practice_trials + wm_trials
    
     # set up conditions and condition codes 
+    ## factor a is the stimulus condition (i.e. mixed, semantic, vision)
     a_levels = settings["memory_experiment"]["encoding_conditions"]
+    assert len(a_levels)==3, "There must be 3 encoding (stimulus) conditions."
     a_index = [0,1,2] 
+    
+    ## factor b is the encoding time
     b_levels = settings["timing"]["encoding_times"]
+    assert len(a_levels)==4, "There must be 4 encoding time."
     b_index = [0,1,2,3]
-    n_conditions = len(a_levels)*len(b_levels)
 
+    # squared design (also within each experimental block)
+    n_conditions = len(a_levels)*len(b_levels)
     assert wm_block1_trials%(n_conditions) == 0, f"Number of wm trials must be divisible by {n_conditions}"
     assert wm_block2_trials%(n_conditions) == 0, f"Number of wm trials must be divisible by {n_conditions}"
     assert wm_block3_trials%(n_conditions) == 0, f"Number of wm trials must be divisible by {n_conditions}"
 
-    # weightings for sequential presentation
-    position_weights = settings["memory_experiment"]["position_weights"]
+    if subject_number%len(a_levels)!=0:
+        print("Subject number will be higher due to latin square randomization")
 
     # load and encoding time 
     load = settings["memory_experiment"]["load"]
+    assert load == 3, f"Load == {load} is not yet implemented. Set load to 3."
 
-    if subject_number%len(a_levels)!=0:
-        print("Subject number will be higher due to latin square randomization")
+    # weightings for sequential presentation
+    position_weights = settings["memory_experiment"]["position_weights"]
 
     # start randomization
     nan = 9999
@@ -473,6 +482,9 @@ if __name__ == "__main__":
 
         # distractors
         distractors = get_distractor_stimuli()
+
+        # encoding thetas
+        encoding_thetas = np.vstack([generate_random_angles() for _ in range(all_encoding_trials)])
 
         # lm randomization (used during lm data assambling)
         lm_random_idx = np.random.permutation(np.arange(lm_trials))
