@@ -31,8 +31,8 @@
     "memory_experiment": {
         "encoding_conditions": [
             "mixed",
-            "semantic",
-            "visual"
+            "visual",
+            "semantic"
         ],
         "load": 3,
         "practice_trials": 3,
