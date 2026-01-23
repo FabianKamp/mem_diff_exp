@@ -427,7 +427,6 @@ function createLM(timeline_variables, jsPsych) {
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
                 data.set_id = jsPsych.evaluateTimelineVariable('set_id')
-                data.sample_position = jsPsych.evaluateTimelineVariable('sample_position')
                 data.encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
                 data.condition = jsPsych.evaluateTimelineVariable('condition')
                 data.condition_name = jsPsych.evaluateTimelineVariable('condition_name')

@@ -77,6 +77,7 @@ def generate_wm_mat():
         # lm sample positions
         lm_position = np.array([np.random.choice([n for n in np.arange(load) if n != m]) 
                                    for m in wm_position])
+        assert (wm_position!=lm_position).all(), "WM and LM position should be different."
         block_mat[3,:] = lm_position
         
         # wm left/right randomization 
@@ -332,45 +333,67 @@ def insert_catch_trials():
 def get_lm_target_ids():
     """Identify long memory target stimuli from cued and uncued WM encoding trials."""
 
+    assert len(encoding_ids)==design_mat.shape[1], "Encoding ids should have the same length as there are trials in design mat."
+    
     # mixed trials -> lm_sample != wm_sample
-    uncued_trials = np.where((wm_mat.loc["stimulus_condition_index"] == 0) & (wm_mat.loc["wm_block_id"] < 3))[0]
-    lm_ids_uncued = encoding_ids[uncued_trials, wm_mat.loc["lm_sample_position", uncued_trials]]
+    uncued_trials = np.where(
+        (design_mat.loc["stimulus_condition_index"] == 0) & 
+        (design_mat.loc["wm_block_id"].isin([1,2]))
+    )[0]
+    lm_sample_positions = design_mat.loc["lm_sample_position",:].to_numpy()
+    lm_ids_uncued = encoding_ids[uncued_trials, lm_sample_positions[uncued_trials]]
 
     # other trials -> lm_sample == wm_sample
-    cued_trials = np.where((wm_mat.loc["stimulus_condition_index"] != 0) & (wm_mat.loc["wm_block_id"] < 3))[0]
-    lm_ids_cued = encoding_ids[cued_trials, wm_mat.loc["wm_sample_position", cued_trials]]
+    cued_trials = np.where(
+        (design_mat.loc["stimulus_condition_index"] != 0) & 
+        (design_mat.loc["wm_block_id"].isin([1,2]))
+    )[0]
+    wm_sample_positions = design_mat.loc["wm_sample_position",:].to_numpy()
+    lm_ids_cued = encoding_ids[cued_trials, wm_sample_positions[cued_trials]]
 
+    # sort 
     lm_encoding_trials = np.concat([cued_trials, uncued_trials])
+    sorted_idx = np.argsort(lm_encoding_trials)
     lm_recognition_target = np.concat([lm_ids_cued, lm_ids_uncued])
+    lm_recognition_target = lm_recognition_target[sorted_idx]
 
-    return lm_encoding_trials, lm_recognition_target
+    return lm_recognition_target
 
 def assemble_lm_trial_data():
     """Assemble randomized long memory trial data with target and foil stimuli."""
-    lm_encoding_trials_random = lm_encoding_trials[lm_random_idx]
+    
     lm_recognition_target_random = lm_recognition_target[lm_random_idx]
     set_ids = np.array([s if s < 9000 else nan for s in lm_recognition_target_random]).astype(int)
     lm_recognition_target_files = np.array([get_file_path(i) for i in lm_recognition_target_random])
 
-    lm_left_target = wm_mat.loc["lm_left_target",lm_encoding_trials_random]
+    # left right 
+    lm_left_target = wm_mat.loc["lm_left_target", :].to_numpy()
+    lm_left_target = lm_left_target[lm_random_idx]
     lm_correct_response = (lm_left_target==0).astype(int)
     
-    # get the sequential position during encoding (starts with 1)
-    lm_sample_positions = wm_mat.loc["lm_sample_position",lm_encoding_trials_random]
-    lm_sample_positions += 1
+    # lm stimulus condition
+    lm_condition = wm_mat.loc["stimulus_condition_index", :].to_numpy()
+    lm_condition = lm_condition[lm_random_idx]
+    lm_condition_name = np.array([a_levels[i] for i in lm_condition])
+
+    assert (lm_recognition_target_random[lm_condition==0]>9000).all(), "In mixed trials, we a distractor image should be tested in lm." 
+    assert (lm_recognition_target_random[lm_condition!=0]<9000).all(), "In visual/semantic trials, we a distractor image should be tested in lm." 
+
+    # lm encoding time
+    lm_encoding_time_idx = wm_mat.loc["encoding_time_index", :].to_numpy()
+    lm_encoding_time_idx = lm_encoding_time_idx[lm_random_idx]
+    lm_encoding_time = np.array([b_levels[i] for i in lm_encoding_time_idx]).astype(int)
 
     # assemble lm data
     lm_trial_data = dict(
         trial_type = "lm",
         subject_id = subject_id,
         trial_id = np.arange(lm_trials), 
-        encoding_trial_id = lm_encoding_trials_random,
+        encoding_trial_id = lm_random_idx,
         set_id = set_ids,
-        sample_position = lm_sample_positions,
-        encoding_time = np.array([b_levels[i] for i in wm_mat.loc["encoding_time_index", lm_encoding_trials_random]]
-                                  ).astype(int),
-        condition = wm_mat.loc["stimulus_condition_index",lm_encoding_trials_random],
-        condition_name = np.array([a_levels[i] for i in wm_mat.loc["stimulus_condition_index", lm_encoding_trials_random]]), 
+        encoding_time = lm_encoding_time,
+        condition = lm_condition,
+        condition_name = lm_condition_name, 
         recognition_target_id = lm_recognition_target_random.astype(int),
         recognition_target_file = lm_recognition_target_files,
         recognition_foil_id = distractors["lm"].astype(int),
@@ -520,7 +543,7 @@ if __name__ == "__main__":
             _ = [trial_dict.update(trial_id = trial_id) for (trial_id, trial_dict) in enumerate(wm_trial_data)]
 
             # assemble lm
-            lm_encoding_trials, lm_recognition_target = get_lm_target_ids()
+            lm_recognition_target = get_lm_target_ids()
             lm_trial_data = assemble_lm_trial_data()
 
             # combine wm and lm data
