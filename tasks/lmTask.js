@@ -209,11 +209,13 @@ function createLM(timeline_variables, jsPsych) {
             return files;
         }, 
         on_finish: function(data) { 
+            var preload_duration = jsPsych.data.get().last(1).values()[0].time_elapsed - jsPsych.data.get().last(2).values()[0].time_elapsed
             if (data.subject_id == 999) {
                     console.log("Preloading duration: ", preload_duration)
             }
             data.stimulus = null;
             data.trial_type = "preload";
+            data.preload_duration = preload_duration;
             data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
         }
     })
