@@ -199,9 +199,9 @@ def generate_encoding_id_mat():
 def map_conditions2stimuli(conditions):
     """Map experimental conditions to target and foil stimulus codes for recognition trials."""
     condition_mapping = {
-        0: (4, 3),
-        1: (4, 5),
-        2: (3, 5)
+        0: (4, 3),  # mixed
+        1: (4, 5),  # visual 
+        2: (3, 5)   # semantic 
     }
     target_codes = np.array([condition_mapping[c][0] for c in conditions])
     foil_codes = np.array([condition_mapping[c][1] for c in conditions])
@@ -452,7 +452,7 @@ if __name__ == "__main__":
     all_encoding_trials = practice_trials + wm_trials
    
     # set up conditions and condition codes 
-    ## factor a is the stimulus condition (i.e. mixed, semantic, vision)
+    ## factor a is the stimulus condition (i.e. mixed, visual, semantic)
     a_levels = settings["memory_experiment"]["encoding_conditions"]
     assert len(a_levels)==3, "There must be 3 encoding (stimulus) conditions."
     a_index = [0,1,2] 

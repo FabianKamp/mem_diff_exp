@@ -21,7 +21,7 @@
     },
 
     "memory_experiment": {
-        "encoding_conditions": ["mixed", "semantic", "visual"],
+        "encoding_conditions": ["mixed", "visual", "semantic"],
         "load": 3,
         "practice_trials": 3,
         "wm_trials": 156, 
