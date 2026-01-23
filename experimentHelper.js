@@ -115,7 +115,7 @@ function botCheck(jsPsych) {
             </div>`,
         choices: ["o"],
         on_load: function() {
-            startTimer(
+            startTrialTimer(
                 radius=12,
                 delay=100,
                 duration=10000,
@@ -124,6 +124,7 @@ function botCheck(jsPsych) {
             );
         },
         on_finish: function(data){
+            resetTrialTimer();
             data.stimulus = null;
             data.trial_type = "bot-check";
         },
@@ -254,7 +255,8 @@ function checkTime(jsPsych, max_duration) {
 // TIMER animation
 let delayID = null;
 let timerId = null;
-function startTimer(radius,delay,duration,top,color) {
+
+function startTrialTimer(radius,delay,duration,top,color) {
     delayID = setTimeout(() => {
         const oldCountdown = document.getElementById('countdown');
         if (oldCountdown) oldCountdown.remove();
@@ -280,7 +282,7 @@ function startTimer(radius,delay,duration,top,color) {
     }, delay);
 }
 
-function resetTimer() {
+function resetTrialTimer() {
     if (delayID) {
         clearTimeout(delayID);
         delayID = null;

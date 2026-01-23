@@ -28,7 +28,7 @@ function createLMInstructions() {
                 </div>`,
             choices: ['Enter'],
             on_load: function() {
-                startTimer(
+                startTrialTimer(
                     radius=12,
                     delay=100,
                     duration=120000,
@@ -37,7 +37,7 @@ function createLMInstructions() {
                 );
             },
             on_finish: function(data) {
-                resetTimer();
+                resetTrialTimer();
 
                 if(data.rt === null) {
                     data.break_ending = "ended by timeout after 2 minutes";
@@ -209,6 +209,9 @@ function createLM(timeline_variables, jsPsych) {
             return files;
         }, 
         on_finish: function(data) { 
+            if (data.subject_id == 999) {
+                    console.log("Preloading duration: ", preload_duration)
+            }
             data.stimulus = null;
             data.trial_type = "preload";
             data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
@@ -390,7 +393,7 @@ function createLM(timeline_variables, jsPsych) {
             },
 
             on_load: function() {
-                startTimer(
+                startTrialTimer(
                     radius=4,
                     delay=25000,
                     duration=5000, 
@@ -401,7 +404,7 @@ function createLM(timeline_variables, jsPsych) {
 
             on_finish: function(data) {  
                 // reset timer
-                resetTimer();             
+                resetTrialTimer();             
 
                 // stimulus
                 var foil_file = jsPsych.evaluateTimelineVariable(`recognition_foil_file`)
@@ -432,6 +435,12 @@ function createLM(timeline_variables, jsPsych) {
                 data.correct_response = jsPsych.evaluateTimelineVariable('correct_response')
                 data.timed_out = (data.response === null);
                 data.timestamp = new Date().toLocaleTimeString()
+
+                if (data.subject_id==999) {
+                    console.log("Condition: ", data.condition_name)
+                    console.log("Response: ", data.response)
+                    console.log("Correct response: ", data.correct_response)
+                }
             }
         })
 

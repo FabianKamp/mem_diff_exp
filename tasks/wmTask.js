@@ -628,7 +628,7 @@ function createWM(timeline_variables, jsPsych) {
             trial_duration: 31000,
 
             on_load: function() {
-                startTimer(
+                startTrialTimer(
                     radius=4,
                     delay=25000,
                     duration=5000,
@@ -706,7 +706,7 @@ function createWM(timeline_variables, jsPsych) {
             },
 
             on_finish: function(data) {
-                resetTimer();
+                resetTrialTimer();
                 // stimulus
                 var foil_file = jsPsych.evaluateTimelineVariable(`recognition_foil_file`)
                 var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
@@ -889,7 +889,7 @@ function createBreak(label) {
         },
         
         on_load: function() {
-            startTimer(
+            startTrialTimer(
                 radius=12,
                 delay=100,
                 duration=120000,
@@ -899,7 +899,7 @@ function createBreak(label) {
         },
         
         on_finish: function(data) {
-            resetTimer();
+            resetTrialTimer();
 
             if(data.rt === null) {
                 data.break_ending = "ended by timeout after 2 minutes";
