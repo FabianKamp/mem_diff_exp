@@ -208,6 +208,9 @@ function createWMInstructions() {
                 You will have <strong>2 breaks</strong> during the task, each lasting up to two minutes. 
                 Each block between breaks takes 8-12 minutes to complete.
                 <br>
+                Your progress through the task is displayed in a bar at the bottom of the screen.
+                <br>
+
             </p>
             `
             ],
