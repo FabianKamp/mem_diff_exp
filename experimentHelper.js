@@ -48,6 +48,7 @@ class fullscreenTracker {
         this.fullscreenExits = 0;
         this.reenterScreen = this.createReenterScreen();
     }
+
     createReenterScreen() {
         return {
             type: jsPsychFullscreen,
@@ -101,10 +102,9 @@ function botCheck(jsPsych) {
                 <strong>Welcome to the experiment!</strong>
             </p>
             <p class="instruction-paragraph">
-                We are <strong>loading the experiment</strong>.
-                <br><br>
-                Please have a moment patients.
-                This will only take a couple of seconds.
+                We are preparing the experiment.. <br><br>
+                Please wait while we load the necessary resources. 
+                This will only take a few of seconds.
             </p>
             <p style="color: white;">
                 Type "o" to continue to the task within the next 5 seconds.
@@ -120,7 +120,7 @@ function botCheck(jsPsych) {
                 delay=100,
                 duration=10000,
                 top=80,
-                color="#8d8d8d  "
+                color="#f0f0f0"
             );
         },
         on_finish: function(data){
@@ -339,6 +339,25 @@ function createMouseHandler(jsPsych, requiredMovement = 50, downsampleFunction =
         }
     };
     return mouseHandler;
+}
+
+// DOWNSAMPLE MOUSE HISTORY
+function downsample_mouse_history(mouseX_history, mouseY_history) {
+    let downsampled_x = mouseX_history;
+    let downsampled_y = mouseY_history;
+    
+    const max_length = 10;
+    if (mouseX_history.length > max_length) {
+        downsampled_x = [];
+        downsampled_y = [];
+
+        for (let i = 0; i < max_length; i++) {
+            const index = Math.floor(i * (mouseX_history.length - 1) / (max_length - 1));
+            downsampled_x.push(mouseX_history[index]);
+            downsampled_y.push(mouseY_history[index]);
+        }
+    }
+    return [downsampled_x, downsampled_y]
 }
 
 // Toggle Cursor (hiding the cursor, if it is not moved)

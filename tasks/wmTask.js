@@ -21,25 +21,6 @@ function generate_instruction_angles(load) {
     return result;
 }
 
-// DOWNSAMPLE MOUSE HISTORY
-function downsample_mouse_history(mouseX_history, mouseY_history) {
-    let downsampled_x = mouseX_history;
-    let downsampled_y = mouseY_history;
-    
-    const max_length = 10;
-    if (mouseX_history.length > max_length) {
-        downsampled_x = [];
-        downsampled_y = [];
-
-        for (let i = 0; i < max_length; i++) {
-            const index = Math.floor(i * (mouseX_history.length - 1) / (max_length - 1));
-            downsampled_x.push(mouseX_history[index]);
-            downsampled_y.push(mouseY_history[index]);
-        }
-    }
-    return [downsampled_x, downsampled_y]
-}
-
 function createWMInstructions() {   
     var instruction_timeline = []
      // preload
