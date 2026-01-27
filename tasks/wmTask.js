@@ -140,13 +140,14 @@ function createWMInstructions() {
             <p class="instruction-paragraph-left">
                 <strong>3/5 Which image matches the original image better?</strong>
                 <br><br> 
-                After the delay you will see <strong>2 new images</strong> at the bottom of the screen.
+                After the delay you will see <strong>2 new images</strong>.
                 You haven't seen either of the images before.
                 <br><br>
                 Your task is to <strong>select the image that matches the original image better</strong> 
                 by clicking on it.
                 <br><br>
                 The <strong>?</strong> mark indicates the location of the original image.
+                <br>                
             </p>
             `
             ],
@@ -206,11 +207,9 @@ function createWMInstructions() {
             <p class="instruction-paragraph-left">
                 <strong>5/5 What about breaks?</strong><br><br> 
                 You will have <strong>2 breaks</strong> during the task, each lasting up to two minutes. 
-                Each block between breaks takes 8-12 minutes to complete.
-                <br>
+                <br><br>
                 Your progress through the task is displayed in a bar at the bottom of the screen.
                 <br>
-
             </p>
             `
             ],
@@ -282,13 +281,12 @@ function startingWM() {
                     Great! We will now start the experiment.
                     <br><br>
                     <strong>Reminder</strong>: The images can match the original image in various ways.
-                    If you're uncertain which image matches the original better, 
-                    make your best guess. 
+                    If you're uncertain which image matches the original better, make your best guess. 
                     <br><br>
-                    There will be <strong>no feedback</strong> during the experiment and
-                    the next trial will start automatically as soon as you responded.
-                    <br><br>
-                    The next break will be in 8-12 minutes.
+                    <strong>Note</strong>: The experiment includes attention checks. During these trials you'll have to  
+                    memorize a single image and then recognize it.
+                    <br><br><br>
+                    There will be <strong>no feedback</strong> during the experiment. 
                     <br>
                 </p>
                 <p class="continue-prompt">
