@@ -93,12 +93,10 @@ function createWMInstructions() {
             `<div>
                 <p class="instruction-header"><strong>Instructions</strong></p>
                 <p class="instruction-paragraph">
-                    During this experiment, we will ask you to memorize images that appear on your the screen.
-                    <br><br>
                     <strong>The instructions are self-paced</strong>. 
                     You can navigate back and forth through the instructions using the buttons below 
                     or using the arrow keys on your keyboard.
-                    <br><br>
+                    <br>
                 </p>
             </div>`
             ],
@@ -206,9 +204,9 @@ function createWMInstructions() {
             
             <p class="instruction-paragraph-left">
                 <strong>5/5 What about breaks?</strong><br><br> 
-                You will have <strong>2 breaks</strong> during the task, each lasting up to two minutes. 
+                The task has 3 blocks, each taking 10-12 minutes. You will have <strong>2 breaks</strong> (up to two minutes each) between blocks.
                 <br><br>
-                Your progress through the task is displayed in a bar at the bottom of the screen.
+                Your progress is shown in a bar at the bottom of the screen.
                 <br>
             </p>
             `
