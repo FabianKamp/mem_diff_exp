@@ -41,3 +41,17 @@ function createDemographics() {
         }};
     return demographics;
 }
+
+function createFeedbackSurvey() {
+    var feedback = {
+        type: jsPsychSurveyText,
+        questions: [
+            {
+                prompt: 'Please give us feedback!', 
+                placeholder: "e.g. did you experience any issues (technical problems, distractions etc.) during the experiment? Did you have any strategy while working on the tasks?",
+                rows: 15,
+            }
+        ]
+    }
+    return feedback;
+}

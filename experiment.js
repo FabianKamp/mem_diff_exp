@@ -139,7 +139,15 @@ async function createTimeline(jsPsych){
             })
         }
 
-        // Ending experiment
+        // feedback
+        experiment_timeline.push({
+            timeline: [
+                createFeedbackSurvey(),
+            ],
+            name: "feedback_survey"
+        })
+
+        // experiment end
         experiment_timeline.push({
             timeline: [
                 endingExperiment(jsPsych),

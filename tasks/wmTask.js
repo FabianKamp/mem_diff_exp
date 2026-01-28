@@ -396,8 +396,6 @@ function createWM(timeline_variables, jsPsych) {
                 data.preload_duration = preload_duration;
                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id');
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
-
-
             }
         }
     )
