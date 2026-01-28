@@ -85,11 +85,11 @@ function createLMInstructions() {
                 <p class="instruction-paragraph-left">
                     <strong>1/3 Have you seen this image previously?</strong>
                     <br><br>
-                    In this task you will see a series of images pairs. 
+                    In this task you will see a series of image pairs. 
                     <br><br>
                     <strong>One image was shown in the task before, the other image is new</strong>. 
                     <br><br>
-                    Please, try to remember which image you have seen in the previous task and select it.
+                    Try to recall which image you saw in the previous task and select it.
                     <br><br><br>
                     <strong>Note</strong>: Before selecting any image you have to move your mouse 
                     to enable the buttons.
@@ -107,10 +107,10 @@ function createLMInstructions() {
                 
                 <p class="instruction-paragraph-left">
                     <strong>2/3 What if you don't recognize any of the images?</strong><br><br>
-                    It's okay, if you don't recognize either image.
+                    It's okay if you don't recognize either image.
                     This task was designed to be challenging!
                     <br><br>
-                    When unsure, choose whichever one feels more familiar.
+                    When you are unsure, choose whichever one feels more familiar.
                     <br><br>
                     You will get feedback during this task. 
                 </p>
