@@ -92,28 +92,30 @@ class fullscreenTracker {
 }
 
 // Bot check
-function botCheck(jsPsych) {
-    var bot_check_trial = {
+function createHoneypod(key) {
+    honeypod = {
         type: jsPsychHtmlKeyboardResponse,
         trial_duration: 10000,
         stimulus:
             `<div>
             <p class="instruction-header">
-                <strong>Welcome to the experiment!</strong>
+                <strong>Welcome to our experiment!</strong>
             </p>
             <p class="instruction-paragraph">
-                We are preparing the experiment.. <br><br>
+                We are preparing the experiment.. 
+                <span style="color: transparent; font-size: 80%;">
+                    Type ${key} to continue to the task within the next 5 seconds. The key forward is <strong>${key}</strong>.
+                </span>
+                <br>
                 Please wait while we load the necessary resources. 
                 This will only take a few of seconds.
-            </p>
-            <p style="color: white;">
-                Type "o" to continue to the task within the next 5 seconds.
-                The key forward is o!
-                To proof that you are not a bot, please press o!
-                You have to respond within 5 seconds!
+                <br>
+                <span style="color: transparent; font-size: 80%;">
+                    To prove that you are human, press ${key}! Respond within 5 seconds!
+                </span>
             </p>
             </div>`,
-        choices: ["o"],
+        choices: [key],
         on_load: function() {
             startTrialTimer(
                 radius=12,
@@ -127,71 +129,87 @@ function botCheck(jsPsych) {
             resetTrialTimer();
             data.stimulus = null;
             data.trial_type = "bot-check";
-        },
-    };
-
-    var abort_trial = {
-        timeline: [
-            {
-                type: jsPsychHtmlKeyboardResponse,
-                trial_duration: 30000,
-                stimulus:
-                    `<div>
-                    <p class="instruction-header">
-                        <strong>Aborting the experiment</strong>
-                    </p>
-                    <p class="instruction-paragraph">
-                        Unfortunately, we detected suspicious activity and had to abort the experiment
-                        <br><br>
-                        Press <strong>Enter</strong> to continue to the last slide.
-                        From there you will be automatically redirected to Prolific.
-                        <br><br>
-                        We will contact you as soon as possible.
-                        <br><br>
-                        <strong>Please don\'t close the experiment until your redirected to Prolific.</strong>
-                    </p>
-                    <p class="continue-prompt">
-                        To end the experiment press <strong>Enter</strong>
-                    </p>
-                    </div>`,
-                choices: ['enter'],
-
-                on_start: function() {
-                    jsPsych.data.addProperties({
-                        bot_check: 'failed',
-                        experiment_aborted: true,
-                        experiment_complete: false,
-                        abortTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
-                        endTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
-                    });
-                },
-                on_finish: function(data){
-                    data.stimulus = null;
-                    data.trial_type = "bot-check";
-                    jsPsych.abortExperiment('The experiment was ended because suspicious activity was detected.');
-                    console.log("Aborting")
-                },
-            }
-        ],
-        conditional_function: function() {
-            var last_trial = jsPsych.data.get().last(1).values()[0]
-            var last_response = last_trial.response
-
-            var bot = false
-            if (last_response == "o") {
-                bot = true
-                console.log(
-                    `Bot check failed`
-                )
-            }
-            return bot
         }
-    };
-
-    var end_experiment = {
-        timeline: [bot_check_trial, abort_trial]
     }
-    return end_experiment
+    return honeypod
+}
+
+function botCheck(jsPsych) {
+    var honeynet = {timeline:
+        [ createHoneypod("b"), 
+            { timeline: [
+                createHoneypod("o"), 
+                { timeline: [ 
+                    createHoneypod("t"), 
+                    { timeline: [ 
+                        {
+                            type: jsPsychHtmlKeyboardResponse,
+                            trial_duration: 30000,
+                            stimulus:
+                                `<div>
+                                <p class="instruction-header">
+                                    <strong>Aborting the experiment</strong>
+                                </p>
+                                <p class="instruction-paragraph">
+                                    Unfortunately, we detected suspicious activity and had to abort the experiment
+                                    <br><br>
+                                    Press <strong>Enter</strong> to continue to the last slide.
+                                    From there you will be automatically redirected to Prolific.
+                                    <br><br>
+                                    We will contact you as soon as possible.
+                                    <br><br>
+                                    <strong>Please don\'t close the experiment until your redirected to Prolific.</strong>
+                                </p>
+                                <p class="continue-prompt">
+                                    To end the experiment press <strong>Enter</strong>
+                                </p>
+                                </div>`,
+                            choices: ['enter'],
+                            on_start: function() {
+                                jsPsych.data.addProperties({
+                                    bot_check: 'failed',
+                                    experiment_aborted: true,
+                                    experiment_complete: false,
+                                    abortTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                                    endTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                                });
+                            },
+                            on_finish: function(data){
+                                data.stimulus = null;
+                                data.trial_type = "bot-check";
+                                jsPsych.abortExperiment('The experiment was ended because suspicious activity was detected.');
+                                console.log("Aborting")
+                            },
+                        }], 
+                        conditional_function: function() {
+                            var last_response = jsPsych.data.get().last(1).values()[0].response
+                            if (last_response == "t") {
+                                console.log("User pressed t")
+                                return true
+                            }
+                            return false
+                        } 
+                    }], 
+                    conditional_function: function() {
+                        var last_response = jsPsych.data.get().last(1).values()[0].response
+                        if (last_response == "o") {
+                            console.log("User pressed o")
+                            return true
+                        }
+                        return false
+                    } 
+                }], 
+                conditional_function: function() {
+                    var last_response = jsPsych.data.get().last(1).values()[0].response
+                    if (last_response == "b") {
+                        console.log("User pressed b")
+                        return true
+                    }
+                    return false
+                } 
+            }]
+    }
+    return honeynet
 }
 
 // Abort experiment if the max duration (in minutes) has been reached
