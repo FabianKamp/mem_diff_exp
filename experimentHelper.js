@@ -359,23 +359,13 @@ function createMouseHandler(jsPsych, requiredMovement = 50, downsampleFunction =
     return mouseHandler;
 }
 
-// DOWNSAMPLE MOUSE HISTORY
-function downsample_mouse_history(mouseX_history, mouseY_history) {
-    let downsampled_x = mouseX_history;
-    let downsampled_y = mouseY_history;
-    
-    const max_length = 10;
-    if (mouseX_history.length > max_length) {
-        downsampled_x = [];
-        downsampled_y = [];
-
-        for (let i = 0; i < max_length; i++) {
-            const index = Math.floor(i * (mouseX_history.length - 1) / (max_length - 1));
-            downsampled_x.push(mouseX_history[index]);
-            downsampled_y.push(mouseY_history[index]);
-        }
-    }
-    return [downsampled_x, downsampled_y]
+// Crop MOUSE HISTORY
+function crop_mouse_history(mouseX_history, mouseY_history) {
+    const max_length = 15;
+    return [
+        mouseX_history.slice(-max_length), 
+        mouseY_history.slice(-max_length)
+    ]
 }
 
 // Toggle Cursor (hiding the cursor, if it is not moved)

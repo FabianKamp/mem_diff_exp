@@ -318,7 +318,7 @@ function createLM(timeline_variables, jsPsych) {
             },
 
             on_load: function() {
-                const mouseHandler = createMouseHandler(jsPsych, 50, downsample_mouse_history);
+                const mouseHandler = createMouseHandler(jsPsych, 50, crop_mouse_history);
                 document.addEventListener('mousemove', mouseHandler);
             },
 

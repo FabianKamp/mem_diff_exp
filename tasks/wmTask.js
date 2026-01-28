@@ -433,6 +433,7 @@ function createWM(timeline_variables, jsPsych) {
                 data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
             }
         },
+        // cross switches color 500ms before next trial
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
@@ -626,7 +627,7 @@ function createWM(timeline_variables, jsPsych) {
             },
 
             on_load: function() {
-                const mouseHandler = createMouseHandler(jsPsych, 50, downsample_mouse_history);
+                const mouseHandler = createMouseHandler(jsPsych, 50, crop_mouse_history);
                 document.addEventListener('mousemove', mouseHandler);
             },
 
@@ -694,7 +695,8 @@ function createWM(timeline_variables, jsPsych) {
                 var recog_pos = convert2cartesian(recog_theta)
 
                 var html =
-                    `<div style="width:500px; height:75vh;">
+                    `
+                    <div style="width:500px; height:75vh;">
                         <div>
                             <div class="square" style="top: calc(50% - ${recog_pos.y}px); left: calc(50% + ${recog_pos.x}px);">
                                 ?
@@ -725,13 +727,15 @@ function createWM(timeline_variables, jsPsych) {
                 var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 var progress_percent = (trial_id / total_trials) * 100
                 var progress_bar = 
-                    `<div class="progress-bar">
+                    `
+                    <div class="progress-bar">
                         <div class="progress-bar-track">
                             <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
                             <div class="progress-marker" style="left: ${first_break}%"></div>
                             <div class="progress-marker" style="left: ${second_break}%"></div>
                         </div>
-                    </div>`
+                    </div>
+                    `
                 
                 html += progress_bar
                 return html;
