@@ -131,6 +131,8 @@ function createLMInstructions() {
                     This is the final task of the experiment, which will take only <strong>~10 minutes</strong>. 
                     <br><br>
                     Therefore, there will be no breaks in this task. 
+                    <br><br>
+                    Your progress will be shown in a bar at the bottom of the screen.
                 </p>
                 </div>`
             ], 

@@ -31,11 +31,15 @@ function createWMInstructions() {
             show_progress_bar: false,
             message:  
                 `<div>
-                    <p class="instruction-header"><strong>Loading Experiment</strong></p>
+                    <p class="instruction-header">
+                        <strong>Welcome to our experiment!</strong>
+                    </p>
                     <p class="instruction-paragraph">
-                        We are loading the experiment.
-                        Please have a moment of patience.
+                        We are preparing the instructions.. 
                         <br><br>
+                        Please wait while we load the necessary resources. 
+                        This will only take a few of seconds.
+                        <br>
                     </p>
                 </div>`
             ,
@@ -59,28 +63,10 @@ function createWMInstructions() {
     var instruction_angles = generate_instruction_angles(experimentSettings.memory_experiment.load)
     var sample_pos = convert2cartesian(instruction_angles[1])
     var instruction_files = ["dist1.jpg", "sample1.jpg", "dist2.jpg"] // "dist3.jpg", "dist4.jpg", "dist5.jpg", "dist6.jpg"
-    var encoding_slide = `<div>`
+    var encoding_positions = [] 
     for (let i = 0; i < instruction_angles.length; i++) {
-        var pos = convert2cartesian(instruction_angles[i])
-        encoding_slide += 
-            `<div class="image-container"> 
-                <img src="stimuli/instructions/${instruction_files[i]}" class="image-object" 
-                style="left: calc(50% - ${pos.x}px); top: calc(50% + ${pos.y}px);"/>
-            </div>`
+        encoding_positions.push(convert2cartesian(instruction_angles[i]))
     }
-    encoding_slide += 
-        `<div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-            <p class="instruction-paragraph-left">
-                <strong>1/5 Memorize</strong><br><br>
-                In each trial we will ask you to memorize <strong>${experimentSettings.memory_experiment.load} images</strong>.<br><br>
-                ${experimentSettings.memory_experiment.serial === 1 ? 'The images will appear <strong>sequentially</strong> on the screen.<br><br>' : ''}
-                The images will be shown for about <strong>0.5 to 2 seconds</strong>. 
-                The time varies from trial to trial — some trials are fast, others are slower.
-                <br><br><br>
-                <strong>Important:</strong> Keep your eyes focused on the cross in the center of the screen while memorizing the images.
-
-            </p>
-            </div>`
     
     instruction_timeline.push({
         type: jsPsychInstructions,
@@ -100,7 +86,36 @@ function createWMInstructions() {
                 </p>
             </div>`
             ],
-            encoding_slide,
+            // 1/5
+            [
+            `<div>
+                <div class="image-container"> 
+                        <img src="stimuli/instructions/${instruction_files[0]}" class="image-object" 
+                        style="left: calc(50% - ${encoding_positions[0].x}px); top: calc(50% + ${encoding_positions[0].y}px);"/>
+                </div>
+                <div class="image-container"> 
+                        <img src="stimuli/instructions/${instruction_files[1]}" class="image-object" 
+                        style="left: calc(50% - ${encoding_positions[1].x}px); top: calc(50% + ${encoding_positions[1].y}px);"/>
+                </div>
+                <div class="image-container"> 
+                        <img src="stimuli/instructions/${instruction_files[2]}" class="image-object" 
+                        style="left: calc(50% - ${encoding_positions[2].x}px); top: calc(50% + ${encoding_positions[2].y}px);"/>
+                </div>
+                
+                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
+                
+                <p class="instruction-paragraph-left">
+                    <strong>1/5 Memorize</strong><br><br>
+                    In each trial we will ask you to memorize <strong>${experimentSettings.memory_experiment.load} images</strong>.<br><br>
+                    ${experimentSettings.memory_experiment.serial === 1 ? 'The images will appear <strong>sequentially</strong> on the screen.<br><br>' : ''}
+                    The images will be shown for about <strong>0.5 to 2 seconds</strong>. 
+                    The time varies from trial to trial — some trials are fast, others are slower.
+                    <br><br><br>
+                    <strong>Important:</strong> Keep your eyes focused on the cross in the center of the screen while memorizing the images.
+                </p>
+            </div>`
+            ],
+            // 2/5
             [
             `<div>
                 <div class="cross">
@@ -109,7 +124,7 @@ function createWMInstructions() {
                 </div>       
                 <p class="instruction-paragraph-left">
                     <strong>2/5 Delay</strong><br><br> 
-                    Afterwards there will be a short delay. <br><br>
+                    Afterwards there will be a short delay. <br>
                     The delay will take a couple of seconds. <br><br>
                     Please focus on the cross on the screen.
                 </p>
@@ -117,10 +132,13 @@ function createWMInstructions() {
             ],
             // 3/5
             [
-            `<div class="square" 
-                style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+            `
+            <div class="square plain" style="left: calc(50% - ${encoding_positions[0].x}px); top: calc(50% + ${encoding_positions[0].y}px);"></div>
+            <div class="square" style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+                ?
             </div>
-               
+            <div class="square plain" style="left: calc(50% - ${encoding_positions[2].x}px); top: calc(50% + ${encoding_positions[2].y}px);"></div>
+
             <div>
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
@@ -138,22 +156,25 @@ function createWMInstructions() {
             <p class="instruction-paragraph-left">
                 <strong>3/5 Which image matches the original image better?</strong>
                 <br><br> 
-                After the delay you will see <strong>2 new images</strong>.
+                After the delay you will see <strong>2 new images</strong> at the bottom of the screen.
                 You haven't seen either of the images before.
                 <br><br>
                 Your task is to <strong>select the image that matches the original image better</strong> 
                 by clicking on it.
                 <br><br>
-                The <strong>?</strong> mark indicates the location of the original image.
+                The <strong>? mark</strong> indicates the location of the original image.
                 <br>                
             </p>
             `
             ],
             // 4/5
             [
-            `<div class="square" 
-                style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+            `
+            <div class="square plain" style="left: calc(50% - ${encoding_positions[0].x}px); top: calc(50% + ${encoding_positions[0].y}px);"></div>
+            <div class="square" style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+                ?
             </div>
+            <div class="square plain" style="left: calc(50% - ${encoding_positions[2].x}px); top: calc(50% + ${encoding_positions[2].y}px);"></div>
                 
             <div>
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
@@ -184,9 +205,12 @@ function createWMInstructions() {
             ],
             // 5/5
             [
-            `<div class="square" 
-                style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+            `
+            <div class="square plain" style="left: calc(50% - ${encoding_positions[0].x}px); top: calc(50% + ${encoding_positions[0].y}px);"></div>
+            <div class="square" style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+                ?
             </div>
+            <div class="square plain" style="left: calc(50% - ${encoding_positions[2].x}px); top: calc(50% + ${encoding_positions[2].y}px);"></div>
                 
             <div>
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
@@ -204,9 +228,10 @@ function createWMInstructions() {
             
             <p class="instruction-paragraph-left">
                 <strong>5/5 What about breaks?</strong><br><br> 
-                The task has 3 blocks, each taking 10-12 minutes. You will have <strong>2 breaks</strong> (up to two minutes each) between blocks.
+                The task has 3 blocks, each taking 10-12 minutes. <br>
+                You will have <strong>2 breaks</strong> (up to two minutes each) between blocks.
                 <br><br>
-                Your progress is shown in a bar at the bottom of the screen.
+                Your progress will be shown in a bar at the bottom of the screen.
                 <br>
             </p>
             `
@@ -238,7 +263,7 @@ function startingWMPractice(){
                 <p class="instruction-paragraph">
                     We will start with <strong>three practice runs</strong>.
                     <br><br>
-                    During the practice runs the original image will 
+                    <strong>Feedback</strong>: During the practice runs the original image will 
                     appear again for a couple of seconds,  
                     so that you're able to compare the original image 
                     with the image you picked. 
@@ -438,7 +463,7 @@ function createWM(timeline_variables, jsPsych) {
             },
             stimulus: function() {
                 var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
-                html = `<div style="width:500px; height:80vh;">`
+                html = `<div style="width:500px; height:75vh;">`
                 for (let i = 0; i < n_encoding; i++) {
                     if (i >= n_encoding) break;
                     var file = jsPsych.evaluateTimelineVariable(`encoding_file_${i+1}`)
@@ -519,16 +544,17 @@ function createWM(timeline_variables, jsPsych) {
     // Show cursor
     wm_timeline.push(show_cursor())
 
-    // Mouse Movement Check (this is the same as the recognition slide, but with disabled buttons)
+    // Mouse Movement Check (this is the same as the recognition slide, but with RESPONSE DISABLED)
     wm_timeline.push(
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
             trial_duration: null,
 
-            stimulus: function() {
-                var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                var pos = convert2cartesian(theta)
+            stimulus: function() {                                
+                var recog_theta = jsPsych.evaluateTimelineVariable('recognition_theta')
+                var recog_pos = convert2cartesian(recog_theta)
+                
                 var foil_file = jsPsych.evaluateTimelineVariable(`recognition_foil_file`)
                 var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
                 var left_target = jsPsych.evaluateTimelineVariable(`left_target`)
@@ -545,8 +571,8 @@ function createWM(timeline_variables, jsPsych) {
                 var html =
                     `<div style="width:500px; height: 75vh;">
                         <div>
-                            <div class="square"
-                                style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
+                            <div class="square"style="top: calc(50% - ${recog_pos.y}px); left: calc(50% + ${recog_pos.x}px);">
+                                ?
                             </div>
                             <div class="cross"><div class="cross-vertical"></div>
                             <div class="cross-horizontal"></div></div>
@@ -555,7 +581,7 @@ function createWM(timeline_variables, jsPsych) {
                                 style="top: calc(50% + ${button_y}px);">
                             </div>
 
-                            <!-- Disabled buttons that look like the real ones -->
+                            <!-- Disabled buttons -->
                             <div style="width: 126px; height: 126px;
                                         position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px); transform: translate(-50%, -50%);">
                                 <img src="${left_image}" class="image-button" style="pointer-events: none;" />
@@ -569,6 +595,20 @@ function createWM(timeline_variables, jsPsych) {
                     </div>
                     `
 
+                // empty squares
+                var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+                for (let i = 0; i < n_encoding; i++) {
+                    if (i >= n_encoding) break;
+                    
+                    var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
+                    if (theta == recog_theta) continue;
+                    
+                    var pos = convert2cartesian(theta)
+                    html += `<div class="square plain" style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"></div>`
+                }
+
+
+                // progress bar
                 var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 var progress_percent = (trial_id / total_trials) * 100
 
@@ -650,14 +690,14 @@ function createWM(timeline_variables, jsPsych) {
             },
 
             stimulus: function() {
-                var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                var pos = convert2cartesian(theta)
+                var recog_theta = jsPsych.evaluateTimelineVariable('recognition_theta')
+                var recog_pos = convert2cartesian(recog_theta)
 
                 var html =
-                    `<div style="width:500px; height: 75vh;">
+                    `<div style="width:500px; height:75vh;">
                         <div>
-                            <div class="square"
-                                style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
+                            <div class="square" style="top: calc(50% - ${recog_pos.y}px); left: calc(50% + ${recog_pos.x}px);">
+                                ?
                             </div>
                             <div class="cross"><div class="cross-vertical"></div>
                             <div class="cross-horizontal"></div></div>
@@ -668,10 +708,22 @@ function createWM(timeline_variables, jsPsych) {
                         </div>
                     </div>
                     `
+                
+                // empty squares
+                var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+                for (let i = 0; i < n_encoding; i++) {
+                    if (i >= n_encoding) break;
+                    
+                    var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
+                    if (theta == recog_theta) continue;
+                    
+                    var pos = convert2cartesian(theta)
+                    html += `<div class="square plain" style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"></div>`
+                }  
 
+                // progress bar
                 var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 var progress_percent = (trial_id / total_trials) * 100
-                
                 var progress_bar = 
                     `<div class="progress-bar">
                         <div class="progress-bar-track">
@@ -786,10 +838,11 @@ function createWM(timeline_variables, jsPsych) {
                         var right_image = target_file 
                     }
 
-                    var theta = jsPsych.evaluateTimelineVariable('recognition_theta')
-                    var pos = convert2cartesian(theta)
+                    var recog_theta = jsPsych.evaluateTimelineVariable('recognition_theta')
+                    var recog_pos = convert2cartesian(recog_theta)
+                    
                     var html =
-                        `<div style="width:500px; height: 80vh;">
+                        `<div style="width:500px; height: 75vh;">
                             <p style="font-size: x-large; position: absolute; top: 50px; left: 50%;
                             transform: translateX(-50%); color:#4682B4; text-align: center;">
                                 <strong></strong>
@@ -797,7 +850,7 @@ function createWM(timeline_variables, jsPsych) {
 
                             <div>
                                 <div class="square"
-                                    style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);">
+                                    style="top: calc(50% - ${recog_pos.y}px); left: calc(50% + ${recog_pos.x}px);">
                                 </div>
                             </div>
 
@@ -810,7 +863,7 @@ function createWM(timeline_variables, jsPsych) {
                             
                             <div>
                                 <img src="${sample_file}" class="image-object feedback-blink"
-                                style="width: 126px; height: 126px; top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"/>
+                                style="width: 126px; height: 126px; top: calc(50% - ${recog_pos.y}px); left: calc(50% + ${recog_pos.x}px);"/>
                             </div>
 
                             <div style="cursor: pointer; width: 126px; height: 126px;
@@ -823,6 +876,19 @@ function createWM(timeline_variables, jsPsych) {
                                     <img src="${left_image}" class="image-button" />
                             </div>
                         </div>`
+
+                        // empty squares
+                        var n_encoding = jsPsych.evaluateTimelineVariable('n_encoding')
+                        for (let i = 0; i < n_encoding; i++) {
+                            if (i >= n_encoding) break;
+                            
+                            var theta = jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`)
+                            if (theta == recog_theta) continue;
+                            
+                            var pos = convert2cartesian(theta)
+                            html += `<div class="square plain" style="top: calc(50% - ${pos.y}px); left: calc(50% + ${pos.x}px);"></div>`
+                        }
+
                     return html;
                 },
                 on_finish: function(data) { 
