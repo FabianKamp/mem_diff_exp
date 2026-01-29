@@ -106,12 +106,14 @@ function createWMInstructions() {
                 
                 <p class="instruction-paragraph-left">
                     <strong>1/5 Memorize</strong><br><br>
-                    In each trial we will ask you to memorize <strong>${experimentSettings.memory_experiment.load} images</strong>.<br><br>
-                    ${experimentSettings.memory_experiment.serial === 1 ? 'The images will appear <strong>sequentially</strong> on the screen.<br><br>' : ''}
+                    In each trial we will ask you to memorize <strong>3 images</strong>.
+                    <br><br>
                     The images will be shown for about <strong>0.5 to 2 seconds</strong>. 
                     The time varies from trial to trial — some trials are fast, others are slower.
-                    <br><br><br>
+                    <br><br>
                     <strong>Important:</strong> Keep your eyes focused on the cross in the center of the screen while memorizing the images.
+                    <br><br><br>
+                    Note: The images shown in this experiment are computer-generated, not real photographs.
                 </p>
             </div>`
             ],
@@ -198,7 +200,7 @@ function createWMInstructions() {
                 If you're uncertain which image matches the original better, 
                 that's okay - just make your best guess.
                 <br><br><br>
-                <strong>Note</strong>: Before selecting any image you have to move your mouse 
+                Note: Before selecting any image you have to move your mouse 
                 to enable the buttons.
             </p>
             `
@@ -227,8 +229,10 @@ function createWMInstructions() {
             </div>
             
             <p class="instruction-paragraph-left">
-                <strong>5/5 What about breaks?</strong><br><br> 
-                The task has 3 blocks, each taking 10-12 minutes. <br>
+                <strong>5/5 What about breaks?</strong>
+                <br><br> 
+                The task has 3 blocks, each taking 10-12 minutes. 
+                <br><br>
                 You will have <strong>2 breaks</strong> (up to two minutes each) between blocks.
                 <br><br>
                 Your progress will be shown in a bar at the bottom of the screen.
@@ -306,7 +310,7 @@ function startingWM() {
                     <strong>Reminder</strong>: The images can match the original image in various ways.
                     If you're uncertain which image matches the original better, make your best guess. 
                     <br><br>
-                    <strong>Note</strong>: The experiment includes attention checks. During these trials you'll have to  
+                    Note: The experiment includes attention checks. During these trials you'll have to  
                     memorize a single image and then recognize it.
                     <br><br><br>
                     There will be <strong>no feedback</strong> during the experiment. 
