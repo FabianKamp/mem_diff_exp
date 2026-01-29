@@ -178,7 +178,7 @@ function botCheck(jsPsych) {
                                 data.stimulus = null;
                                 data.trial_type = "bot-check";
                                 jsPsych.abortExperiment('The experiment was ended because suspicious activity was detected.');
-                                console.log("Aborting")
+                                console.log('Aborting')
                             },
                         }], 
                         conditional_function: function() {

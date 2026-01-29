@@ -3,7 +3,7 @@ function createDemographics() {
         type: jsPsychSurvey,
         survey_json: {
             pages: [{
-                name: 'page1',
+                name: 'page-1',
                 elements: [
                 {
                     type: "html",
@@ -24,21 +24,31 @@ function createDemographics() {
                 },
                 {
                     type: 'radiogroup',
-                    title: 'Which gender do you identify with?', 
+                    title: 'Which gender do you identify with?',
                     choices: ['Diverse', 'Female','Male','I prefer not to say'],
                     name: 'Gender',
                     isRequired: true
-                }, 
-                // {
-                //     type: 'text',
-                //     title: 'Paste your Prolific ID below', 
-                //     name: 'prolificID', 
-                //     isRequired: true,
-                //     inputType: 'text',
-                // },
-                ]
-            }] 
-        }};
+                },
+                {
+                    type: "panel",
+                    name: "captcha",
+                    elements: [
+                        {
+                            type: "html",
+                            name: "captcha-image",
+                            html: '<img src="captcha.jpg" style="width: 180px; display: block; margin: 0 0 8px 0;">'
+                        },
+                        {
+                            type: 'text',
+                            name: 'Type the word you see in the image above', 
+                            isRequired: true,
+                            inputType: 'text',
+                        }
+                    ]
+                }]
+            }]
+        },
+    };
     return demographics;
 }
 
