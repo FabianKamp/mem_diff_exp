@@ -12,6 +12,7 @@
 /__pycache__/
 .env
 /analysis/*.txt
+/analysis/_archive/
 /analysis/*.ipynb
 /**/.DS_Store
 /.DS_Store
