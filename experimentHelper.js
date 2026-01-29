@@ -41,6 +41,47 @@ function setupShortcuts(jsPsych) {
     });
 }
 
+// Enter FULLSCREEN
+function enterFullscreen(jsPsych) {
+    var fullscreen = {timeline:[
+        {
+            type: jsPsychFullscreen,
+            fullscreen_mode: true,
+            choices: ['Continue'],
+            message:         
+            `
+            <p class="instruction-header"><strong>Entering Fullscreen Mode</strong></p>
+            <div style="height: 80vh; position: relative;">
+                <p class="instruction-paragraph">
+                    Great! We will now enter <strong>fullscreen mode</strong>.
+                    <br><br>
+                    We'd ask you to <strong>remain in fullscreen mode during the entire experiment</strong>.
+                    <br><br>
+                    This experiment is time sensitive. To ensure data quality, 
+                    the session will be automatically terminated if you take significantly 
+                    longer than expected.
+                    <br><br>
+                    Once the experiment is over, you will be redirected to Prolific automatically. 
+                    </br><br>
+                    To enter fullscreen mode, please click <strong>Continue</strong>.
+                </p>
+            </div>
+            `,
+            on_finish: function(data){
+                data.stimulus = null
+                data.trial_type = "fullscreen-slide", 
+                jsPsych.data.addProperties({ 
+                    experimentStart: jsPsych.data.get().last(1).values()[0].time_elapsed
+                });
+            }
+        },
+        {
+            type: jsPsychBrowserCheck
+        }
+    ]}
+    return fullscreen
+}
+
 // FULLSCREEN Tracker
 class fullscreenTracker {
     constructor(jsPsych) {
@@ -91,7 +132,7 @@ class fullscreenTracker {
     }
 }
 
-// Bot check
+// BOT CHECK
 function createHoneypod(key) {
     honeypod = {
         type: jsPsychHtmlKeyboardResponse,
@@ -269,8 +310,37 @@ function checkTime(jsPsych, max_duration) {
     return end_experiment
 }
 
+// Countdown to next task
+function countdown(seconds) {
+    var counter = []; 
+    for (let i = 0; i < seconds; i++) {
+        counter.push(
+        {
+            type: jsPsychHtmlKeyboardResponse,
+            choices: "NO_KEYS",
+            trial_duration: 1000,
+            record_data: true,
+            stimulus: function(){
+                var html = 
+                    `<div style="width:250px; height:75vh;">
+                        <p style="font-family: 'Courier New', monospace; font-size: 3rem; 
+                                position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                                text-align: center; color: #4682B4; margin: 0; line-height: 1;">
+                            <strong>${seconds-i}</strong>
+                        </p>
+                    </div>`
+                return html;
+            }, 
+            on_finish: function(data){
+                data.stimulus = null;
+                data.trial_type = `countdown-${i+1}`
+            }
+        })
+    }
+    return {timeline:counter}; 
+}
 
-// TIMER animation
+// TIMER animation -- if response is not given
 let delayID = null;
 let timerId = null;
 

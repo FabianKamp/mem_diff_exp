@@ -54,14 +54,63 @@ function createDemographics() {
 
 function createFeedbackSurvey() {
     var feedback = {
-        type: jsPsychSurveyText,
-        questions: [
-            {
-                prompt: 'Please give us feedback!', 
-                placeholder: "e.g. did you experience any issues (technical problems, distractions etc.) during the experiment? Did you have any strategy while working on the tasks?",
-                rows: 15,
-            }
-        ]
-    }
+        type: jsPsychSurvey,
+        survey_json: {
+            completeText: "Continue",
+            showQuestionNumbers: "off",
+            pages: [{
+                name: 'feedback-page',
+                elements: [
+                    {
+                        type: "html",
+                        name: "Title",
+                        html: 
+                            `<p style="font-size: x-large; color:#4682B4; text-align: center;">
+                                <strong>Ending the experiment</strong>
+                            </p>`
+                    },
+                    {
+                        type: "html",
+                        name: "preamble",
+                        html: 
+                            `<p>
+                                <strong>Congratulations!</strong> You have successfully completed the experiment.
+                                Thank you for your time and effort in participating in our study!
+                                <br>
+                                Your feedback helps us to improve our research, so please feel free to share any comments or suggestions.
+                            </p>`
+                    },
+                    {
+                        type: "comment",
+                        name: "feedback",
+                        title: "Feel free to leave any feedback below",
+                        placeholder: "e.g. did you experience any issues (technical problems, distractions etc.) during the experiment? Did you have any strategy while doing experiment?",
+                        rows: 8,
+                        isRequired: false
+                    },
+                    {
+                        type: "html",
+                        name: "prostamble",
+                        html: 
+                            `<p>
+                                <br><br>
+                                Press <strong>Continue</strong> to go to the last slide.
+                                From there you will be automatically redirected to Prolific.<br>
+                                <strong>Please don't close this browser tab until you're redirected to Prolific.</strong>
+                                <br><br>
+                            </p>`
+                    },
+                ]
+            }]
+        },
+        on_finish: function(data){
+            jsPsych.data.addProperties({ 
+                experiment_complete: true,
+                endTime: new Date().toISOString().replace('T', ' ').slice(0, 19),
+            });
+            data.stimulus = null
+            data.trial_type = "feedback-slide"
+        }
+    };
     return feedback;
 }

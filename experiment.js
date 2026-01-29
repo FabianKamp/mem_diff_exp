@@ -53,12 +53,12 @@ async function createTimeline(jsPsych){
         experiment_timeline.push({
             timeline: [
                 checkConsent(jsPsych, version_id),
-                startingExperiment(jsPsych),
+                enterFullscreen(jsPsych),
             ],
             name: 'exp_start'
         })
 
-        // demographics 
+        // demographics & botcheck
         experiment_timeline.push({
             timeline: [
                 createDemographics(),
@@ -152,14 +152,6 @@ async function createTimeline(jsPsych){
                 createFeedbackSurvey(),
             ],
             name: "feedback_survey"
-        })
-
-        // experiment end
-        experiment_timeline.push({
-            timeline: [
-                endingExperiment(jsPsych),
-            ],
-            name: "exp_end"
         })
     } 
     return experiment_timeline;
