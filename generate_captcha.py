@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import random
 
-text = "memdiff"
+text = "memdi11"
 font = ImageFont.truetype("Arial", 24)
 
 img = Image.new('RGB', (140, 45), color='#f0f0f0')
