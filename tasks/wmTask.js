@@ -455,7 +455,7 @@ function createWM(timeline_variables, jsPsych) {
         }, 
     ]})
 
-    // Parallel encoding
+    // Encoding slide
     wm_timeline.push(
         {
             type: jsPsychHtmlKeyboardResponse,
@@ -552,7 +552,7 @@ function createWM(timeline_variables, jsPsych) {
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
-            trial_duration: null,
+            trial_duration: 10000, // skip automatically after 10secs
 
             stimulus: function() {                                
                 var recog_theta = jsPsych.evaluateTimelineVariable('recognition_theta')

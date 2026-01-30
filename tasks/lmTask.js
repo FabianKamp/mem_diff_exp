@@ -268,7 +268,7 @@ function createLM(timeline_variables, jsPsych) {
         {
             type: jsPsychHtmlKeyboardResponse,
             choices: "NO_KEYS",
-            trial_duration: null,
+            trial_duration: 10000, // skip automatically after 10sec
 
             stimulus: function() {
                 var foil_file = jsPsych.evaluateTimelineVariable(`recognition_foil_file`)
