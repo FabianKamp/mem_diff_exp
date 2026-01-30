@@ -551,4 +551,4 @@ if __name__ == "__main__":
             save_input_data()
 
     # Generate tokens 
-    generate_token()
+    generate_token(wave_id=wave_id)
