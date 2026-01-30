@@ -71,7 +71,7 @@ function createFeedbackSurvey() {
                     },
                     {
                         type: "html",
-                        name: "preamble",
+                        name: "intro",
                         html: 
                             `<p>
                                 <strong>Congratulations!</strong> You have successfully completed the experiment.
@@ -90,7 +90,7 @@ function createFeedbackSurvey() {
                     },
                     {
                         type: "html",
-                        name: "prostamble",
+                        name: "outro",
                         html: 
                             `<p>
                                 <br><br>
