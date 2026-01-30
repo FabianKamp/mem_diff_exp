@@ -11,10 +11,11 @@ def generate_token(wave_id, session_ids=None, suffix=None):
     # uuid4 uses os.urandom() which is not affected by random.seed() or np.random.seed()
     
     print("Generating tokens.")
+    assert type(wave_id)==str, "Wave ID must be a string."
+
     if session_ids is None:
         input_dir = f"input_data/{wave_id}"
         assert os.path.isdir(input_dir), f"{wave_id} not found in input_data/"
-        
         session_ids = [fname.rstrip(".json").split("_")[1] 
                        for fname in os.listdir(input_dir) 
                        if fname.endswith(".json") and not fname.startswith("_settings")]
