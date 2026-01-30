@@ -7,18 +7,16 @@ import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib.backends.backend_pdf import PdfPages
 import pickle
-matplotlib.use('TkAgg')
-plt.close()
 
 #%% variable set up
 wave_code = "M-PD"
-subject_ids = [4,5,6] #[2,3,4,5,6,7,9,10,11,21,22,23]
+subject_ids = [1,2,3,4,5,6,7,8,9] #[2,3,4,5,6,7,9,10,11,21,22,23]
 
 show = False
 save = True
 
 #%% set up colors
-colors_palette = ["#F2857D","#7EBDC3","#9ED9A3","#F5B971","#B39CD4"]
+colors_palette = ["#F2857D","#7EBDC3","#9ED9A3","#F5B971"]
 sns.set_palette(colors_palette)
 all_figures = []
 figure_data = {}
@@ -42,7 +40,6 @@ n_subjects = len(subject_ids)
 #%% Preprocess working memory data
 NAN = 9999
 all_data.loc[all_data.response.isna(), "response"] = NAN
-
 wm_data = all_data.loc[(all_data.trial_type=='wm') & 
                        (all_data.phase == "recognition")].copy()
 
@@ -51,6 +48,7 @@ wm_data.correct_response = wm_data.correct_response.astype(int)
 wm_data["correct"] = (wm_data.response == wm_data.correct_response)
 
 wm_data.encoding_time = wm_data.encoding_time.astype(int)
+
 
 #%% Visual vs semantic condition
 vis_sem = wm_data.loc[wm_data.condition_name!='mixed']

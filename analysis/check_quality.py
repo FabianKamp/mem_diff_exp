@@ -5,23 +5,21 @@ import glob
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
+import ast
 from matplotlib.backends.backend_pdf import PdfPages
-matplotlib.use('TkAgg')
-plt.close()
 
-#%% variable set up
+#%% 
+# variable set up
 wave_code = "M-PD"
-subject_ids = [4,5,6] #[2,3,4,5,6,7,9,10,11,21,22,23]
-
-show = False
+subject_ids = [1,2,3,4,5,6,7,8,9] #[2,3,4,5,6,7,9,10,11,21,22,23]
 save = True
 
 colors_palette = ["#ef476f","#ffd166","#06d6a0","#118ab2","#073b4c"]
 sns.set_palette(colors_palette)
 all_figures = []
 
-#%% load files
+#%% 
+# load files
 if os.path.basename(os.getcwd()) == "analysis": 
     os.chdir("..")
 
@@ -40,15 +38,51 @@ labels = all_data.session_id.unique()
 
 all_figures = []
 
+# %% 
+# define plotting functions 
+def annotate_outliers(ax, data, x, y, label_col):
+    categories = data[x].unique()
+    for i, category in enumerate(categories):
+        category_data = data[data[x] == category]
+        
+        Q1 = category_data[y].quantile(0.25)
+        Q3 = category_data[y].quantile(0.75)
+        IQR = Q3 - Q1
+        
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        outliers = category_data[
+            (category_data[y] < lower_bound) | 
+            (category_data[y] > upper_bound)
+        ]
+        
+        # Annotate each outlier
+        for _, row in outliers.iterrows():
+            ax.text(
+                x=i,
+                y=row[y],
+                s=str(row[label_col]),
+                fontsize=6,
+                alpha=.5
+            )
+# %% 
+# bot checks 
+bot_checks = all_data.loc[(all_data.trial_type == "bot-check")]
+for sid, bot_check in bot_checks.groupby("session_id"):
+    print(sid, "\tBot check response:\t", bot_check.response.to_list())
+
+# %% 
+# feedback form 
+feedback_data = all_data.loc[(all_data.trial_type == "feedback-slide")]
+for sid, session_feedback in feedback_data.groupby("session_id"):
+    feedback = ast.literal_eval(session_feedback.response.item())["feedback"]
+    if feedback is not None: 
+        print(sid, feedback, sep="\t")
+
 # %% section lengths
 results = []
-
 for session, subdata in all_data.groupby("session_id"):   
-    wm_trials = subdata.loc[
-        (subdata.trial_type == "wm")|
-        (subdata.trial_type == "practice")|
-        (subdata.trial_type == "catch")
-        ]
+    wm_trials = subdata.loc[(subdata.trial_type == "wm")]
     
     results.append(dict(
         session_id = session, 
@@ -80,32 +114,6 @@ boxplot = sns.boxplot(
 ax.set_xlabel("")
 ax.set_yticks(np.arange(0,ax.get_ylim()[1],10))
 ax.grid(axis="y", alpha=.5)
-
-def annotate_outliers(ax, data, x, y, label_col):
-    categories = data[x].unique()
-    for i, category in enumerate(categories):
-        category_data = data[data[x] == category]
-        
-        Q1 = category_data[y].quantile(0.25)
-        Q3 = category_data[y].quantile(0.75)
-        IQR = Q3 - Q1
-        
-        lower_bound = Q1 - 1.5 * IQR
-        upper_bound = Q3 + 1.5 * IQR
-        outliers = category_data[
-            (category_data[y] < lower_bound) | 
-            (category_data[y] > upper_bound)
-        ]
-        
-        # Annotate each outlier
-        for _, row in outliers.iterrows():
-            ax.text(
-                x=i,
-                y=row[y],
-                s=str(row[label_col]),
-                fontsize=6,
-                alpha=.5
-            )
 annotate_outliers(
     data=results, 
     x ="section", 
@@ -113,7 +121,6 @@ annotate_outliers(
     label_col="session_id",
     ax=ax
 )
-
 all_figures.append(fig)
 
 
@@ -132,48 +139,42 @@ for session_id, sub_data in all_data.groupby("session_id"):
         trial_time = wm_times.to_list()
     )))
 
-results = dict(
-    WM = pd.concat(wm_rt).reset_index(),
-)
+wm_rt = pd.concat(wm_rt).reset_index()
 
-fig, ax = plt.subplots(1,2,
+fig, ax = plt.subplots(
     constrained_layout=True, 
     sharey=True,
     figsize=(12,5)
     )
 
-for i, el in enumerate(results.items()):
-    bars = sns.barplot(
-        data=el[1], 
-        x="session_id", 
-        y="trial_time",
-        color="w",
-        edgecolor="k",
-        errorbar=None,
-        ax=ax[i]
-    )
+bars = sns.barplot(
+    data=wm_rt, 
+    x="session_id", 
+    y="trial_time",
+    color="w",
+    edgecolor="k",
+    errorbar=None,
+    ax=ax
+)
 
-    scatter = sns.scatterplot(
-        data=el[1],
-        x="session_id",
-        y="trial_time",
-        size=1,
-        legend=False,
-        ax=ax[i],
-        facecolor='none',
-        edgecolor='grey'
-    )
+scatter = sns.scatterplot(
+    data=wm_rt,
+    x="session_id",
+    y="trial_time",
+    size=1,
+    legend=False,
+    ax=ax,
+    facecolor='none',
+    edgecolor='grey'
+)
 
-    ax[i].set_title(el[0])
-    ax[i].axhline(30)
-    ax[i].axhline(15, linestyle=":", c="k", alpha=.5)
-    ax[i].axhline(10, linestyle=":", c="k", alpha=.5)
-    ax[i].axhline(5, linestyle=":", c="k", alpha=.5)
-    
-    if i == 0: 
-        ax[i].set_ylabel("Reaction times")
-    else: 
-        ax[i].set_ylabel("")
+ax.set_title("WM")
+ax.axhline(30)
+ax.axhline(15, linestyle=":", c="k", alpha=.5)
+ax.axhline(10, linestyle=":", c="k", alpha=.5)
+ax.axhline(5, linestyle=":", c="k", alpha=.5)
+ax.set_ylabel("Reaction times")
+ax.set_ylabel("")
 
 all_figures.append(fig)
 
@@ -200,10 +201,10 @@ for session_id, sub_data in all_data.groupby("session_id"):
         trial_time = recognition_time.to_list()
     )))
 
-results = dict(
-    preload_time = pd.concat(preload_times),
-    recognition = pd.concat(recognition_times),
-)
+results = {
+    "preload time": pd.concat(preload_times),
+    "recognition time": pd.concat(recognition_times),
+}
 
 fig, ax = plt.subplots(
     1,2,
@@ -234,11 +235,11 @@ for i, el in enumerate(results.items()):
         ax=ax[i]
     )
 
-    ax[i].set_title(el[0])
+    ax[i].set_title(el[0].title())
     ax[i].axhline(30)
-    ax[i].axhline(15, linestyle=":", c="k", alpha=.5)
+    ax[i].axhline(20, linestyle=":", c="k", alpha=.5)
     ax[i].axhline(10, linestyle=":", c="k", alpha=.5)
-    ax[i].axhline(5, linestyle=":", c="k", alpha=.5)
+    ax[i].axhline(2., linestyle=":", c="k", alpha=.5)
     ax[i].set_ylabel("Trial times")
     ax[i].set_ylabel("")
 
@@ -271,8 +272,7 @@ bar.set_xlabel("")
 bar.set_ylabel("Time Outs")
 bar.tick_params(axis='x', labelrotation=90)
 all_figures.append(fig)
-if show: 
-    fig.show()
+
 
 # %% Attention checks
 attention_accuracy = []
@@ -306,12 +306,11 @@ all_figures.append(fig)
 
 # %% Browser interaction
 record_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}_browser_records.csv" 
-               for i in subject_ids for suffix in "AB"]
+               for i in subject_ids for suffix in "ABC"]
 record_files = filter(os.path.exists, record_files)
 
 all_records = []
 for file in record_files: 
-    print(file)
     records = pd.read_csv(file)
     records["session_id"] = os.path.basename(file.rstrip("_ir.csv"))
     all_records.append(records)
@@ -346,15 +345,13 @@ sns.barplot(
 ax.set_ylabel("Count of tasks events")
 all_figures.append(fig)
 
-# %%
-if show:
-    plt.show(block=False)
-    plt.pause(10)
-    plt.close('all')
+# %% mouse checks
 
+# %%
 if save:
-    pdf_file = f"./figures/quality_check/qc_{wave_code}.pdf"
+    pdf_file = f"./figures/quality_check/qc_{wave_code}_wm.pdf"
     with PdfPages(pdf_file) as pdf:
         for f in all_figures:
             pdf.savefig(f)
 
+# %%
