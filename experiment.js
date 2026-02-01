@@ -22,7 +22,9 @@ async function createTimeline(jsPsych){
         startTime : new Date().toISOString().replace('T', ' ').slice(0, 19),
         OS : window.navigator.platform,
         fullscreen_mode: true,
-        experiment_complete: false
+        experiment_complete: false,
+        preloadBlock: false,
+        connection_quality: ""
     });
 
     // initialize the fullscreen tracker
@@ -90,7 +92,8 @@ async function createTimeline(jsPsych){
         // WM block 1
         experiment_timeline.push({
             timeline: [
-                startingWM(),
+                startingWM(wm_input_data_block1, jsPsych),
+                preloadBlock(wm_input_data_block1, jsPsych),
                 fullscreen_tracker.check(),
                 countdown(3),
                 createWM(wm_input_data_block1, jsPsych)
@@ -103,6 +106,7 @@ async function createTimeline(jsPsych){
             timeline: [
                 checkTime(jsPsych, 45),
                 createBreak(label=1),
+                preloadBlock(wm_input_data_block2, jsPsych),
                 fullscreen_tracker.check(),
                 countdown(3),
                 createWM(wm_input_data_block2, jsPsych),
@@ -115,6 +119,7 @@ async function createTimeline(jsPsych){
             timeline: [
                 checkTime(jsPsych, 45),
                 createBreak(label=2),
+                preloadBlock(wm_input_data_block3, jsPsych),
                 fullscreen_tracker.check(),
                 countdown(3),
                 createWM(wm_input_data_block3, jsPsych),
@@ -138,6 +143,7 @@ async function createTimeline(jsPsych){
             experiment_timeline.push({
                 timeline: [
                     startingLM(),
+                    preloadBlock(lm_input_data, jsPsych),
                     fullscreen_tracker.check(),
                     countdown(3),
                     createLM(lm_input_data, jsPsych),

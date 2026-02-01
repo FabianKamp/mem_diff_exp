@@ -310,6 +310,54 @@ function checkTime(jsPsych, max_duration) {
     return end_experiment
 }
 
+// Preload Block --> for instable internet conditions
+function preloadBlock(input_data, jsPsych) {
+    const all_image_files = input_data
+        .flatMap(item => Object.values(item))
+        .filter(val => typeof val === "string")
+        .filter(val => val.endsWith('.jpg'));
+
+    preload = 
+        {timeline: [{
+            type: jsPsychPreload,
+            record_data: true,
+            show_progress_bar: true,
+            message:  function() {               
+                html = 
+                    `<div>
+                        <p class="instruction-header">
+                            <strong>Loading</strong>
+                        </p>
+                        <p class="instruction-paragraph">
+                            We are preparing the experiment.. 
+                            <br>
+                            Please wait while we load the necessary resources. 
+                            This may take a moment.
+                            <br>
+                        </p>
+                    </div>`
+                return html 
+                },
+            images: all_image_files,
+            on_finish: function(data) { 
+                var preload_duration = jsPsych.data.get().last(1).values()[0].time_elapsed - jsPsych.data.get().last(2).values()[0].time_elapsed
+                
+                if (data.subject_id == 999) {
+                    console.log("Block preloading duration: ", preload_duration)
+                }
+                
+                data.stimulus = null;
+                data.trial_type = "preload-block";
+                data.preload_duration = preload_duration;
+                }
+            }], 
+        conditional_function: function() {
+            return jsPsych.data.dataProperties.preloadBlock
+        }
+    }
+    return preload
+}
+
 // Countdown to next task
 function countdown(seconds) {
     var counter = []; 

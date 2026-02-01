@@ -182,44 +182,48 @@ function createLM(timeline_variables, jsPsych) {
     lm_timeline.push(hide_cursor())
 
     // preload
-    lm_timeline.push(
-    {
-        type: jsPsychPreload,
-        record_data: true,
-        show_progress_bar: false,
-        show_detailed_errors: true,
-        message: function() {
-            html = `<div style="width:500px; height: 60vh;"></div>
-            <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>`
-            // progress bar
-            var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-            var progress_percent = (trial_id / total_trials) * 100
-            var progress_bar =
-                `<div class="progress-bar">
-                    <div class="progress-bar-track">
-                        <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
-                    </div>
-                </div>`
-            html += progress_bar
-            return html
+    lm_timeline.push({timeline: [
+        {
+            type: jsPsychPreload,
+            record_data: true,
+            show_progress_bar: false,
+            show_detailed_errors: true,
+            message: function() {
+                html = `<div style="width:500px; height: 60vh;"></div>
+                <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>`
+                // progress bar
+                var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                var progress_percent = (trial_id / total_trials) * 100
+                var progress_bar =
+                    `<div class="progress-bar">
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
+                        </div>
+                    </div>`
+                html += progress_bar
+                return html
 
-        },
-        images: function() {
-            var files = []
-            files.push(jsPsych.evaluateTimelineVariable(`recognition_foil_file`));
-            files.push(jsPsych.evaluateTimelineVariable(`recognition_target_file`));
-            return files;
-        }, 
-        on_finish: function(data) { 
-            var preload_duration = jsPsych.data.get().last(1).values()[0].time_elapsed - jsPsych.data.get().last(2).values()[0].time_elapsed
-            if (data.subject_id == 999) {
-                    console.log("Preloading duration: ", preload_duration)
+            },
+            images: function() {
+                var files = []
+                files.push(jsPsych.evaluateTimelineVariable(`recognition_foil_file`));
+                files.push(jsPsych.evaluateTimelineVariable(`recognition_target_file`));
+                return files;
+            }, 
+            on_finish: function(data) { 
+                var preload_duration = jsPsych.data.get().last(1).values()[0].time_elapsed - jsPsych.data.get().last(2).values()[0].time_elapsed
+                if (data.subject_id == 999) {
+                        console.log("Preloading duration: ", preload_duration)
+                }
+                data.stimulus = null;
+                data.trial_type = "preload";
+                data.preload_duration = preload_duration;
+                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
             }
-            data.stimulus = null;
-            data.trial_type = "preload";
-            data.preload_duration = preload_duration;
-            data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
-        }
+        }],
+        conditional_function: function() {
+            return !jsPsych.data.dataProperties.preloadBlock
+        } 
     })
 
     // inter trial delay
@@ -228,9 +232,13 @@ function createLM(timeline_variables, jsPsych) {
         type: jsPsychHtmlKeyboardResponse,
         choices: "NO_KEYS",
         trial_duration: function() {
-            var preload_time = jsPsych.data.get().last(1).values()[0].time_elapsed
-            var recognition_time = jsPsych.data.get().last(2).values()[0].time_elapsed
-            var preload_delay = (preload_time-recognition_time)
+            if (preloadBlock) {
+                var preload_delay = 0;
+            } else { 
+                var preload_time = jsPsych.data.get().last(1).values()[0].time_elapsed
+                var recognition_time = jsPsych.data.get().last(2).values()[0].time_elapsed
+                var preload_delay = (preload_time-recognition_time) 
+            }
             var delay = Math.max(experimentSettings.timing.lm_inter_trial_delay-preload_delay,0)
             return delay
         }, 
