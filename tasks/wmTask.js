@@ -809,9 +809,8 @@ function createWM(timeline_variables, jsPsych) {
                 data.timestamp = new Date().toLocaleTimeString()
                 
                 if (data.subject_id==999) {
-                    console.log("Condition: ", data.condition_name)
-                    console.log("Response: ", data.response)
-                    console.log("Correct response: ", data.correct_response)
+                    console.log("Condition: ", data.condition_name, "\tEncoding time", data.encoding_time)
+                    console.log("Response: ", data.response, "\tCorrect response: ", data.correct_response)
                 }
             }
         }
