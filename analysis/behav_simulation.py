@@ -27,11 +27,12 @@ conditions = [0,1]
 n_trials_per_condition = 13
 
 input_data = pd.concat([
-    get_input_data(np.array([.7,1.2,1.7, 2.2]), 1), # wave 1
-    get_input_data(np.array([.4, .9,1.4, 1.9]), 2)  # wave 2
+    get_input_data(np.array([.7, 1.2, 1.7, 2.2]), 1),   # wave 1
+    get_input_data(np.array([.4,  .9, 1.4, 1.9]), 2),   # wave 2
+    get_input_data(np.array([.5,  .7 , 1.2, 1.5 ]), 3)    # wave 2
 ])
 
-input_data["time"] = np.round(input_data.time - input_data.time.mean(),3)
+input_data["time"] = np.round(input_data.time, 3)
 input_data
 
 # %% 
@@ -58,16 +59,16 @@ def boxplot_idata(data, ax):
 
 # %%
 # simulating outcome
-def simulator(input_data, draws=10):
+def simulator(input_data, draws):
     with pm.Model() as generator_model:
-        alpha = pm.Normal('alpha', (0., 0.), .1, shape=2)
-        beta  = pm.Normal('beta', (0., 1.),  .1, shape=2)
+        t_bar = pm.Normal('t_bar', (1., 1.), .1, shape=2)
+        beta   = pm.Normal('beta', (.5, 2.), .1, shape=2)
         
         cid   = pm.Data('cid', input_data['condition'])
         time = pm.Data('time', input_data['time'].values)
 
         # logit p
-        logit_p = alpha[cid] + beta[cid] * time
+        logit_p = beta[cid] * (time - t_bar[cid])
         
         lapse = .5
         p = pm.Deterministic('p', lapse + (1-lapse) * pm.math.invlogit(logit_p))
@@ -84,8 +85,8 @@ def simulator(input_data, draws=10):
 # process output
 n_sessions = 10
 simulated_data = pd.concat([
-    simulator(input_data.loc[input_data.wave_id==1], draws=n_sessions),
-    simulator(input_data.loc[input_data.wave_id==2], draws=n_sessions)
+    simulator(input_data.loc[input_data.wave_id==wave], draws=n_sessions)
+    for wave in input_data.wave_id.unique()
 ])
 
 output_data  = (simulated_data
@@ -99,9 +100,9 @@ output_data  = (simulated_data
 fig, ax = plt.subplots(figsize=(18,6), sharex=True, sharey=True)
 boxplot_idata(output_data, ax);
 
-fig, ax = plt.subplots(2,1, figsize=(18,6), sharex=True, sharey=True)
-boxplot_idata(output_data.loc[output_data.wave_id==1], ax[0]);
-boxplot_idata(output_data.loc[output_data.wave_id==2], ax[1]);
+# fig, ax = plt.subplots(2,1, figsize=(18,6), sharex=True, sharey=True)
+# boxplot_idata(output_data.loc[output_data.wave_id==1], ax[0]);
+# boxplot_idata(output_data.loc[output_data.wave_id==2], ax[1]);
 
 # %%
 # fit hierachical model
@@ -124,19 +125,17 @@ with pm.Model(coords=coords) as hierachical_model:
     cid  = pm.Data('cid',  output_data['condition'].values, dims="obs")
     time = pm.Data('time', output_data['time'].values, dims="obs")
 
-    # varying intercepts
-    hyper_mu = pm.Normal('hyper_mu', 0, 2., dims="condition")
-    hyper_sigma = pm.Exponential('hyper_sigma', 1., dims="condition")
-    alpha = pm.Normal('alpha', hyper_mu, hyper_sigma, dims=("session","condition"))
+    # t (reparameterized for multilevel)
+    t_bar = pm.Normal('t_bar', 1., .5)
+    t_sigma = pm.Exponential('t_sigma', 1.)
+    t_z = pm.Normal('t_z', 0., 1., dims=("session", "condition"))
+    t = pm.Deterministic('t', t_bar + t_z[sid,cid] * t_sigma, dims="obs")
 
-    # fixed slope
-    beta  = pm.Normal('beta', [1.,1.], 2., dims="condition")
-    
-    # logit p
-    logit_p = alpha[sid,cid] + beta[cid] * time
-    
-    lapse = .5
-    p = pm.Deterministic('p', lapse + (1-lapse) * pm.math.invlogit(logit_p), dims="obs")
+    # slopes
+    beta = pm.LogNormal('beta', mu=0, sigma=1, dims="condition")
+        
+    l = .5
+    p = pm.Deterministic('p', l + (1-l) * pm.math.invlogit(beta[cid] * (time - t)), dims="obs")
     y = pm.Binomial('y', p=p, n=n_trials_per_condition, observed=output_data['hits'].values, dims="obs")
 
 with hierachical_model:
@@ -144,13 +143,21 @@ with hierachical_model:
 
 # %%
 # plot inference data
-beta_0 = idata.posterior.beta[0,...,0].to_numpy()
-beta_1 = idata.posterior.beta[0,...,1].to_numpy()
+posterior = idata.posterior
+t_sessions = posterior["t_bar"] + posterior["t_z"] * posterior["t_sigma"]
+t_df = (t_sessions.mean(dim=["chain", "draw"])
+    .to_dataframe("t")
+    .reset_index()
+)
 
-plt.hist(beta_0, bins=30)
-plt.hist(beta_1, bins=30)
+sns.boxplot(
+    data=t_df, 
+    y="t", 
+    hue="condition",
+)
 
-alpha_0 = idata.posterior.alpha[0,...,0].to_numpy()
-alpha_1 = idata.posterior.alpha[0,...,1].to_numpy()
+plt.figure()
+plt.hist(posterior.beta[...,0].to_numpy().flatten())
+plt.hist(posterior.beta[...,1].to_numpy().flatten())
 
 # %%
