@@ -433,9 +433,9 @@ if __name__ == "__main__":
         settings = json.load(file)
 
     # set random seed
-    seed = np.random.default_rng().integers(0, 4**20)
+    seed = np.random.default_rng().integers(0, 2**31)
     np.random.seed(seed) 
-    settings.update(seed=seed)
+    settings.update(seed=int(seed))
 
     # ids
     wave_id = settings["wave"]["wave_id"]

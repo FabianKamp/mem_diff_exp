@@ -335,9 +335,8 @@ function startingWM() {
             
             if (data.subject_id == 999) {
                     console.log("Max preload: ", max_preload)
-                    jsPsych.data.dataProperties.preloadBlock = true;
+                    jsPsych.data.dataProperties.preloadBlock = max_preload < 0 ? false : true;
             }
-
             data.stimulus = null;
             data.trial_type = "starting-wm";
         }

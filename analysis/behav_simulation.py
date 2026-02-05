@@ -29,7 +29,7 @@ n_trials_per_condition = 13
 input_data = pd.concat([
     get_input_data(np.array([.7, 1.2, 1.7, 2.2]), 1),   # wave 1
     get_input_data(np.array([.4,  .9, 1.4, 1.9]), 2),   # wave 2
-    get_input_data(np.array([.5,  .7 , 1.2, 1.5 ]), 3)    # wave 2
+    get_input_data(np.array([.5,  .7, 1.2, 1.5 ]), 3)   # wave 3
 ])
 
 input_data["time"] = np.round(input_data.time, 3)

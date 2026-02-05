@@ -4,30 +4,47 @@
         "wave_id": "M-PE",
         "subject_number": 12
     },
-
     "stimuli": {
         "exp_stimuli_dir": "stimuli/exp_stimuli_pilot",
-        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot", 
+        "dist_stimuli_dir": "stimuli/dist_stimuli_pilot",
         "n_set_ids": 165,
-        "excluded_set_ids": [18, 33, 66, 93, 120, 159],
-        "practice_set_ids": [13, 19, 30]
+        "excluded_set_ids": [
+            18,
+            33,
+            66,
+            93,
+            120,
+            159
+        ],
+        "practice_set_ids": [
+            13,
+            19,
+            30
+        ]
     },
-
     "memory_experiment": {
-        "encoding_conditions": ["mixed", "visual", "semantic"],
+        "encoding_conditions": [
+            "mixed",
+            "visual",
+            "semantic"
+        ],
         "load": 3,
         "practice_trials": 3,
-        "wm_trials": 156, 
+        "wm_trials": 156,
         "wm_block1_trials": 60,
         "wm_block2_trials": 60,
         "wm_block3_trials": 36,
-        "lm_trials": 120, 
-        "ncatch": 18, 
+        "lm_trials": 120,
+        "ncatch": 18,
         "serial": 0
     },
-
     "timing": {
-        "encoding_times": [400,900,1400,1900], 
+        "encoding_times": [
+            400,
+            900,
+            1400,
+            1900
+        ],
         "memory_delay": 3000,
         "wm_inter_trial_delay": 2500,
         "lm_inter_trial_delay": 2000,
@@ -35,22 +52,18 @@
         "catch_delay": 750,
         "encoding_time_catch": 3000
     },
-    
     "spatial": {
         "radius_x": 80,
         "radius_y": 80,
         "button_x": 70,
         "button_y": 290
     },
-    
     "break": {
         "duration": 120000
     },
-    
     "countdown": {
         "interval": 1000
     },
-
     "distractor": {
         "initial_number": 100,
         "random_min": 2,
@@ -61,8 +74,8 @@
         "rounds": 3,
         "operations_per_round": 5
     },
-
     "feedback": {
         "duration": 10000
-    }
+    },
+    "seed": 1238392754
 }
