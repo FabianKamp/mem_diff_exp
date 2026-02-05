@@ -169,8 +169,8 @@ def get_distractor_stimuli():
     all_wm_images = all_encoding_trials * load
     wm_dist_pool = dist_info.loc[~dist_info.concept.isin(lm_dist_concepts)]
     wm_dist_idx = np.arange(all_wm_images - all_encoding_trials) + 1
-    wm_dist_idx = np.concat([np.random.permutation(wm_dist_idx[i::12]) 
-                             for i in np.random.permutation(range(12))]).flatten() # ensures distance of 12
+    wm_dist_idx = np.concat([np.random.permutation(wm_dist_idx[i::6]) 
+                             for i in np.random.permutation(range(6))]).flatten() # ensures distance of 6
     wm_dist_df = wm_dist_pool.iloc[wm_dist_idx,]
     wm_dist_concepts = wm_dist_df.concept.unique()
     wm_distractors = wm_dist_df.diff_id.to_numpy()
@@ -426,14 +426,16 @@ def save_input_data():
             json.dump(input_data, file, indent=4)
 
 if __name__ == "__main__":
-    # set seed
-    np.random.seed(42) 
-
     # load settings
     setting_file = "experimentSettings.json"
 
     with open(setting_file, "r") as file: 
         settings = json.load(file)
+
+    # set random seed
+    seed = np.random.default_rng().integers(0, 4**20)
+    np.random.seed(seed) 
+    settings.update(seed=seed)
 
     # ids
     wave_id = settings["wave"]["wave_id"]
