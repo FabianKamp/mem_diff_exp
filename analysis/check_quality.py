@@ -1,22 +1,20 @@
 # %%
+import ast
 import pandas as pd 
 import os
 import glob
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
-import ast
 from matplotlib.backends.backend_pdf import PdfPages
+import textwrap
 
 #%% 
 # variable set up
 wave_code = "M-PD"
 subject_ids = [1,2,3,4,5,6,7,8,9] #[2,3,4,5,6,7,9,10,11,21,22,23]
-save = True
-
-colors_palette = ["#ef476f","#ffd166","#06d6a0","#118ab2","#073b4c"]
-sns.set_palette(colors_palette)
 all_figures = []
+save = True
 
 #%% 
 # load files
@@ -39,7 +37,85 @@ labels = all_data.session_id.unique()
 all_figures = []
 
 # %% 
-# define plotting functions 
+# bot checks 
+bot_checks = all_data.loc[(all_data.trial_type == "bot-check")]
+
+fig, ax = plt.subplots(
+    figsize=(6, 6),
+    constrained_layout=True
+    )
+
+# header
+header_pos = 0.95  
+ax.text(0.05, header_pos, "Bot Check", transform=ax.transAxes, fontsize=14, verticalalignment='top')
+
+# text
+text_pos = .85
+for sid, bot_check in bot_checks.groupby("session_id"):
+    text = "   ".join([sid, bot_check.response.to_string(index=False)])
+    ax.text(0.05, text_pos, text, transform=ax.transAxes, fontsize=9, verticalalignment='top')
+    text_pos -= 0.04 
+ax.axis('off')  
+
+all_figures.append(fig)
+
+# %%
+# captcha 
+survey_data = all_data.loc[(all_data.trial_type == "survey")]
+
+# fig
+fig, ax = plt.subplots(
+    figsize=(6, 6),
+    constrained_layout=True
+    )
+
+# header
+header_pos = 0.95  
+ax.text(0.05, header_pos, "Captcha Response", transform=ax.transAxes, fontsize=14, verticalalignment='top')
+
+# text
+text_pos = .85
+for (sid, response) in survey_data.groupby("session_id")["response"]:
+    response_dict = ast.literal_eval(response.iloc[0])
+    key = 'Type the word you see in the image above'
+    if key not in response_dict: continue
+    captcha_response = response_dict[key]
+    text = "   ".join([sid, captcha_response])
+    ax.text(0.05, text_pos, text, transform=ax.transAxes, fontsize=9, verticalalignment='top')
+    text_pos -= 0.04
+
+ax.axis('off')  
+all_figures.append(fig)
+
+
+# %% 
+# feedback form 
+feedback_data = all_data.loc[(all_data.trial_type == "feedback-slide")]
+fig, ax = plt.subplots(
+    figsize=(6, 6),
+    constrained_layout=True
+    )
+
+# header
+header_pos = 0.95   
+ax.text(0.05, header_pos , "Feedback", transform=ax.transAxes, fontsize=14, verticalalignment='top')
+
+# text
+text_pos = .85
+for sid, session_feedback in feedback_data.groupby("session_id"):
+    feedback = ast.literal_eval(session_feedback.response.item())["feedback"]
+    if feedback is not None: 
+        text = "   ".join([sid, feedback])
+        text = "   ".join([sid, feedback])
+        wrapped = textwrap.fill(text, width=80)  
+        ax.text(0.05, text_pos, wrapped, transform=ax.transAxes, fontsize=9, verticalalignment='top')
+        text_pos -= 0.03 * (wrapped.count('\n') + 1) 
+
+ax.axis('off')  
+all_figures.append(fig)
+
+# %% 
+# annotating function
 def annotate_outliers(ax, data, x, y, label_col):
     categories = data[x].unique()
     for i, category in enumerate(categories):
@@ -66,20 +142,7 @@ def annotate_outliers(ax, data, x, y, label_col):
                 alpha=.5
             )
 # %% 
-# bot checks 
-bot_checks = all_data.loc[(all_data.trial_type == "bot-check")]
-for sid, bot_check in bot_checks.groupby("session_id"):
-    print(sid, "\tBot check response:\t", bot_check.response.to_list())
-
-# %% 
-# feedback form 
-feedback_data = all_data.loc[(all_data.trial_type == "feedback-slide")]
-for sid, session_feedback in feedback_data.groupby("session_id"):
-    feedback = ast.literal_eval(session_feedback.response.item())["feedback"]
-    if feedback is not None: 
-        print(sid, feedback, sep="\t")
-
-# %% section lengths
+# plot section lengths
 results = []
 for session, subdata in all_data.groupby("session_id"):   
     wm_trials = subdata.loc[(subdata.trial_type == "wm")]
@@ -123,8 +186,111 @@ annotate_outliers(
 )
 all_figures.append(fig)
 
+# %% 
+# time outs
+missing_data = []
 
-# %% Reaction times
+i = 0 
+for session, outdata in all_data.groupby("session_id"):  
+    outdata = outdata.loc[outdata.phase=="recognition"]
+    missing = dict(
+        session_id = session,
+        timed_out = outdata.timed_out.astype(int).sum())
+    missing_data.append(missing)
+    print(session)
+missing_data = pd.DataFrame(missing_data)
+
+fig, ax = plt.subplots(constrained_layout=True)
+bar = sns.barplot(
+    data=missing_data,
+    x="session_id",
+    y="timed_out",
+    color="w",
+    edgecolor="k",
+    ax=ax
+)
+
+bar.set_xlabel("")
+bar.set_ylabel("Time Outs")
+bar.tick_params(axis='x', labelrotation=90)
+all_figures.append(fig)
+
+
+# %% 
+# attention checks
+attention_accuracy = []
+i = 0 
+for session, outdata in all_data.groupby("session_id"):  
+    catch_trials = outdata.loc[
+        (outdata.trial_type=="catch")&
+        (outdata.phase=="recognition")].copy()
+    catch_trials["correct"] = (catch_trials.correct_response.astype(int) == catch_trials.response.astype(int)).astype(int)
+    if i>0: assert len(catch_trials) == ncatch, "Number of catch trials is not equal across sessions."
+    
+    ncatch = len(catch_trials)
+    accuracy = (catch_trials.correct.sum()/ncatch)
+    if accuracy<.8: print(f"Warning: {session} - {accuracy}")
+    
+    attention_accuracy.append(accuracy)
+
+fig, ax = plt.subplots(constrained_layout=True)
+session_ids = all_data.loc[~all_data.session_id.isna(), "session_id"].unique().astype(str)
+
+bar = sns.barplot(
+    x=session_ids,
+    y=attention_accuracy, 
+    color="w",
+    edgecolor="k",
+    ax=ax
+)
+bar.tick_params(axis='x', labelrotation=90)
+all_figures.append(fig)
+
+# %% 
+# Browser interaction
+record_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}_browser_records.csv" 
+               for i in subject_ids for suffix in "ABC"]
+record_files = filter(os.path.exists, record_files)
+
+all_records = []
+for file in record_files: 
+    records = pd.read_csv(file)
+    records["session_id"] = os.path.basename(file.rstrip("_ir.csv"))
+    all_records.append(records)
+all_records = pd.concat(all_records)
+all_records["session_id"] = all_records.session_id.str.rstrip("_browser_record")
+
+i, results = 0, []
+for session, records in all_records.groupby("session_id"): 
+    records = records.loc[records.trial>1]
+    
+    time_other_window = records.loc[records.event.isin(["blur","focus"])].time.diff()
+    time_other_window = time_other_window.iloc[1::2].sum()/60e3
+    
+    count_df = records.groupby("event").trial.count().reset_index()
+    count_df = count_df.rename(columns={"trial":"count"})
+    count_df["subject_id"] = session
+    count_df["time_other_window"] = time_other_window
+    
+    results.append(count_df)
+
+results = pd.concat(results)
+results = results.loc[results.event=="blur"]
+
+fig, ax = plt.subplots(constrained_layout=True)
+sns.barplot(
+    data=results, 
+    y="count", 
+    x="subject_id", 
+    facecolor="none",
+    edgecolor="black",
+    ax=ax, 
+    legend=False)
+ax.set_ylabel("Count of tasks events")
+all_figures.append(fig)
+
+# %% 
+# # reaction times
 wm_rt =[]
 
 for session_id, sub_data in all_data.groupby("session_id"):
@@ -178,7 +344,8 @@ ax.set_ylabel("")
 
 all_figures.append(fig)
 
-# %% Trial times
+# %% 
+# trial times
 preload_times, recognition_times = [], []
 for session_id, sub_data in all_data.groupby("session_id"):
     session_id = str(int(session_id.split("-")[-2]))
@@ -193,8 +360,11 @@ for session_id, sub_data in all_data.groupby("session_id"):
     )))
 
     ## recognition
-    recognition_time = sub_data.loc[(sub_data.trial_type=="wm") & (sub_data.phase=="recognition"), 
-                                    "trial_time"]
+    recognition_time = sub_data.loc[
+        (sub_data.trial_type=="wm") & 
+        (sub_data.phase=="recognition"), 
+        "trial_time"
+        ]
     recognition_times.append(pd.DataFrame(dict(
         session_id = [session_id] * len(recognition_time), 
         trial_time = recognition_time.to_list()
@@ -244,106 +414,8 @@ for i, el in enumerate(results.items()):
 
 all_figures.append(fig)
 
-# %% Time outs
-missing_data = []
-
-i = 0 
-for session, outdata in all_data.groupby("session_id"):  
-    outdata = outdata.loc[outdata.phase=="recognition"]
-    missing = dict(
-        session_id = session,
-        timed_out = outdata.timed_out.astype(int).sum())
-    missing_data.append(missing)
-    print(session)
-missing_data = pd.DataFrame(missing_data)
-
-fig, ax = plt.subplots(constrained_layout=True)
-bar = sns.barplot(
-    data=missing_data,
-    x="session_id",
-    y="timed_out",
-    color="w",
-    edgecolor="k",
-    ax=ax
-)
-
-bar.set_xlabel("")
-bar.set_ylabel("Time Outs")
-bar.tick_params(axis='x', labelrotation=90)
-all_figures.append(fig)
-
-
-# %% Attention checks
-attention_accuracy = []
-i = 0 
-for session, outdata in all_data.groupby("session_id"):  
-    catch_trials = outdata.loc[
-        (outdata.trial_type=="catch")&
-        (outdata.phase=="recognition")].copy()
-    catch_trials["correct"] = (catch_trials.correct_response.astype(int) == catch_trials.response.astype(int)).astype(int)
-    if i>0: assert len(catch_trials) == ncatch, "Number of catch trials is not equal across sessions."
-    
-    ncatch = len(catch_trials)
-    accuracy = (catch_trials.correct.sum()/ncatch)
-    if accuracy<.8: print(f"Warning: {session} - {accuracy}")
-    
-    attention_accuracy.append(accuracy)
-
-fig, ax = plt.subplots(constrained_layout=True)
-session_ids = all_data.loc[~all_data.session_id.isna(), "session_id"].unique().astype(str)
-
-bar = sns.barplot(
-    x=session_ids,
-    y=attention_accuracy, 
-    color="w",
-    edgecolor="k",
-    ax=ax
-)
-bar.tick_params(axis='x', labelrotation=90)
-all_figures.append(fig)
-
-# %% Browser interaction
-record_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}_browser_records.csv" 
-               for i in subject_ids for suffix in "ABC"]
-record_files = filter(os.path.exists, record_files)
-
-all_records = []
-for file in record_files: 
-    records = pd.read_csv(file)
-    records["session_id"] = os.path.basename(file.rstrip("_ir.csv"))
-    all_records.append(records)
-all_records = pd.concat(all_records)
-all_records["session_id"] = all_records.session_id.str.rstrip("_browser_record")
-
-i, results = 0, []
-for session, records in all_records.groupby("session_id"): 
-    records = records.loc[records.trial>1]
-    
-    time_other_window = records.loc[records.event.isin(["blur","focus"])].time.diff()
-    time_other_window = time_other_window.iloc[1::2].sum()/60e3
-    
-    count_df = records.groupby("event").trial.count().reset_index()
-    count_df = count_df.rename(columns={"trial":"count"})
-    count_df["subject_id"] = session
-    count_df["time_other_window"] = time_other_window
-    
-    results.append(count_df)
-
-results = pd.concat(results)
-results = results.loc[results.event=="blur"]
-
-fig, ax = plt.subplots(constrained_layout=True)
-sns.barplot(
-    data=results, 
-    y="count", 
-    x="subject_id", 
-    hue="event", 
-    ax=ax, 
-    legend=False)
-ax.set_ylabel("Count of tasks events")
-all_figures.append(fig)
-
-# %% mouse checks
+# %% 
+# mouse checks
 def path_straightness(x, y):
     direct = np.sqrt((x[-1]-x[0])**2 + (y[-1]-y[0])**2)
     path_len = np.sum(np.sqrt(np.diff(x)**2 + np.diff(y)**2))
@@ -367,7 +439,7 @@ def acceleration_pattern(x, y):
 
 mouse_data = all_data.loc[all_data.trial_type == "mouse-movement-check"]
 
-cols = 5
+cols = 3
 rows = n_subjects//cols+1
 fig, ax = plt.subplots(rows, cols, 
             figsize=(cols*4, rows*4), 
@@ -395,8 +467,9 @@ for sid, mouse_session in mouse_data.groupby("session_id"):
         if len(x)<5: 
             continue
 
-        fax[i].plot(x_centered, y_centered, 'b-o', markersize=2, linewidth=.5)
-        fax[i].plot(0, 0, 'ro', markersize=3) 
+        fax[i].plot(x_centered, y_centered, 'k-o', markersize=1.5, linewidth=.3)
+        fax[i].plot(0, 0, 'ro', markersize=2) 
+        fax[i].set_title(sid)
 
         mouse_summary.append(dict(
           straightness = path_straightness(x,y), 
@@ -418,14 +491,12 @@ for sid, mouse_session in mouse_data.groupby("session_id"):
 
     i += 1
 
-# remove the empty axes 
 _ = [ax.remove() for ax in fax[i:]]
-
+all_figures.append(fig)
 # %%
+# save
 if save:
     pdf_file = f"./figures/quality_check/qc_{wave_code}_wm.pdf"
     with PdfPages(pdf_file) as pdf:
         for f in all_figures:
             pdf.savefig(f)
-
-# %%
