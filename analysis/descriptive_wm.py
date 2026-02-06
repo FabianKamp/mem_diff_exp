@@ -4,7 +4,6 @@ import os
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
 from matplotlib.backends.backend_pdf import PdfPages
 import pickle
 
@@ -38,52 +37,87 @@ all_data = pd.concat(all_data)
 n_subjects = len(subject_ids)
 
 #%% Preprocess working memory data
-NAN = 9999
-all_data.loc[all_data.response.isna(), "response"] = NAN
-wm_data = all_data.loc[(all_data.trial_type=='wm') & 
-                       (all_data.phase == "recognition")].copy()
+# NAN = 9999
+# all_data.loc[all_data.response.isna(), "response"] = NAN
+wm_data = all_data.loc[
+    (all_data.trial_type=='wm') & 
+    (all_data.phase == "recognition")
+    ].copy()
+print("NA responses: ", np.sum(wm_data.response.isna()))
 
-wm_data.response = wm_data.response.astype(int)
-wm_data.correct_response = wm_data.correct_response.astype(int)
+wm_data.response = wm_data.response.astype('Int64')
+wm_data.correct_response = wm_data.correct_response.astype('Int64')
 wm_data["correct"] = (wm_data.response == wm_data.correct_response)
 
-wm_data.encoding_time = wm_data.encoding_time.astype(int)
+wm_data.encoding_time = wm_data.encoding_time.astype('Int64')
+wm_data.condition = wm_data.condition.astype('Int64')
 
 
-#%% Visual vs semantic condition
+#%% aggregate visual vs semantic data
 vis_sem = wm_data.loc[wm_data.condition_name!='mixed']
 
+vis_sem_agg = (
+    vis_sem.groupby(["session_id","encoding_time","condition_name","condition"])
+        .agg(
+            hits = ("correct", "sum"),
+            valid_responses = ("correct", "count"),
+            accuracy = ("correct", "mean")
+        )
+        .reset_index()
+        .assign(subject_id = lambda d: d.session_id.str.split("-").str[-2].astype(int))
+    )
+
+# %%
 ## barplots for each subject individually
+# valid responses
 cols = 5
 rows = n_subjects//cols+1
 fig, ax = plt.subplots(rows, cols, 
                        figsize=(cols*2, rows*2), 
                        sharey=True,
                        constrained_layout=True)
-title = "Fig1: Visual vs. Semantic"
+title = "Fig1a: Visual vs. Semantic"
 fig.suptitle(f"{title}    Wave: {wave_code}")
 
 i = 0
-all_results = []
 fax = ax.flatten()
-for s, sub_df in vis_sem.groupby("session_id"):
-    sub_results = (
-        sub_df.groupby(["encoding_time","condition_name"])["correct"]
-            .agg(lambda x: np.round(x.sum()/len(x), 2))
-            .reset_index()
-        )
-    sub_results = sub_results.rename(columns= {"condition_name":"condition", "correct": "accuracy"})
-    
-    sub_results["subject_id"]= int(s.split("-")[-2])
-    all_results.append(sub_results)
-
-    bar = sns.barplot(data=sub_results, 
+for s, sub_df in vis_sem_agg.groupby("session_id"):
+    bar = sns.barplot(data=sub_df, 
                       x="encoding_time", 
-                      hue="condition", 
+                      hue="condition_name", 
+                      hue_order=["visual", "semantic"],
+                      y="valid_responses", 
+                      ax=fax[i])
+    bar.axhline(.5,ls=":")
+    bar.set_title(int(s.split("-")[-2]))
+    bar.set_xlabel('')
+    fax[i].axhline(y=13, color="r")
+    if i>0: bar.get_legend().remove()
+    i+=1
+
+for j in range(i,cols*rows): 
+    fax[j].remove()
+all_figures.append(fig)
+
+# accuracy 
+cols = 5
+rows = n_subjects//cols+1
+fig, ax = plt.subplots(rows, cols, 
+                       figsize=(cols*2, rows*2), 
+                       sharey=True,
+                       constrained_layout=True)
+title = "Fig1b: Visual vs. Semantic"
+fig.suptitle(f"{title}    Wave: {wave_code}")
+
+i = 0
+fax = ax.flatten()
+for s, sub_df in vis_sem_agg.groupby("session_id"):
+    bar = sns.barplot(data=sub_df, 
+                      x="encoding_time", 
+                      hue="condition_name", 
                       hue_order=["visual", "semantic"],
                       y="accuracy", 
                       ax=fax[i])
-    
     bar.axhline(.5,ls=":")
     bar.set_title(int(s.split("-")[-2]))
     bar.set_xlabel('')
@@ -93,14 +127,15 @@ for s, sub_df in vis_sem.groupby("session_id"):
 
 for j in range(i,cols*rows): 
     fax[j].remove()
-
 all_figures.append(fig)
+
+
 figure_data.update({
-    title: all_results
+    title: vis_sem_agg
     })
 
-### scatter plots
-all_results = pd.concat(all_results)
+# %%
+### box plots
 fig, ax = plt.subplots(1, 2, 
             figsize=(10,3), 
             sharey=True,
@@ -110,20 +145,20 @@ title = "Fig2: Visual vs. Semantic"
 fig.suptitle(f"{title}    Wave: {wave_code}")
 
 conditions = ["visual", "semantic"]
-encoding_times = sorted(all_results.encoding_time.unique())
+encoding_times = sorted(vis_sem_agg.encoding_time.unique())
 for (ax, condition) in zip(ax, conditions):
     box = sns.boxplot(
-        data=all_results.loc[all_results.condition == condition], 
+        data=vis_sem_agg.loc[vis_sem_agg.condition_name == condition], 
         x="encoding_time", 
         y="accuracy", 
         widths=0.5, 
         palette=colors_palette,
-        ax=ax
+        legend=False,
+        ax=ax,
         )
     
-    # Plot connected lines for each subject
-    for s, sub_results in all_results.groupby("subject_id"):
-        condition_results = sub_results.loc[sub_results.condition==condition]
+    for s, sub_results in vis_sem_agg.groupby("subject_id"):
+        condition_results = sub_results.loc[sub_results.condition_name==condition]
         ax.plot(np.arange(len(encoding_times)),
                 [condition_results.loc[condition_results.encoding_time==t, "accuracy"] 
                 for t in encoding_times],
@@ -139,63 +174,105 @@ for (ax, condition) in zip(ax, conditions):
 
 all_figures.append(fig)
 figure_data.update({
-    title: all_results
+    title: vis_sem_agg
     })
 
 # %% Mixed trials
 # preprocess mixed trials
-mixed_data = wm_data.loc[wm_data.condition_name=='mixed'].copy()
+mixed_data = wm_data.loc[
+    (wm_data.condition_name=='mixed') &
+    (wm_data.response.notna())
+    ].copy()
+
 mixed_data["response_stimulus"] = mixed_data.apply(
     lambda row: row.stimulus_left if row.response == 0 else row.stimulus_right, axis=1
     )
+
 mixed_data.response_stimulus = (
     mixed_data.response_stimulus
     .str.split("/")
     .str[-1]
     .str[0]
     .map({'3': "semantic", '4': "visual"})
-    )
+)
 
-all_results = []
-for s, sub_df in mixed_data.groupby("session_id"):
-    results = (
-        sub_df.groupby("encoding_time")["response_stimulus"]
-        .value_counts(normalize=True)
-        .reset_index())
-    results = results.loc[results.response_stimulus=="visual"]
-    results = (results
-               .rename(columns={"proportion":"proportion_visual"})
-               .drop(columns="response_stimulus")
-    )
-    results["session_id"] = s.split("-")[-2]
-    all_results.append(results)
-all_results = pd.concat(all_results)
+response_counts = (
+    mixed_data
+    .groupby(["session_id", "encoding_time"])
+    .response_stimulus
+    .value_counts()
+    .reset_index()
+)
 
-## barplots
+valid_responses = (
+    response_counts
+    .groupby(["session_id", "encoding_time"])
+    .agg(sum = ("count", "sum"))
+    .reset_index()
+)
+
+mixed_data_agg = pd.merge(
+    response_counts,
+    valid_responses, 
+    on=["session_id", "encoding_time"] 
+)
+
+mixed_data_agg["proportion"] = mixed_data_agg["count"]/mixed_data_agg["sum"]
+mixed_data_vision = mixed_data_agg.loc[mixed_data_agg.response_stimulus == "visual"]
+
+# %%
+## barplots 
+# trial counts
 fig, ax = plt.subplots(
     figsize=(10,3),
     constrained_layout=True
     )
-title = "Fig3: Mixed Trials"
+title = "Fig3a: Mixed Trials"
 fig.suptitle(f"{title}    Wave: {wave_code}")
 
 bar = sns.barplot(
-    data=all_results, 
+    data=mixed_data_vision, 
+    x="session_id", 
+    hue="encoding_time",
+    y="sum", 
+    palette=colors_palette,
+    ax=ax
+)
+bar.axhline(.5,ls=":")
+bar.set_ylabel('valid responses')
+bar.set_xlabel('')
+
+all_figures.append(fig)
+figure_data.update({
+    title: mixed_data_agg
+    })
+
+# proportions
+fig, ax = plt.subplots(
+    figsize=(10,3),
+    constrained_layout=True
+    )
+title = "Fig3b: Mixed Trials"
+fig.suptitle(f"{title}    Wave: {wave_code}")
+
+bar = sns.barplot(
+    data=mixed_data_vision, 
     x="session_id", 
     hue = "encoding_time",
-    y="proportion_visual", 
+    y="proportion", 
     palette=colors_palette,
     ax=ax
 )
 bar.axhline(.5,ls=":")
 bar.set_xlabel('')
+bar.set_ylabel('proportion vision')
 
 all_figures.append(fig)
 figure_data.update({
-    title: all_results
+    title: mixed_data_agg
     })
 
-## scatter plot
+## box plots
 fig, ax = plt.subplots(
     figsize=(5,3), 
     constrained_layout=True
@@ -204,28 +281,29 @@ title = "Fig4: Mixed Trials"
 fig.suptitle(f"{title}    Wave: {wave_code}")
 
 box = sns.boxplot(
-    data=all_results,
+    data=mixed_data_vision,
     x="encoding_time",
-    y="proportion_visual",
+    y="proportion",
     widths=0.5,
     palette=colors_palette,
 )
 box.axhline(.5, color='k')
 
-encoding_times = sorted(all_results.encoding_time.unique())
-for s, sub_data in all_results.groupby("session_id"):
-    ax.plot(np.arange(len(encoding_times)),
-            [sub_data.loc[sub_data.encoding_time==t, "proportion_visual"] for t in encoding_times],
+encoding_times = sorted(mixed_data_vision.encoding_time.unique())
+for s, sub_data in mixed_data_vision.groupby("session_id"):
+    box.plot(np.arange(len(encoding_times)),
+            [sub_data.loc[sub_data.encoding_time==t, "proportion"] for t in encoding_times],
             'o:',  
             alpha=0.6,
             color='gray',
             markerfacecolor='none',
             linewidth=1
     )
+box.set_ylabel("proportion visual")
 
 all_figures.append(fig)
 figure_data.update({
-    title: all_results
+    title: mixed_data_vision
     })
 
 # %%
