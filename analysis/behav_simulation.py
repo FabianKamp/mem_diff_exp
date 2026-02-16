@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 import seaborn as sns
 from tqdm.notebook import tqdm
+import arviz as az
 
 # %% 
 # set up encoding times 
@@ -62,7 +63,7 @@ def boxplot_idata(data, ax):
 def simulator(input_data, draws):
     with pm.Model() as generator_model:
         t_bar = pm.Normal('t_bar', (1., 1.), .1, shape=2)
-        beta   = pm.Normal('beta', (.5, 2.), .1, shape=2)
+        beta   = pm.Normal('beta', (.6, 1.), .1, shape=2)
         
         cid   = pm.Data('cid', input_data['condition'])
         time = pm.Data('time', input_data['time'].values)
@@ -96,6 +97,10 @@ output_data  = (simulated_data
     .sort_values(by=["session_id","condition","time"])
     )
 
+output_data["session_id"] = output_data.session_id.astype(int)
+output_data["condition"] = output_data.condition.astype(int)
+output_data["hits"] = output_data.hits.astype(int)
+
 # one plot
 fig, ax = plt.subplots(figsize=(18,6), sharex=True, sharey=True)
 boxplot_idata(output_data, ax);
@@ -119,7 +124,7 @@ coords = {
     "obs": range(len(output_data)),
 }
 
-with pm.Model(coords=coords) as hierachical_model:
+with pm.Model(coords=coords) as t_hierachical_model:
     # index variables
     sid  = pm.Data('sid',  output_data['session_id'].values, dims="obs")
     cid  = pm.Data('cid',  output_data['condition'].values, dims="obs")
@@ -129,35 +134,84 @@ with pm.Model(coords=coords) as hierachical_model:
     t_bar = pm.Normal('t_bar', 1., .5)
     t_sigma = pm.Exponential('t_sigma', 1.)
     t_z = pm.Normal('t_z', 0., 1., dims=("session", "condition"))
-    t = pm.Deterministic('t', t_bar + t_z[sid,cid] * t_sigma, dims="obs")
+    t = pm.Deterministic('t', t_bar + t_z * t_sigma, dims=("session", "condition"))
 
     # slopes
     beta = pm.LogNormal('beta', mu=0, sigma=1, dims="condition")
         
     l = .5
-    p = pm.Deterministic('p', l + (1-l) * pm.math.invlogit(beta[cid] * (time - t)), dims="obs")
+    p = pm.Deterministic('p', l + (1-l) * pm.math.invlogit(beta[cid] * (time - t[sid,cid])), dims="obs")
     y = pm.Binomial('y', p=p, n=n_trials_per_condition, observed=output_data['hits'].values, dims="obs")
 
-with hierachical_model:
+with t_hierachical_model:
     idata = pm.sample(nuts_sampler="numpyro", draws=2000)
 
+# %% 
+# plot hierarchical model
+az.plot_forest(
+    [idata.posterior.sel(condition=0), idata.posterior.sel(condition=1)],  
+    model_names=["visual", "semantic"], # This controls the legend/labels
+    var_names=["t"],
+    combined=True,
+)
+
+az.plot_forest(
+    [idata.posterior.sel(condition=0), idata.posterior.sel(condition=1)],  
+    model_names=["visual", "semantic"], # This controls the legend/labels
+    var_names=["beta"],
+    combined=True
+)
+
 # %%
-# plot inference data
-posterior = idata.posterior
-t_sessions = posterior["t_bar"] + posterior["t_z"] * posterior["t_sigma"]
-t_df = (t_sessions.mean(dim=["chain", "draw"])
-    .to_dataframe("t")
-    .reset_index()
+# complete hierarchical model (varying slopes and intercepts)
+n_sessions = output_data.session_id.nunique()
+n_conditions = 2 
+
+coords = {
+    "session": range(n_sessions),
+    "condition": range(n_conditions),
+    "obs": range(len(output_data)),
+}
+
+with pm.Model(coords=coords) as t_hierachical_model:
+    # index variables
+    sid  = pm.Data('sid',  output_data['session_id'].values, dims="obs")
+    cid  = pm.Data('cid',  output_data['condition'].values, dims="obs")
+    time = pm.Data('time', output_data['time'].values, dims="obs")
+
+    # t (reparameterized for multilevel)
+    t_bar = pm.Normal('t_bar', 1., .5)
+    t_sigma = pm.Exponential('t_sigma', 1.)
+    t_z = pm.Normal('t_z', 0., 1., dims=("session", "condition"))
+    t = pm.Deterministic('t', t_bar + t_z * t_sigma, dims=("session", "condition"))
+
+    # slopes
+    beta_bar = pm.Normal('beta_mu_bar', 0., 1.) 
+    beta_sigma  = pm.Exponential('beta_sigma', 1.)
+    beta_z = pm.Normal('beta_z', 0., 1., dims=("session", "condition"))
+    beta = pm.Deterministic('beta', pm.math.exp(beta_bar + beta_z * beta_sigma), dims=("session", "condition"))
+        
+    l = .5
+    p = pm.Deterministic('p', l + (1-l) * pm.math.invlogit(beta[sid,cid] * (time - t[sid,cid])), dims="obs")
+    y = pm.Binomial('y', p=p, n=n_trials_per_condition, observed=output_data['hits'].values, dims="obs")
+
+with t_hierachical_model:
+    idata = pm.sample(nuts_sampler="numpyro", draws=2000)
+
+# %% 
+# plot hierarchical model
+az.plot_forest(
+    [idata.posterior.sel(condition=0), idata.posterior.sel(condition=1)],  
+    model_names=["C1", "C2"], # This controls the legend/labels
+    var_names=["t"],
+    combined=True,
+    colors=["#1f77b4", "#ff7f0e"],
 )
 
-sns.boxplot(
-    data=t_df, 
-    y="t", 
-    hue="condition",
+az.plot_forest(
+    [idata.posterior.sel(condition=0), idata.posterior.sel(condition=1)],  
+    model_names=["C1", "C2"], # This controls the legend/labels
+    var_names=["beta"],
+    combined=True
 )
-
-plt.figure()
-plt.hist(posterior.beta[...,0].to_numpy().flatten())
-plt.hist(posterior.beta[...,1].to_numpy().flatten())
-
 # %%
