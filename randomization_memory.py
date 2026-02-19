@@ -24,12 +24,21 @@ def get_file_path(image_id):
 
 def generate_encoding_thetas(layout_ids):
     """Convert layouts to angles using a triangle layout"""
-    layouts = np.array([
-        [0,3,5],
-        [1,3,6],
-        [1,4,7], 
-        [2,5,7], 
-    ])
+    if load == 3:
+        layouts = np.array([
+            [0,3,5],
+            [1,3,6],
+            [1,4,7], 
+            [2,5,7], 
+        ])
+    # for load 4 all layout are the same
+    if load == 4: 
+        layouts = np.array([
+            [1,3,5,7],
+            [1,3,5,7],
+            [1,3,5,7],
+            [1,3,5,7],
+        ])
     encoding_layouts = layouts[layout_ids]
     encoding_thetas = np.pi * encoding_layouts/4 
     encoding_thetas = np.round(encoding_thetas,4)
@@ -71,7 +80,7 @@ def generate_wm_mat():
         
         ## counterbalancing across condition*encoding time
         # sample positions (spatial)
-        wm_position = np.concatenate([np.random.choice(3, trials_per_condition, replace=True) for _ in range(n_conditions)])
+        wm_position = np.concatenate([np.random.choice(load, trials_per_condition, replace=True) for _ in range(n_conditions)])
         block_mat[2,:] = wm_position        
         
         # lm sample positions
@@ -92,7 +101,7 @@ def generate_wm_mat():
         block_id = block+1
         block_mat[6,:] = np.repeat(block_id, n_trials)
 
-        # encoding layout id
+        # encoding layout id (there are 4 different layouts for the triangle)
         encoding_layout_id = np.concatenate([np.random.choice(4, trials_per_condition, replace=True) for _ in range(n_conditions)])
         block_mat[7,:] = encoding_layout_id
 
@@ -125,9 +134,9 @@ def generate_wm_mat():
     return design_mat
 
 def generate_practice_mat():
-    """Generate the practice trial design matrix with hard-coded trial parameters."""
+    """Generate the 3 practice trial design matrix with hard-coded trial parameters."""
     practice_mat = np.vstack([
-        np.repeat(nan,3),
+        np.repeat(nan,3), 
         np.array([2,1,0]), 
         np.array([1,0,2]),  
         np.array([2,1,0]),
@@ -137,8 +146,8 @@ def generate_practice_mat():
         np.repeat(nan,3),
         np.arange(3)
     ])
-
     practice_mat = practice_mat.astype(int)
+    
     row_names = [
         "encoding_trial_id",
         "stimulus_condition_index",
@@ -156,36 +165,66 @@ def generate_practice_mat():
 def get_distractor_stimuli():
     """Generate non-overlapping distractor stimulus sets for WM, LM, and catch trials."""
     dist_info = pd.read_csv(os.path.join(dist_stimuli_dir, "image_info.csv"))
+    # exlude some doubled images
+    dist_info = dist_info.loc[~dist_info.diff_id.isin(excluded_dist_ids)]
     
-    # lm 
-    lm_dist_concepts = np.random.choice(dist_info.concept.unique(), lm_trials, replace=False)
+    ## lm
+    # get lm pool
+    concept_counts = dist_info.concept.value_counts()
+    unique_concepts = concept_counts.index[concept_counts==1].to_numpy()
+    double_concepts = concept_counts.index[concept_counts==2].to_numpy()
+    
+    # sample concepts (8 concepts get repeated)
+    lm_dist_repeats = 8
+    missing_n = lm_trials - len(unique_concepts) - lm_dist_repeats
+    double_concepts = np.random.choice(double_concepts, missing_n, replace=False)
+    lm_dist_concepts = np.concat([unique_concepts, double_concepts]).astype(str)
     lm_dist_pool = dist_info.loc[dist_info.concept.isin(lm_dist_concepts)]
-    lm_distractors = lm_dist_pool.groupby("concept")["diff_id"].first().to_numpy()
-    lm_distractors = np.random.permutation(lm_distractors)
-    lm_distractors += 9000
-    
-    # wm
-    # Attention: No trials with several distractors from the same category
-    all_wm_images = all_encoding_trials * load
-    wm_dist_pool = dist_info.loc[~dist_info.concept.isin(lm_dist_concepts)]
-    wm_dist_idx = np.arange(all_wm_images - all_encoding_trials) + 1
-    wm_dist_idx = np.concat([np.random.permutation(wm_dist_idx[i::6]) 
-                             for i in np.random.permutation(range(6))]).flatten() # ensures distance of 6
-    wm_dist_df = wm_dist_pool.iloc[wm_dist_idx,]
-    wm_dist_concepts = wm_dist_df.concept.unique()
-    wm_distractors = wm_dist_df.diff_id.to_numpy()
-    wm_distractors += 9000
+    unique_lm_distractors   = lm_dist_pool.groupby("concept")["diff_id"].first().to_numpy()
+    repeated_lm_distractors = np.random.choice(list(
+        set(lm_dist_pool.groupby("concept")["diff_id"].last().to_numpy())- 
+        set(lm_dist_pool.groupby("concept")["diff_id"].first().to_numpy())
+        ), lm_dist_repeats, replace=False)
+    lm_distractors = np.concat([unique_lm_distractors, repeated_lm_distractors])
 
-    # catch
-    catch_pool = dist_info.loc[~dist_info.concept.isin(wm_dist_concepts)&~dist_info.concept.isin(lm_dist_concepts)]
-    catch_ids = np.random.choice(np.arange(0, len(catch_pool)), ncatch, replace=True)
-    catch_ids = catch_pool.iloc[catch_ids,].diff_id.to_numpy()
-    catch_ids += 9000
+    ## wm
+    # this tries to make sure that there is a broad coverage of categories
+    wm_dist_pool = dist_info.loc[~dist_info.concept.isin(lm_dist_concepts)].copy()
+    wm_dist_pool["category"] = wm_dist_pool.category.fillna("na")
+    wm_distractors = []
+    
+    while len(wm_dist_pool)>=(load-1):
+        cat_counts = wm_dist_pool.category.value_counts()
+        trial_dist = []
+        for j in range(load-1):
+            trial_dist.append(wm_dist_pool.loc[wm_dist_pool.category == cat_counts.index[j],"diff_id"]
+                            .sample(n=1)
+                            .iloc[0])
+        rand_trial = np.random.permutation(trial_dist)
+        wm_distractors.append(rand_trial)
+        wm_dist_pool = wm_dist_pool.loc[~wm_dist_pool.diff_id.isin(trial_dist)]
+
+    wm_distractors = np.vstack(wm_distractors)
+    random_idx = np.random.choice(len(wm_distractors), all_encoding_trials, replace=False)
+    wm_distractors = wm_distractors[random_idx,:].flatten()
+
+    ## catch
+    catch_pool = dist_info.loc[
+        (~dist_info.diff_id.isin(wm_distractors))&
+        (~dist_info.concept.isin(lm_dist_concepts))
+    ]
+    catch_idx = np.random.permutation(np.arange(ncatch)%len(catch_pool))
+    catch_distractors = catch_pool.iloc[catch_idx,].diff_id.to_numpy()
+    
+    # distractor images start index with 9
+    lm_distractors += 9000
+    wm_distractors += 9000  
+    catch_distractors += 9000
 
     distractors = dict(
         wm = wm_distractors,
         lm = lm_distractors,
-        catch = catch_ids
+        catch = catch_distractors
     )
     return distractors
 
@@ -461,6 +500,7 @@ if __name__ == "__main__":
     n_set_ids = settings["stimuli"]["n_set_ids"]
     practice_set_ids = settings["stimuli"]["practice_set_ids"]
     excluded_set_ids = settings["stimuli"]["excluded_set_ids"]
+    excluded_dist_ids = settings["stimuli"]["excluded_dist_ids"]
     image_paths = get_image_paths()
     
     # trial numbers
@@ -498,7 +538,7 @@ if __name__ == "__main__":
 
     # load and encoding time 
     load = settings["memory_experiment"]["load"]
-    assert load == 3, f"Load == {load} is not yet implemented. Set load to 3."
+    assert load in [3,4], f"Load == {load} is not yet implemented. Set load to 3."
 
     # start randomization
     nan = 9999

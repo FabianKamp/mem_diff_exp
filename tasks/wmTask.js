@@ -14,7 +14,11 @@ function convert2cartesian(theta) {
 
 // INSTRUCTIONS
 function generate_instruction_angles(load) {
-    var result = [1,3,6];
+    if (load == 3) {
+        var result = [1,3,6];
+    } else {
+        var result = [1,3,5,7];
+    }
     for (let i = 0; i < load; i++) {
         result[i] *= Math.PI/4;
     }
@@ -46,6 +50,7 @@ function createWMInstructions() {
             images: [
                 "stimuli/instructions/dist1.jpg", 
                 "stimuli/instructions/dist2.jpg", 
+                "stimuli/instructions/dist3.jpg", 
                 "stimuli/instructions/sample1.jpg", 
                 "stimuli/instructions/sample2.jpg",
                 "stimuli/instructions/sample4.jpg"
@@ -60,14 +65,41 @@ function createWMInstructions() {
     // instruction angles
     const button_x = experimentSettings.spatial.button_x
     const button_y = experimentSettings.spatial.button_y
-    var instruction_angles = generate_instruction_angles(experimentSettings.memory_experiment.load)
+    var load = experimentSettings.memory_experiment.load
+    var instruction_angles = generate_instruction_angles(load)
     var sample_pos = convert2cartesian(instruction_angles[1])
     var instruction_files = ["dist1.jpg", "sample1.jpg", "dist2.jpg"] // "dist3.jpg", "dist4.jpg", "dist5.jpg", "dist6.jpg"
+    if (experimentSettings.memory_experiment.load == 4){
+        instruction_files.push("dist3.jpg")
+    }
+
     var encoding_positions = [] 
     for (let i = 0; i < instruction_angles.length; i++) {
         encoding_positions.push(convert2cartesian(instruction_angles[i]))
     }
     
+    var image_containers = ``
+    for (let i = 0; i < load; i++) {
+        image_containers += `
+            <div class="image-container"> 
+                    <img src="stimuli/instructions/${instruction_files[i]}" class="image-object" 
+                    style="left: calc(50% - ${encoding_positions[i].x}px); top: calc(50% + ${encoding_positions[i].y}px);"/>
+            </div>
+            `
+    }
+
+    var square_containers = `
+        <div class="square plain" style="left: calc(50% - ${encoding_positions[0].x}px); top: calc(50% + ${encoding_positions[0].y}px);"></div>
+        <div class="square" style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
+            ?
+        </div>
+        <div class="square plain" style="left: calc(50% - ${encoding_positions[2].x}px); top: calc(50% + ${encoding_positions[2].y}px);"></div>
+        `
+    if (load == 4){
+        square_containers += `<div class="square plain" style="left: calc(50% - ${encoding_positions[3].x}px); top: calc(50% + ${encoding_positions[3].y}px);"></div>`
+    }
+    
+
     instruction_timeline.push({
         type: jsPsychInstructions,
         key_forward: 'ArrowRight',
@@ -88,25 +120,11 @@ function createWMInstructions() {
             ],
             // 1/5
             [
-            `<div>
-                <div class="image-container"> 
-                        <img src="stimuli/instructions/${instruction_files[0]}" class="image-object" 
-                        style="left: calc(50% - ${encoding_positions[0].x}px); top: calc(50% + ${encoding_positions[0].y}px);"/>
-                </div>
-                <div class="image-container"> 
-                        <img src="stimuli/instructions/${instruction_files[1]}" class="image-object" 
-                        style="left: calc(50% - ${encoding_positions[1].x}px); top: calc(50% + ${encoding_positions[1].y}px);"/>
-                </div>
-                <div class="image-container"> 
-                        <img src="stimuli/instructions/${instruction_files[2]}" class="image-object" 
-                        style="left: calc(50% - ${encoding_positions[2].x}px); top: calc(50% + ${encoding_positions[2].y}px);"/>
-                </div>
-                
+            `<div>                
                 <div class="cross"><div class="cross-vertical"></div><div class="cross-horizontal"></div></div>
-                
                 <p class="instruction-paragraph-left">
                     <strong>1/5 Memorize</strong><br><br>
-                    In each trial we will ask you to memorize <strong>3 images</strong>.
+                    In each trial we will ask you to memorize <strong>${load} images</strong>.
                     <br><br>
                     The images will be shown for about <strong>0.5 to 2 seconds</strong>. 
                     The time varies from trial to trial — some trials are fast, others are slower.
@@ -115,7 +133,7 @@ function createWMInstructions() {
                     <br><br><br>
                     Note: The images shown in this experiment are computer-generated, not real photographs.
                 </p>
-            </div>`
+            ` + image_containers + `</div>`
             ],
             // 2/5
             [
@@ -135,12 +153,6 @@ function createWMInstructions() {
             // 3/5
             [
             `
-            <div class="square plain" style="left: calc(50% - ${encoding_positions[0].x}px); top: calc(50% + ${encoding_positions[0].y}px);"></div>
-            <div class="square" style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
-                ?
-            </div>
-            <div class="square plain" style="left: calc(50% - ${encoding_positions[2].x}px); top: calc(50% + ${encoding_positions[2].y}px);"></div>
-
             <div>
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
@@ -154,7 +166,7 @@ function createWMInstructions() {
             <div class="rectangle"
                 style="top: calc(50% + ${button_y}px);">
             </div>
-            
+
             <p class="instruction-paragraph-left">
                 <strong>3/5 Which image matches the original image better?</strong>
                 <br><br> 
@@ -167,17 +179,11 @@ function createWMInstructions() {
                 The <strong>? mark</strong> indicates the location of the original image.
                 <br>                
             </p>
-            `
+            ` + square_containers
             ],
             // 4/5
             [
-            `
-            <div class="square plain" style="left: calc(50% - ${encoding_positions[0].x}px); top: calc(50% + ${encoding_positions[0].y}px);"></div>
-            <div class="square" style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
-                ?
-            </div>
-            <div class="square plain" style="left: calc(50% - ${encoding_positions[2].x}px); top: calc(50% + ${encoding_positions[2].y}px);"></div>
-                
+            `  
             <div>
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
@@ -203,17 +209,11 @@ function createWMInstructions() {
                 Note: Before selecting any image you have to move your mouse 
                 to enable the buttons.
             </p>
-            `
+            ` + square_containers
             ],
             // 5/5
             [
             `
-            <div class="square plain" style="left: calc(50% - ${encoding_positions[0].x}px); top: calc(50% + ${encoding_positions[0].y}px);"></div>
-            <div class="square" style="left: calc(50% - ${sample_pos.x}px); top: calc(50% + ${sample_pos.y}px);">
-                ?
-            </div>
-            <div class="square plain" style="left: calc(50% - ${encoding_positions[2].x}px); top: calc(50% + ${encoding_positions[2].y}px);"></div>
-                
             <div>
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% + ${button_x}px);" src="stimuli/instructions/sample3.jpg" class="image-object"/>
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
@@ -238,7 +238,7 @@ function createWMInstructions() {
                 Your progress will be shown in a bar at the bottom of the screen.
                 <br>
             </p>
-            `
+            ` + square_containers
             ],
         ], 
         on_finish: function(data) { 
