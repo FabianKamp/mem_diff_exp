@@ -8,7 +8,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 import pickle
 
 #%% variable set up
-wave_code = "M-PD"
+wave_code = "M-PF"
 subject_ids = [1,2,3,4,5,6,7,8,9] #[2,3,4,5,6,7,9,10,11,21,22,23]
 
 show = False
@@ -24,7 +24,7 @@ figure_data = {}
 if os.path.basename(os.getcwd()) == "analysis": 
     os.chdir("..")
 
-out_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}.csv" 
+out_files = [f"./output_data/raw/{wave_code}/{wave_code}-{i:03d}-{suffix}.csv" 
              for i in subject_ids for suffix in "ABC"]
 out_files = filter(os.path.exists, out_files)
 
@@ -188,13 +188,14 @@ mixed_data["response_stimulus"] = mixed_data.apply(
     lambda row: row.stimulus_left if row.response == 0 else row.stimulus_right, axis=1
     )
 
-mixed_data.response_stimulus = (
+mixed_data.response_stimulus = pd.Categorical(
     mixed_data.response_stimulus
     .str.split("/")
     .str[-1]
     .str[0]
     .map({'3': "semantic", '4': "visual"})
 )
+
 
 response_counts = (
     mixed_data

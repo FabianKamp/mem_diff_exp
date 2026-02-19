@@ -11,7 +11,7 @@ import textwrap
 
 #%% 
 # variable set up
-wave_code = "M-PD"
+wave_code = "M-PF"
 subject_ids = [1,2,3,4,5,6,7,8,9] #[2,3,4,5,6,7,9,10,11,21,22,23]
 all_figures = []
 save = True
@@ -224,6 +224,9 @@ for session, outdata in all_data.groupby("session_id"):
     catch_trials = outdata.loc[
         (outdata.trial_type=="catch")&
         (outdata.phase=="recognition")].copy()
+    print("No response catch trials:", catch_trials.response.isna().sum())
+    catch_trials = catch_trials.loc[catch_trials.response.notna()]
+    
     catch_trials["correct"] = (catch_trials.correct_response.astype(int) == catch_trials.response.astype(int)).astype(int)
     if i>0: assert len(catch_trials) == ncatch, "Number of catch trials is not equal across sessions."
     
@@ -248,7 +251,7 @@ all_figures.append(fig)
 
 # %% 
 # Browser interaction
-record_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}_browser_records.csv" 
+record_files = [f"./output_data/raw/{wave_code}/{wave_code}-{i:03d}-{suffix}_browser_records.csv" 
                for i in subject_ids for suffix in "ABC"]
 record_files = filter(os.path.exists, record_files)
 

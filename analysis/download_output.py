@@ -10,9 +10,9 @@ user= os.getenv("EXP_USER")
 password= os.getenv("EXP_PASSWORD")
 root_url = os.getenv("EXP_URL")
 
-wave_id = "M-PE"
+wave_id = "M-PF"
 default_csv = f"./token/token_{wave_id}.csv"
-default_out_dir = f"./output_data/{wave_id}"
+default_out_dir = f"./output_data/raw/{wave_id}"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--token_csv', type=str, default=default_csv)
