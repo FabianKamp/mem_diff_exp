@@ -3,18 +3,19 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 import os
 
-# check cwd
-if os.path.basename(os.getcwd()) == "analysis": 
-    os.chdir("..")
+import seaborn as sns
 colors_palette = ["#F2857D","#7EBDC3","#9ED9A3","#F5B971"]
 sns.set_palette(colors_palette)
 
 # %% 
 # load data
-# define exclusion criteria
+# check cwd
+if os.path.basename(os.getcwd()) == "analysis": 
+    os.chdir("..")
+
+# define pilots
 session_ids = {
     "M-PE": list(range(1,12)),
     "M-PD": list(range(1,12)),

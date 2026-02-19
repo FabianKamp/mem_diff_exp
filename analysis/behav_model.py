@@ -6,93 +6,35 @@ from itertools import product
 import pymc as pm
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
-import seaborn as sns
 from tqdm.notebook import tqdm
 import arviz as az
 import os
+
+import seaborn as sns
 colors_palette = ["#F2857D","#7EBDC3","#9ED9A3","#F5B971"]
 sns.set_palette(colors_palette)
 
-# %% 
-# load data
-# define exclusion criteria
-d_excluded = [8]
-e_excluded = [5,6]
-
-session_ids = {
-    "M-PD": list(set(range(1,12))-set(d_excluded)),
-    "M-PE": list(set(range(1,12))-set(e_excluded))
-}
-
+# %%
+# check cwd
 if os.path.basename(os.getcwd()) == "analysis": 
     os.chdir("..")
 
-out_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}.csv" 
-             for wave_code in session_ids.keys()
-             for i in session_ids[wave_code] 
-             for suffix in "ABCD" 
-             ]
+# load data
+output_data = pd.read_csv("./output_data/aggregated/aggregated_wm-vs.csv")
 
-out_files = filter(os.path.exists, out_files)
-all_data = []
-for file in out_files: 
-    # print(file)
-    data = pd.read_csv(file)   
-    all_data.append(data)
+# exclude bad data
+bad_sessions = ['M-PD-008-B', 'M-PE-005-B', 'M-PE-006-B', 'M-PE-010-B']
+output_data = output_data.loc[~output_data.session_id.isin(bad_sessions)]
 
-all_data = pd.concat(all_data) 
-
-#%% 
-# preprocess working memory data
-output_data = all_data.loc[
-    (all_data.trial_type=='wm') & 
-    (all_data.condition_name!='mixed') & 
-    (all_data.phase == "recognition") 
-    ].copy()
-print("NA responses: ", np.sum(output_data.response.isna()))
-
-output_data.response = output_data.response.astype("Int64")
-output_data.correct_response = output_data.correct_response.astype("Int64")
-
-output_data["correct"] = (output_data.response == output_data.correct_response)
-output_data["time"] = output_data.encoding_time/1e3
-
-# aggregate
-output_data = (output_data
-    .groupby(["session_id", "condition", "condition_name", "time"])
-    .agg(
-        hits = ("correct", "sum"),
-        responses = ("correct", "count"),
-        accuracy = ("correct", "mean")
-    )
-    .reset_index()
-    .assign(log_time = lambda d: np.log(d["time"]))
-)
-
+# quick check 
 box = sns.boxplot(
     data=output_data, 
-    x="time", 
+    x="bin_log_time", 
     y="accuracy", 
     hue="condition_name", 
     native_scale=True,
-    width=.5, 
     palette=colors_palette[:2]
     )
-box.grid(alpha=.1)
-
-fig = plt.figure()
-box = sns.boxplot(
-    data=output_data, 
-    x="log_time", 
-    y="accuracy", 
-    hue="condition_name", 
-    native_scale=True,
-    width=.5, 
-    palette=colors_palette[:2]
-    )
-box.grid(alpha=.1)
-
-
 # %% 
 # general model configuration
 n_trials_per_condition = 13
@@ -199,16 +141,16 @@ with pm.Model(coords=coords) as cp_log_model:
 
 # %%
 # posterior predicitive -- log scale complete pooled (cp)
-ppc_times = np.linspace(-1,3,20)
+ppc_times = np.geomspace(.1, 3., num=50, endpoint=True).round(1)
 predictions = dict()
 for cname, cid in condition_map.items():
-    with cp_model:
+    with cp_log_model:
         pm.set_data(
             dict(
                 time = ppc_times, 
-                cid = np.repeat(cid,20)
+                cid = np.repeat(cid,50)
                 ), 
-            coords={"obs": range(20)}
+            coords={"obs": range(50)}
         )
         predictions[cname] = pm.sample_posterior_predictive(
             idata["complete_pooling_log"].sel(draw=slice(None, None, 5)), 
@@ -221,6 +163,13 @@ ax.plot(ppc_times, predictions["semantic"], c=colors_palette[0], alpha=.01);
 ax.plot(ppc_times, predictions["visual"], c=colors_palette[1], alpha=.01);
 ax.plot(ppc_times, predictions["semantic"].mean("sample"), label="semantic", linewidth=3, c=colors_palette[0]);
 ax.plot(ppc_times, predictions["visual"].mean("sample"), label="visual", linewidth=3, c=colors_palette[1]);
+ax.legend()
+
+fig, ax = plt.subplots()
+ax.plot(np.log(ppc_times), predictions["semantic"], c=colors_palette[0], alpha=.01);
+ax.plot(np.log(ppc_times), predictions["visual"], c=colors_palette[1], alpha=.01);
+ax.plot(np.log(ppc_times), predictions["semantic"].mean("sample"), label="semantic", linewidth=3, c=colors_palette[0]);
+ax.plot(np.log(ppc_times), predictions["visual"].mean("sample"), label="visual", linewidth=3, c=colors_palette[1]);
 ax.legend()
 
 # plot posteriors
@@ -268,7 +217,7 @@ with pm.Model(coords=coords) as pp_model:
 # %%
 # plot multilevel model
 model_key = "partial_pooling"
-fig, axes = plt.subplots(1,2, figsize=(10,4))
+fig, axes = plt.subplots(1,2, figsize=(10,6))
 
 # threshold
 az.plot_forest(
@@ -297,5 +246,9 @@ az.plot_forest(
     colors='white',
     ax = axes[1]
 )
+
+# %%
+
+# %%
 
 # %%
