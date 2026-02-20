@@ -167,6 +167,13 @@ def get_distractor_stimuli():
     dist_info = pd.read_csv(os.path.join(dist_stimuli_dir, "image_info.csv"))
     # exlude some doubled images
     dist_info = dist_info.loc[~dist_info.diff_id.isin(excluded_dist_ids)]
+
+    # catch ids 
+    ## catch
+    catch_pool = [270,271,263,264]
+    catch_idx = np.random.permutation(np.arange(ncatch)%len(catch_pool))
+    catch_distractors = np.array(catch_pool)[catch_idx]
+    dist_info = dist_info.loc[~dist_info.diff_id.isin(catch_pool)] # eliminate from pool
     
     ## lm
     # get lm pool
@@ -189,7 +196,7 @@ def get_distractor_stimuli():
 
     ## wm
     # this tries to make sure that there is a broad coverage of categories
-    wm_dist_pool = dist_info.loc[~dist_info.concept.isin(lm_dist_concepts)].copy()
+    wm_dist_pool = dist_info.loc[(~dist_info.concept.isin(lm_dist_concepts))].copy()
     wm_dist_pool["category"] = wm_dist_pool.category.fillna("na")
     wm_distractors = []
     
@@ -207,14 +214,6 @@ def get_distractor_stimuli():
     wm_distractors = np.vstack(wm_distractors)
     random_idx = np.random.choice(len(wm_distractors), all_encoding_trials, replace=False)
     wm_distractors = wm_distractors[random_idx,:].flatten()
-
-    ## catch
-    catch_pool = dist_info.loc[
-        (~dist_info.diff_id.isin(wm_distractors))&
-        (~dist_info.concept.isin(lm_dist_concepts))
-    ]
-    catch_idx = np.random.permutation(np.arange(ncatch)%len(catch_pool))
-    catch_distractors = catch_pool.iloc[catch_idx,].diff_id.to_numpy()
     
     # distractor images start index with 9
     lm_distractors += 9000
