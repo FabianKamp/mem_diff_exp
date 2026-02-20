@@ -2,7 +2,7 @@
     "wave": {
         "version_id": "M",
         "wave_id": "M-PG",
-        "subject_number": 12
+        "subject_number": 21
     },
     "stimuli": {
         "exp_stimuli_dir": "stimuli/exp_stimuli_pilot",
@@ -43,9 +43,9 @@
     },
     "timing": {
         "encoding_times": [
-            400,
-            700,
-            1200,
+            500,
+            800,
+            1250,
             2000
         ],
         "memory_delay": 3000,
@@ -80,5 +80,5 @@
     "feedback": {
         "duration": 10000
     },
-    "seed": 1094042546
+    "seed": 507520938
 }

@@ -107,7 +107,7 @@ def latin_square_check(file_list):
 
 if __name__ == "__main__":
 
-    prefix = "M-PF"
+    prefix = "M-PG"
     files = sorted(glob.glob(f"./input_data/{prefix}/*{prefix}*.json"))
     files = [f for f in files if '999' not in os.path.basename(f)]
 

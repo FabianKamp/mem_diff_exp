@@ -2,7 +2,7 @@
     "wave": {
         "version_id": "M",
         "wave_id": "M-PG",
-        "subject_number": 12
+        "subject_number": 21
     },
 
     "stimuli": {
@@ -28,7 +28,7 @@
     },
 
     "timing": {
-        "encoding_times": [400,700,1200,2000], 
+        "encoding_times": [500,800,1250,2000], 
         "memory_delay": 3000,
         "wm_inter_trial_delay": 2500,
         "lm_inter_trial_delay": 2000,
