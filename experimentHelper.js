@@ -318,43 +318,68 @@ function preloadBlock(input_data, jsPsych) {
         .filter(val => val.endsWith('.jpg'));
 
     preload = 
-        {timeline: [{
-            type: jsPsychPreload,
-            record_data: true,
-            show_progress_bar: true,
-            message:  function() {               
-                html = 
+        {timeline: [
+            {
+                type: jsPsychPreload,
+                record_data: true,
+                show_progress_bar: true,
+                message:  function() {               
+                    html = 
+                        `<div>
+                            <p class="instruction-header">
+                                <strong>Loading</strong>
+                            </p>
+                            <p class="instruction-paragraph">
+                                We are preparing the experiment.. 
+                                <br>
+                                Please wait while we load the necessary resources. 
+                                This may take a moment.
+                                <br>
+                            </p>
+                        </div>`
+                    return html 
+                    },
+                images: all_image_files,
+                on_finish: function(data) { 
+                    var preload_duration = jsPsych.data.get().last(1).values()[0].time_elapsed - jsPsych.data.get().last(2).values()[0].time_elapsed
+                    
+                    if (data.subject_id == 999) {
+                        console.log("Block preloading duration: ", preload_duration)
+                    }
+                    
+                    data.stimulus = null;
+                    data.trial_type = "preload-block";
+                    data.preload_duration = preload_duration;
+                    }
+            },
+            {
+                type: jsPsychHtmlKeyboardResponse,
+                trial_duration: 30000,
+                stimulus:
                     `<div>
-                        <p class="instruction-header">
-                            <strong>Loading</strong>
-                        </p>
-                        <p class="instruction-paragraph">
-                            We are preparing the experiment.. 
-                            <br>
-                            Please wait while we load the necessary resources. 
-                            This may take a moment.
-                            <br>
-                        </p>
-                    </div>`
-                return html 
-                },
-            images: all_image_files,
-            on_finish: function(data) { 
-                var preload_duration = jsPsych.data.get().last(1).values()[0].time_elapsed - jsPsych.data.get().last(2).values()[0].time_elapsed
-                
-                if (data.subject_id == 999) {
-                    console.log("Block preloading duration: ", preload_duration)
+                    <p class="instruction-header">
+                        <strong>Experiment loaded</strong>
+                    </p>
+                    <p class="instruction-paragraph">
+                        The experiment loaded succesfully!
+                        Please press <strong>Enter</strong> to start,
+                        or wait 30 seconds to begin automatically.
+                    </p>
+                    <p class="continue-prompt">
+                        To end the experiment press <strong>Enter</strong>
+                    </p>
+                    </div>`, 
+                key_forward: 'Enter',
+                on_finish: function(data){
+                    data.stimulus = null;
+                    data.trial_type = "preload-successfull";
                 }
-                
-                data.stimulus = null;
-                data.trial_type = "preload-block";
-                data.preload_duration = preload_duration;
-                }
-            }], 
+            },
+        ], 
         conditional_function: function() {
             return jsPsych.data.dataProperties.preloadBlock
+            }
         }
-    }
     return preload
 }
 

@@ -10,7 +10,7 @@ user= os.getenv("EXP_USER")
 password= os.getenv("EXP_PASSWORD")
 root_url = os.getenv("EXP_URL")
 
-wave_id = "M-PF"
+wave_id = "M-PG"
 default_csv = f"./token/token_{wave_id}.csv"
 default_out_dir = f"./output_data/raw/{wave_id}"
 

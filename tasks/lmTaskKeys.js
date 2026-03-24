@@ -287,86 +287,27 @@ function createLM(timeline_variables, jsPsych) {
     
     // Show cursor
     lm_timeline.push(show_cursor())
-    
-    // Mouse Movement Check (same as the recognition slide, but with disabled buttons)
-    lm_timeline.push(
-        {
-            type: jsPsychHtmlKeyboardResponse,
-            choices: "NO_KEYS",
-            trial_duration: 10000, // skip automatically after 10sec
-
-            stimulus: function() {
-                var foil_file = jsPsych.evaluateTimelineVariable(`recognition_foil_file`)
-                var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
-                var left_target = jsPsych.evaluateTimelineVariable(`left_target`) 
-
-                if (left_target === 1) {
-                    var left_image = target_file
-                    var right_image = foil_file
-                } else {
-                    var left_image = foil_file
-                    var right_image = target_file 
-                }
-
-                var html =
-                    `<div style="width:500px; height: 60vh;">
-                    <p style="font-family: 'Courier New', monospace; font-size: x-large; 
-                        position: absolute; top: 20%; left: 50%; max-width: 400px;
-                        transform: translateX(-50%); color:#4682B4; text-align: center;">
-                        <strong>Which image do you remember from the previous task?</strong>
-                    </p>
-                    <div class="rectangle"></div>
-                    </div>
-
-                    <!-- Disabled buttons that look like the real ones -->
-                    <div style="width: 126px; height: 126px; 
-                                position: absolute; top: 50%; left: calc( 50% - ${button_x}px); transform: translate(-50%, -50%);">
-                        <img src="${left_image}" class="image-button" style="pointer-events: none;"/>
-                    </div>
-                    <div style="width: 126px; height: 126px; 
-                                position: absolute; top: 50%; left: calc( 50% + ${button_x}px); transform: translate(-50%, -50%);">
-                        <img src="${right_image}" class="image-button" style="pointer-events: none;"/>
-                    </div>`
-                
-                // progress bar
-                var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                var progress_percent = (trial_id / total_trials) * 100      
-
-                var progress_bar = 
-                    `<div class="progress-bar">
-                        <div class="progress-bar-track">
-                            <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
-                        </div>
-                    </div>`
-                html += progress_bar
-                return html;
-            },
-
-            on_load: function() {
-                const mouseHandler = createMouseHandler(jsPsych, 50, crop_mouse_history);
-                document.addEventListener('mousemove', mouseHandler);
-            },
-
-            on_finish: function(data) {
-                data.trial_type = "mouse-movement-check"
-                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                data.timestamp = new Date().toLocaleTimeString()
-            }
-        }
-    )
 
     // Recognition Slide
     lm_timeline.push(
         {
-            type: jsPsychHtmlButtonResponse,
-            choices: ["left", "right"],
-            button_layout: 'grid',
-            trial_duration: 31000,
+            type: jsPsychHtmlKeyboardResponse,
+            choices: ["ArrowLeft", "ArrowRight"],
+            trial_duration: 10000,
 
-            button_html: (choice) => {
+            on_load: function() {
+                startTrialTimer(
+                    radius=15,
+                    delay=7000,
+                    duration=3000,
+                    top=50,
+                    color="#ff0000"
+                );
+            },
+            stimulus: function() {
                 var foil_file = jsPsych.evaluateTimelineVariable(`recognition_foil_file`)
                 var target_file = jsPsych.evaluateTimelineVariable(`recognition_target_file`)
-                var left_target = jsPsych.evaluateTimelineVariable(`left_target`) 
+                var left_target = jsPsych.evaluateTimelineVariable(`left_target`)
 
                 if (left_target === 1) {
                     var left_image = target_file
@@ -375,37 +316,51 @@ function createLM(timeline_variables, jsPsych) {
                     var left_image = foil_file
                     var right_image = target_file 
                 }
-            
-                left_button = 
-                    `<div style="cursor: pointer; width: 126px; height: 126px; 
-                                position: absolute; top: 50%; left: calc( 50% - ${button_x}px); transform: translate(-50%, -50%);">
-                    <img src="${left_image}" class="image-button" />
-                    </div>`
 
-                right_button = 
-                    `<div style="cursor: pointer; width: 126px; height: 126px; 
-                                position: absolute; top: 50%; left: calc( 50% + ${button_x}px); transform: translate(-50%, -50%);">
-                    <img src="${right_image}" class="image-button"/>
-                    </div>`
-            
-                if (choice == "left") {
-                    return left_button;
-                } else {
-                    return right_button;
-                }
-            },
-
-            stimulus: function() {
                 var html =
                     `<div style="width:500px; height: 60vh;">
                     <p style="font-family: 'Courier New', monospace; font-size: x-large; 
-                        position: absolute; top: 20%; left: 50%; max-width: 400px;
+                        position: absolute; top: 20%; left: 50%; max-width: 450px;
                         transform: translateX(-50%); color:#4682B4; text-align: center;">
                         <strong>Which image do you remember from the previous task?</strong>
                     </p>
                     <div class="rectangle"></div>
                     </div>`
                 
+                var left_arrow_emoji = 
+                    `
+                    <div style="position: absolute; top: calc(50% + 100px); left: calc(50% - 24px); 
+                    transform: translateX(-50%); font-size: 30px;">&larr;
+                    </div>
+                    `
+                 
+                var right_arrow_emoji = 
+                    `
+                    <div style="position: absolute; top: calc(50% + 100px); left: calc(50% + 24px); 
+                    transform: translateX(-50%); font-size: 30px;">&rarr;
+                    </div>
+                    `
+
+                var left_button =
+                    `
+                    <div>
+                        <img style="position: absolute; top: 50%; left: calc( 50% - ${button_x}px);"
+                                    src="${left_image}" class="image-object"/>
+                    </div>
+                    
+                    `
+
+                var right_button =
+                    `
+                    <div>
+                        <img style="position: absolute; top: 50%; left: calc( 50% + ${button_x}px);"
+                                    src="${right_image}" class="image-object"/>
+                    </div>
+                    `
+                
+                html += left_button + left_arrow_emoji
+                html += right_button + right_arrow_emoji
+
                 // progress bar
                 var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 var progress_percent = (trial_id / total_trials) * 100      
@@ -417,15 +372,14 @@ function createLM(timeline_variables, jsPsych) {
                         </div>
                     </div>`
                 html += progress_bar
-                
+
                 return html;
             },
-
             on_load: function() {
                 startTrialTimer(
                     radius=4,
-                    delay=25000,
-                    duration=5000, 
+                    delay=7000,
+                    duration=3000, 
                     top=50, 
                     color="#f57c00"
                 );
@@ -448,6 +402,13 @@ function createLM(timeline_variables, jsPsych) {
                     data.stimulus_left = foil_file
                     data.stimulus_right = target_file
                 }
+
+                // recode response
+                if (data.response === 'ArrowLeft') {
+                    data.response = 0
+                } else if (data.response === 'ArrowRight') {
+                    data.response = 1
+                } 
 
                 data.phase = 'recognition'
                 data.trial_type = jsPsych.evaluateTimelineVariable('trial_type') 
@@ -538,6 +499,19 @@ function createLM(timeline_variables, jsPsych) {
                         `
                     }
 
+                    var arrow_emojis = 
+                        `
+                        <div style="position: absolute; top: calc(50% + 100px); left: calc(50% - 24px); 
+                        transform: translateX(-50%); font-size: 30px;">&larr;
+                        </div>
+
+                        <div style="position: absolute; top: calc(50% + 100px); left: calc(50% + 24px); 
+                        transform: translateX(-50%); font-size: 30px;">&rarr;
+                        </div>
+                        `
+
+                    html += arrow_emojis
+
                     // progress bar
                     var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                     var progress_percent = (trial_id / total_trials) * 100
@@ -564,26 +538,31 @@ function createLM(timeline_variables, jsPsych) {
     )
 
     // Time-out
-    lm_timeline.push(    
+    lm_timeline.push(
         {
             timeline: [{
-                type: jsPsychHtmlKeyboardResponse, 
-                stimulus: 
-                    `<div>
-                        <p class="instruction-header" style="color: #f57c00;">
-                            <strong>⏸ Time Out</strong>
-                        </p>
-                        <p class="instruction-paragraph">
-                            You did not respond in the last trial.<br><br>
-                            <strong style="color: #e65100;">Please remember to respond within 30 seconds after the images appear.</strong><br><br>
-                            You're doing well! Let's stay focused until the next break.
-                        </p>
-                        <p class="continue-prompt" style="color: #f57c00;">
-                            Press <strong>Enter</strong> to continue
-                        </p>
-                    </div>`,
+                type: jsPsychHtmlKeyboardResponse,
                 choices: ['Enter'],
-                on_finish: function(data) { 
+                stimulus: function() {
+                    html = 
+                        `<div>
+                            <p class="instruction-header" style="color: #ff0000;">
+                                <strong>⏸ Time Out</strong>
+                            </p>
+                            <p class="instruction-paragraph">
+                                You did not respond in the last trial.<br><br>
+                                <strong style="color: #ff0000;">Please remember to respond within 30 seconds after the images appear.</strong>
+                                <br><br>
+                                You're doing well! Let's stay focused until the next break.
+                            </p>
+                            <p class="continue-prompt" style="color: #000000;">
+                                Press <strong>Enter</strong> to continue
+                            </p>
+                        </div>`;
+                    
+                    return html
+                },
+                on_finish: function(data) {
                     data.stimulus = null;
                     data.trial_type = "timeout";
                     data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
@@ -593,7 +572,7 @@ function createLM(timeline_variables, jsPsych) {
                 return jsPsych.data.get().last(1).values()[0].timed_out;
             }
         }
-    ) 
+    )
 
     return {timeline:lm_timeline, timeline_variables:timeline_variables};
 }

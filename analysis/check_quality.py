@@ -11,8 +11,8 @@ import textwrap
 
 #%% 
 # variable set up
-wave_code = "M-PF"
-subject_ids = [1,2,3,4,5,6,7,8,9] #[2,3,4,5,6,7,9,10,11,21,22,23]
+wave_code = "M-PG"
+subject_ids = np.arange(1,16) #[2,3,4,5,6,7,9,10,11,21,22,23]
 all_figures = []
 save = True
 
@@ -21,7 +21,7 @@ save = True
 if os.path.basename(os.getcwd()) == "analysis": 
     os.chdir("..")
 
-out_files = [f"./output_data/{wave_code}/{wave_code}-{i:03d}-{suffix}.csv" 
+out_files = [f"./output_data/raw/{wave_code}/{wave_code}-{i:03d}-{suffix}.csv" 
              for i in subject_ids for suffix in "ABC"]
 out_files = filter(os.path.exists, out_files)
 

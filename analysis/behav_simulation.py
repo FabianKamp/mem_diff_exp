@@ -55,7 +55,6 @@ def boxplot_idata(data, ax):
         c="k",
         linewidth=.1,
         )
-
     ax.grid(alpha=.1)
 
 # %%

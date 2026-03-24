@@ -8,8 +8,11 @@ from matplotlib.backends.backend_pdf import PdfPages
 import pickle
 
 #%% variable set up
-wave_code = "M-PF"
-subject_ids = [1,2,3,4,5,6,7,8,9] #[2,3,4,5,6,7,9,10,11,21,22,23]
+wave_code = "M-PG"
+subject_ids = np.arange(1,16) #[2,3,4,5,6,7,9,10,11,21,22,23]
+exclude = 6
+
+subject_ids = subject_ids[subject_ids!=exclude]
 
 show = False
 save = True
@@ -34,7 +37,7 @@ for file in out_files:
     all_data.append(data)
 
 all_data = pd.concat(all_data) 
-n_subjects = len(subject_ids)
+n_subjects = all_data.session_id.nunique()
 
 #%% Preprocess working memory data
 # NAN = 9999
