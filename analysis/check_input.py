@@ -107,18 +107,19 @@ def latin_square_check(file_list):
 
 if __name__ == "__main__":
 
-    prefix = "M-PG"
+    prefix = "M-PH"
     files = sorted(glob.glob(f"./input_data/{prefix}/*{prefix}*.json"))
     files = [f for f in files if '999' not in os.path.basename(f)]
 
     old_dict = {}
     latin_list = []
     for i, f in enumerate(files):
-        if i == 0:
-            print(f"Count check: {f} ...", end="", flush=True)
+        if i % 3 == 0:
+            print(f"Count check: {f} ...", end="\n", flush=True)
             check_wm_input(f)
             check_lm_input(f)
-        
+    
+    for i, f in enumerate(files):  
         latin_list.append(f)
         if len(latin_list) == 3:
             print("Latin square check: ", latin_list, end="\t", flush=True)
