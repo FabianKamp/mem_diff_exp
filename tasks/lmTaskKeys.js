@@ -29,7 +29,7 @@ function createLMInstructions() {
             choices: ['Enter'],
             on_load: function() {
                 startTrialTimer(
-                    radius=12,
+                    radius=20,
                     delay=100,
                     duration=120000,
                     top=80,
@@ -82,10 +82,10 @@ function createLMInstructions() {
                     <img style="position: absolute; top: 50%; left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
                 </div>
                 <div 
-                    style="position: absolute; top: calc(50% + 100px); left: calc(50% - 24px); transform: translateX(-50%); font-size: 30px;">&larr;
+                    style="position: absolute; top: calc(50% + 80px); left: calc(50% - 24px); transform: translateX(-50%); font-size: 30px;">&larr;
                 </div>
                 <div 
-                    style="position: absolute; top: calc(50% + 100px); left: calc(50% + 24px); transform: translateX(-50%); font-size: 30px;">&rarr;
+                    style="position: absolute; top: calc(50% + 80px); left: calc(50% + 24px); transform: translateX(-50%); font-size: 30px;">&rarr;
                 </div>
                 
                 <p class="instruction-paragraph-left">
@@ -110,10 +110,10 @@ function createLMInstructions() {
                     <img style="position: absolute; top: 50%; left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
                 </div>
                 <div 
-                    style="position: absolute; top: calc(50% + 100px); left: calc(50% - 24px); transform: translateX(-50%); font-size: 30px;">&larr;
+                    style="position: absolute; top: calc(50% + 80px); left: calc(50% - 24px); transform: translateX(-50%); font-size: 30px;">&larr;
                 </div>
                 <div 
-                    style="position: absolute; top: calc(50% + 100px); left: calc(50% + 24px); transform: translateX(-50%); font-size: 30px;">&rarr;
+                    style="position: absolute; top: calc(50% + 80px); left: calc(50% + 24px); transform: translateX(-50%); font-size: 30px;">&rarr;
                 </div>
                 
                 <p class="instruction-paragraph-left">
@@ -137,10 +137,10 @@ function createLMInstructions() {
                     <img style="position: absolute; top: 50%; left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
                 </div>
                 <div 
-                    style="position: absolute; top: calc(50% + 100px); left: calc(50% - 24px); transform: translateX(-50%); font-size: 30px;">&larr;
+                    style="position: absolute; top: calc(50% + 80px); left: calc(50% - 24px); transform: translateX(-50%); font-size: 30px;">&larr;
                 </div>
                 <div 
-                    style="position: absolute; top: calc(50% + 100px); left: calc(50% + 24px); transform: translateX(-50%); font-size: 30px;">&rarr;
+                    style="position: absolute; top: calc(50% + 80px); left: calc(50% + 24px); transform: translateX(-50%); font-size: 30px;">&rarr;
                 </div>
                 
                 <p class="instruction-paragraph-left">
@@ -329,14 +329,14 @@ function createLM(timeline_variables, jsPsych) {
                 
                 var left_arrow_emoji = 
                     `
-                    <div style="position: absolute; top: calc(50% + 100px); left: calc(50% - 24px); 
+                    <div style="position: absolute; top: calc(50% + 80px); left: calc(50% - 24px); 
                     transform: translateX(-50%); font-size: 30px;">&larr;
                     </div>
                     `
                  
                 var right_arrow_emoji = 
                     `
-                    <div style="position: absolute; top: calc(50% + 100px); left: calc(50% + 24px); 
+                    <div style="position: absolute; top: calc(50% + 80px); left: calc(50% + 24px); 
                     transform: translateX(-50%); font-size: 30px;">&rarr;
                     </div>
                     `
@@ -375,16 +375,6 @@ function createLM(timeline_variables, jsPsych) {
 
                 return html;
             },
-            on_load: function() {
-                startTrialTimer(
-                    radius=4,
-                    delay=7000,
-                    duration=3000, 
-                    top=50, 
-                    color="#f57c00"
-                );
-            },
-
             on_finish: function(data) {  
                 // reset timer
                 resetTrialTimer();             
@@ -501,11 +491,11 @@ function createLM(timeline_variables, jsPsych) {
 
                     var arrow_emojis = 
                         `
-                        <div style="position: absolute; top: calc(50% + 100px); left: calc(50% - 24px); 
+                        <div style="position: absolute; top: calc(50% + 80px); left: calc(50% - 24px); 
                         transform: translateX(-50%); font-size: 30px;">&larr;
                         </div>
 
-                        <div style="position: absolute; top: calc(50% + 100px); left: calc(50% + 24px); 
+                        <div style="position: absolute; top: calc(50% + 80px); left: calc(50% + 24px); 
                         transform: translateX(-50%); font-size: 30px;">&rarr;
                         </div>
                         `
