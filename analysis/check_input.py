@@ -48,6 +48,60 @@ def check_lm_input(file):
     print("="*60)
     print("\n")
 
+def check_lm_wm_match(file):
+    data = pd.read_json(file)
+    lm_data = data.loc[(data.trial_type=="lm") & (data.condition_name.isin(["visual", "semantic"]))]
+    wm_data = data.loc[(data.trial_type=="wm") & (data.condition_name.isin(["visual", "semantic"]))]
+
+    # merge on encoding_trial_id
+    merged = pd.merge(
+        lm_data,
+        wm_data,
+        on="encoding_trial_id",
+        suffixes=("_lm", "_wm"), 
+        how="inner"
+    )
+
+    cols = ["condition", "condition_name", "encoding_time", "set_id"]
+    for col in cols:
+        if col == "set_id":
+            # set id was not correctly coded
+            match = (merged[f"{col}_lm"] == merged[f"{col}_wm"] + 1e3).all()
+        else: 
+            match = (merged[f"{col}_lm"] == merged[f"{col}_wm"]).all()
+        
+        if not match:
+            print("LM-WM missmatch in variable: ", col)
+            raise Exception("Missmatch")
+    
+    # mixed
+    lm_data = data.loc[(data.trial_type=="lm") & (data.condition_name=="mixed")]
+    wm_data = data.loc[(data.trial_type=="wm") & (data.condition_name=="mixed")]
+
+    # merge on encoding_trial_id
+    merged = pd.merge(
+        lm_data,
+        wm_data,
+        on="encoding_trial_id",
+        suffixes=("_lm", "_wm"), 
+        how="inner"
+    )
+
+    cols = ["condition", "condition_name", "encoding_time"]
+    for col in cols:
+        match = (merged[f"{col}_lm"] == merged[f"{col}_wm"]).all()
+        if not match:
+            print("Mixed LM-WM missmatch in variable: ", col)
+            raise Exception("Missmatch")
+    
+    encoding_cols = [f"encoding_file_{i+1}_wm" for i in range(4)]
+    match = merged[encoding_cols].eq(merged["recognition_target_file_lm"], axis=0).any(axis=1).all()
+    if not match:
+        print("Recognition file not found in WM trials")
+        raise Exception("Missmatch")
+
+    print("-> ok")
+
 def latin_square_check(file_list): 
         conditions = []
         
@@ -113,12 +167,18 @@ if __name__ == "__main__":
 
     old_dict = {}
     latin_list = []
+
     for i, f in enumerate(files):
-        if i % 3 == 0:
+        if i % 12 == 0:
             print(f"Count check: {f} ...", end="\n", flush=True)
             check_wm_input(f)
             check_lm_input(f)
     
+    for i, f in enumerate(files):
+        if i % 12 == 0:
+            print("LM-WM match check: ", f, end="\t", flush=True)
+            check_lm_wm_match(f)
+
     for i, f in enumerate(files):  
         latin_list.append(f)
         if len(latin_list) == 3:

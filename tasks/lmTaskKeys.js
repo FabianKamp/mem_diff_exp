@@ -402,7 +402,7 @@ function createLM(timeline_variables, jsPsych) {
 
                 data.phase = 'recognition'
                 data.trial_type = jsPsych.evaluateTimelineVariable('trial_type') 
-                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                data.running_trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
                 data.set_id = jsPsych.evaluateTimelineVariable('set_id')
                 data.encoding_time = jsPsych.evaluateTimelineVariable('encoding_time')
@@ -517,7 +517,7 @@ function createLM(timeline_variables, jsPsych) {
                 on_finish: function(data) { 
                     data.stimulus = null;
                     data.trial_type = "lm-feedback";
-                    data.trial_id = data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
+                    data.running_trial_id = jsPsych.evaluateTimelineVariable('trial_id');
                 }
             }],
             conditional_function: function() {

@@ -743,7 +743,7 @@ function createWM(timeline_variables, jsPsych) {
                 data.encoding_time = jsPsych.evaluateTimelineVariable(`encoding_time`)
                 data.phase = 'recognition'
                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
-                data.running_trial_id = jsPsych.evaluateTimelineVariable('running_trial_id')
+                data.running_trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
                 data.set_id = jsPsych.evaluateTimelineVariable('set_id')
                 data.target_file = jsPsych.evaluateTimelineVariable('recognition_target_file')
@@ -775,7 +775,7 @@ function createWM(timeline_variables, jsPsych) {
                 choices: ['Enter'],
                 stimulus: function() {
                     var timeout_count = jsPsych.data.get().filter({timed_out: true}).count();
-                    if (timeout_count > 10) {
+                    if (timeout_count > 15) {
                         html = 
                             `<div>
                                 <p class="instruction-header">
@@ -826,7 +826,7 @@ function createWM(timeline_variables, jsPsych) {
                     
                     timeout_count = jsPsych.data.get().filter({timed_out: true}).count();
                     data.timeout_count = timeout_count
-                    if (timeout_count > 10){
+                    if (timeout_count > 15){
                         jsPsych.abortExperiment('The experiment was ended due to too many timed-out trials.');
                         console.log('Aborting')
                     }
