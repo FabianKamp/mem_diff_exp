@@ -31,6 +31,7 @@ def generate_encoding_thetas(layout_ids):
             [1,4,7], 
             [2,5,7], 
         ])
+    
     # for load 4 all layout are the same
     if load == 4: 
         layouts = np.array([
@@ -138,7 +139,7 @@ def generate_practice_mat():
     practice_mat = np.vstack([
         np.repeat(nan,3), 
         np.array([2,1,0]), 
-        np.array([1,0,2]),  
+        np.array([3,1,0]),  
         np.array([2,1,0]),
         np.repeat(nan,3),
         np.array([1,1,0]),  
