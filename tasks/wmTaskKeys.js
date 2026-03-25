@@ -159,10 +159,12 @@ function createWMInstructions() {
             </div>
                     
             <div 
-                style="position: absolute; top: calc(50% + ${button_y}px + 100px); left: calc(50% - 24px); transform: translateX(-50%); font-size: 30px;">&larr;
+                style="position: absolute; top: calc(50% + ${button_y}px + 80px); left: calc(50% - 24px); 
+                transform: translateX(-50%); font-size: 30px;">&larr;
             </div>
             <div 
-                style="position: absolute; top: calc(50% + ${button_y}px + 100px); left: calc(50% + 24px); transform: translateX(-50%); font-size: 30px;">&rarr;
+                style="position: absolute; top: calc(50% + ${button_y}px + 80px); left: calc(50% + 24px); 
+                transform: translateX(-50%); font-size: 30px;">&rarr;
             </div>
                     
             <div class="cross">
@@ -197,10 +199,10 @@ function createWMInstructions() {
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
             </div>
             <div 
-                style="position: absolute; top: calc(50% + ${button_y}px + 100px); left: calc(50% - 24px); transform: translateX(-50%); font-size: 30px;">&larr;
+                style="position: absolute; top: calc(50% + ${button_y}px + 80px); left: calc(50% - 24px); transform: translateX(-50%); font-size: 30px;">&larr;
             </div>
             <div 
-                style="position: absolute; top: calc(50% + ${button_y}px + 100px); left: calc(50% + 24px); transform: translateX(-50%); font-size: 30px;">&rarr;
+                style="position: absolute; top: calc(50% + ${button_y}px + 80px); left: calc(50% + 24px); transform: translateX(-50%); font-size: 30px;">&rarr;
             </div>
 
             <div class="cross">
@@ -234,10 +236,10 @@ function createWMInstructions() {
                 <img style="position: absolute; top: calc( 50% + ${button_y}px); left: calc( 50% - ${button_x}px);" src="stimuli/instructions/dist4.jpg" class="image-object"/>
              </div>
             <div 
-                style="position: absolute; top: calc(50% + ${button_y}px + 100px); left: calc(50% - 24px); transform: translateX(-50%); font-size: 30px;">&larr;
+                style="position: absolute; top: calc(50% + ${button_y}px + 80px); left: calc(50% - 24px); transform: translateX(-50%); font-size: 30px;">&larr;
             </div>
             <div 
-                style="position: absolute; top: calc(50% + ${button_y}px + 100px); left: calc(50% + 24px); transform: translateX(-50%); font-size: 30px;">&rarr;
+                style="position: absolute; top: calc(50% + ${button_y}px + 80px); left: calc(50% + 24px); transform: translateX(-50%); font-size: 30px;">&rarr;
             </div>
 
             <div class="cross">
@@ -382,8 +384,8 @@ function createWM(timeline_variables, jsPsych) {
 
     // Helper function to generate progress bar HTML
     const getProgressBarHTML = () => {
-        var trial_id = jsPsych.evaluateTimelineVariable('trial_id');
-        var progress_percent = (trial_id / total_trials) * 100;
+        var running_trial_id = jsPsych.evaluateTimelineVariable('trial_id');
+        var progress_percent = (running_trial_id / total_trials) * 100;
         return `<div class="progress-bar">
                     <div class="progress-bar-track">
                         <div class="progress-bar-fill" style="width: ${progress_percent}%;"></div>
@@ -437,7 +439,7 @@ function createWM(timeline_variables, jsPsych) {
                 data.trial_type = "preload";
                 data.preload_duration = preload_duration;
                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id');
-                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
+                data.running_trial_id = jsPsych.evaluateTimelineVariable('trial_id');
             }
         }],
         conditional_function: function() {
@@ -483,7 +485,7 @@ function createWM(timeline_variables, jsPsych) {
                 data.stimulus = null;
                 data.trial_type = "inter-trial-delay";
                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id');
-                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
+                data.running_trial_id = jsPsych.evaluateTimelineVariable('trial_id');
             }
         },
 
@@ -551,7 +553,7 @@ function createWM(timeline_variables, jsPsych) {
                     theta.push(jsPsych.evaluateTimelineVariable(`encoding_theta_${i+1}`))
                 }
                 data.phase = 'encoding'
-                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                data.running_trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
                 data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
                 data.trial_type = jsPsych.evaluateTimelineVariable('trial_type')
@@ -591,7 +593,7 @@ function createWM(timeline_variables, jsPsych) {
                 data.stimulus = null;
                 data.trial_type = "memory-delay";
                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id');
-                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
+                data.running_trial_id = jsPsych.evaluateTimelineVariable('trial_id');
             }
         }
     )
@@ -664,14 +666,14 @@ function createWM(timeline_variables, jsPsych) {
 
                 var left_arrow_emoji = 
                     `
-                    <div style="position: absolute; top: calc(50% + ${button_y}px + 100px); left: calc(50% - 24px); 
+                    <div style="position: absolute; top: calc(50% + ${button_y}px + 80px); left: calc(50% - 24px); 
                     transform: translateX(-50%); font-size: 30px;">&larr;
                     </div>
                     `
                  
                 var right_arrow_emoji = 
                     `
-                    <div style="position: absolute; top: calc(50% + ${button_y}px + 100px); left: calc(50% + 24px); 
+                    <div style="position: absolute; top: calc(50% + ${button_y}px + 80px); left: calc(50% + 24px); 
                     transform: translateX(-50%); font-size: 30px;">&rarr;
                     </div>
                     `
@@ -697,8 +699,8 @@ function createWM(timeline_variables, jsPsych) {
                 html += right_button + right_arrow_emoji
 
                 // progress bar
-                var trial_id = jsPsych.evaluateTimelineVariable('trial_id')
-                var progress_percent = (trial_id / total_trials) * 100
+                var running_trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                var progress_percent = (running_trial_id / total_trials) * 100
                 var progress_bar = 
                     `
                     <div class="progress-bar">
@@ -730,6 +732,7 @@ function createWM(timeline_variables, jsPsych) {
                     data.stimulus_right = target_file
                 }
 
+                // recode response
                 if (data.response === 'ArrowLeft') {
                     data.response = 0
                 } else if (data.response === 'ArrowRight') {
@@ -740,7 +743,8 @@ function createWM(timeline_variables, jsPsych) {
                 data.encoding_time = jsPsych.evaluateTimelineVariable(`encoding_time`)
                 data.phase = 'recognition'
                 data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id')
-                data.trial_id = jsPsych.evaluateTimelineVariable('trial_id')
+                data.running_trial_id = jsPsych.evaluateTimelineVariable('running_trial_id')
+                data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
                 data.set_id = jsPsych.evaluateTimelineVariable('set_id')
                 data.target_file = jsPsych.evaluateTimelineVariable('recognition_target_file')
                 data.target_correct = jsPsych.evaluateTimelineVariable('target_correct')
@@ -818,7 +822,7 @@ function createWM(timeline_variables, jsPsych) {
                     data.stimulus = null;
                     data.trial_type = "timeout";
                     data.wm_block_id = jsPsych.evaluateTimelineVariable('wm_block_id');
-                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
+                    data.running_trial_id = jsPsych.evaluateTimelineVariable('trial_id');
                     
                     timeout_count = jsPsych.data.get().filter({timed_out: true}).count();
                     data.timeout_count = timeout_count
@@ -918,7 +922,7 @@ function createWM(timeline_variables, jsPsych) {
                 on_finish: function(data) { 
                     data.stimulus = null;
                     data.trial_type = "practice-feedback";
-                    data.trial_id = jsPsych.evaluateTimelineVariable('trial_id');
+                    data.running_trial_id = jsPsych.evaluateTimelineVariable('trial_id');
                 }
             }], 
             conditional_function: function() {
@@ -961,7 +965,7 @@ function createBreak(label) {
         
         on_load: function() {
             startTrialTimer(
-                radius=12,
+                radius=20,
                 delay=100,
                 duration=120000,
                 top=80,
