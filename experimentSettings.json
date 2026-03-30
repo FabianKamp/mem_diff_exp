@@ -1,7 +1,7 @@
 {
     "wave": {
         "version_id": "M",
-        "wave_id": "M-PH",
+        "wave_id": "M-V1",
         "subject_number": 120
     },
 
@@ -28,7 +28,7 @@
     },
 
     "timing": {
-        "encoding_times": [400,400,2200,2200], 
+        "encoding_times": [400,400,2000,2000], 
         "memory_delay": 3000,
         "wm_inter_trial_delay": 2500,
         "lm_inter_trial_delay": 2000,

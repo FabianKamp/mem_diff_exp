@@ -30,7 +30,7 @@ session_dict = {
 # }
 
 bin_width = .25
-bin_width_per_item = .125
+bin_width_per_item = .1
 out_name = "aggregated_pilots"
 
 # %%
@@ -176,8 +176,6 @@ plot_aggregate(output_data, time_col="bin_time_per_item", load=3)
 plot_aggregate(output_data, time_col="time_per_item", load=4)
 
 
-
-
 # %% 
 # time per item plot
 # data count 
@@ -267,6 +265,3 @@ box.legend(loc="lower right")
 box.grid(alpha=.2)
 box.set_xlabel("log time")
 plt.tight_layout()
-
-
-# %%

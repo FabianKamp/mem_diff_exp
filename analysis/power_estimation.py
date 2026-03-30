@@ -11,6 +11,8 @@ import arviz as az
 from scipy.special import expit
 import seaborn as sns
 from tqdm import tqdm
+from scipy import stats
+
 
 # %%
 # set up
@@ -43,6 +45,7 @@ box = sns.boxplot(
     palette=colors_palette[:2],
     medianprops={'color': 'red', 'linewidth': 2},
     )
+box.set_xlabel("time per item")
 box.grid(alpha=.3)
 
 # %%
@@ -103,23 +106,20 @@ with pm.Model(coords=coords) as pp_model:
         )
 
 # %%
-from scipy import stats
-
 def power_simulation(
         posterior,
         times,
         sample_size,
         n_trials = 26,
-        n_sim = 1000
+        n_sim = 1000, 
     ):
+
+    significant = 0
+    conditions = ["visual", "semantic"]    
+    y = np.zeros((sample_size, n_sim, 2, 2))
     
-    conditions = ["visual", "semantic"]
-    successes = 0
-    
-    for _ in tqdm(range(n_sim)):
+    for sim in tqdm(range(n_sim)):
         idx = np.random.randint(0, 8000)
-        
-        y = np.zeros((sample_size, 2,2))
         for i,j in np.ndindex((2,2)):
             
             condition = conditions[i]
@@ -130,19 +130,21 @@ def power_simulation(
             l_param = posterior["l"].values[idx]
 
             p = .5 + (.5-l_param) * expit(b_param * (time - t_param))
-            y[:,i,j] = np.random.binomial(n_trials, p, size=sample_size)
+            y[:,sim,i,j] = np.random.binomial(n_trials, p, size=sample_size)
 
-        acc = y/n_trials
+        # frequentist power
+        acc = y[:,sim,...]/n_trials
         beta0 = acc[:,0,0] - acc[:,0,1]
         beta1 = acc[:,1,0] - acc[:,1,1]
-        interaction = beta0 - beta1
-
-        _, pval = stats.ttest_1samp(interaction, 0)
+        _, pval = stats.ttest_rel(beta0, beta1)
         if pval < .05:
-            successes += 1
-
-    return successes/n_sim
-
+            significant += 1
+    
+    freq_power = significant/n_sim
+    
+    return dict(
+        freq_power = freq_power,
+    )
 
 # %%
 posterior = (idata["partial_pooling"]
@@ -151,47 +153,79 @@ posterior = (idata["partial_pooling"]
     .sel(load=4)
 )
 
-times = [
-    [.1, .5],
-    [.125, .5],
-    [.1, .55],
-    [.125, .55],
-    [.1, .6],
-    [.125, .6],
-]
-
-sample_sizes = [50, 65, 80, 95]
+times = [.1, .55]
+sample_sizes = np.arange(50,201,25)
 results = []
 
-for t in times:
-    for n in sample_sizes:
-        print("Running sample size: ", n, end="\n")
-        p_success = power_simulation(
-            posterior,
-            sample_size=n,
-            times = t,
-        )
-        results.append({
-            "n": n, 
-            "t1": t[0],
-            "t2": t[1],
-            "power": p_success, 
-            })
-
+for n in sample_sizes:
+    print("Running sample size: ", n, end="\n")
+    power_dict = power_simulation(
+        posterior,
+        sample_size=n,
+        times = times,
+    )
+    results.append({
+        "n": n, 
+        "t1": times[0],
+        "t2": times[1],
+        "power": power_dict["freq_power"], 
+        })
 df_power = pd.DataFrame(results)
 
-
 # %%
-
-df_power["t_ratio"] = np.round(df_power.t2/df_power.t1,3)
-sns.relplot(
+# plot power
+line = sns.lineplot(
     data=df_power,
     x="n",
     y="power",
-    hue="t2",
-    col="t1",
     marker="o",
-    kind="line"
 )
+line.grid(alpha=.2)
 
 # %%
+# archive
+
+# recovery model
+coords = {
+    "simulation": range(n_sim),
+    "sample": range(sample_size),
+    "condition": ["visual", "semantic"],
+    "time": ["short", "long"],
+}
+
+with pm.Model(coords=coords) as recov_model:
+    mu = pm.Normal('mu', mu=0, sigma=1, dims=("simulation", "condition", "time"))
+    p = pm.Deterministic('p', pm.math.invlogit(mu), dims=("simulation", "condition", "time"))
+    y = pm.Binomial('y', p=p, n=n_trials, observed=y, dims=("sample", "simulation", "condition", "time"))
+    idata = pm.sample(nuts_sampler="numpyro", chains=2, draws=500, target_accept=0.95)
+
+
+mu = idata.posterior["mu"]
+beta0 = mu.sel(condition="visual", time="short") - mu.sel(condition="visual", time="long")
+beta1 = mu.sel(condition="semantic", time="short") - mu.sel(condition="semantic", time="long")
+interaction = beta0 - beta1  
+
+samples = interaction.stack(sample=("chain", "draw")).values
+hdi_vals = az.hdi(samples, hdi_prob=0.90)
+
+lower = hdi_vals[:, 0]
+upper = hdi_vals[:, 1]
+
+significant = ((lower > 0) | (upper < 0)).sum()
+bayes_power = significant / n_sim
+
+
+with pm.Model(coords=coords) as recov_model:
+    time_vals = pm.Data('time_vals', np.array(times), dims="time")
+    t = pm.Normal('t', mu=.5, sigma=.5, dims=("simulation","condition"))
+    beta = pm.LogNormal('beta', mu=0, sigma=1, dims=("simulation","condition"))
+
+    g = .5      
+    l = pm.Beta('l', alpha=2, beta=48, dims="simulation")
+
+    p = pm.Deterministic('p',
+        g + (1-g-l[:, None, None]) * pm.math.invlogit(beta[:, :, None] * (time_vals[None, None, :] - t[:, :, None])),
+        dims=("simulation", "condition", "time"))
+
+    y = pm.Binomial('y', p=p, n=n_trials, observed=y, dims=("sample", "simulation", "condition", "time"))
+    idata = pm.sample(nuts_sampler="numpyro", chains=2, draws=500, target_accept=0.95)

@@ -15,6 +15,7 @@ sns.set_palette(colors_palette)
 # set working directory
 script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(os.path.dirname(script_dir))
+
 # %%
 # load data
 output_data = pd.read_csv("./output_data/aggregated/aggregated_pilots.csv")
@@ -160,10 +161,25 @@ for cname, cid in condition_map.items():
         ).predictions.p.stack(sample=("chain","draw"))
 
 # plot native scale 
-plot_posterior_predictions(ppc_times, predictions)
-forest_plot(idata["partial_pooling"])
+forest_plot(idata["partial_pooling"]);
+plot_posterior_predictions(ppc_times, predictions);
 
 # %%
+fig = plot_posterior_predictions(ppc_times, predictions);
+box = sns.boxplot(
+    data=output_data.loc[output_data.load==4], 
+    x="time_per_item", 
+    y="accuracy", 
+    hue="condition_name", 
+    hue_order=["semantic","visual"],
+    native_scale=True,
+    palette=colors_palette[:2],
+    medianprops={'color': 'red', 'linewidth': 2},
+    ax=fig.gca(),
+    legend=False
+    )
+box.grid(alpha=.3)
+#%%
 # contrast 
 contrast = predictions["visual"]-predictions["semantic"]
 fig, ax = plt.subplots(figsize=(6,4))
@@ -171,18 +187,20 @@ ax.fill_between(
     ppc_times,
     np.percentile(contrast, 5, axis=1),
     np.percentile(contrast, 95, axis=1),
-    color=colors_palette[0],
+    color=colors_palette[3],
     alpha=0.3
 )
 
 ax.plot(
     ppc_times, 
     contrast.mean("sample"), 
-    label="mean difference", 
+    label="contrast [visual-semantic]", 
     linewidth=3, 
-    c=colors_palette[0], 
+    c=colors_palette[3], 
 );
 ax.legend()
+ax.grid(alpha=.3)
+
 # %%
 # facet grid
 n = 5
@@ -212,4 +230,94 @@ for i in range(n):
             ax[i,j].set_ylabel(f"Start {np.round(ppc_times[idx[i]],2)}")
 
 plt.tight_layout()
+
+#%%
+# log scale 
+with pm.Model(coords=coords) as pp_log_model:
+    lid = pm.Data('lid', output_data['lid'].values.astype('int64'), dims="obs")
+    cid = pm.Data('cid', output_data['cid'].values.astype('int64'), dims="obs")
+    time = pm.Data('time', output_data['time_per_item'].values, dims="obs")
+
+    mu_log_t = pm.Normal('mu_log_t', mu=np.log(0.5), sigma=0.2, dims="condition")
+    sigma_log_t = pm.Exponential('sigma_log_t', 1.0, dims="condition")
+    t_z = pm.Normal('t_z', 0., 1., dims=("load", "condition"))
+    t = pm.Deterministic('t', pm.math.exp(mu_log_t + t_z * sigma_log_t), dims=("load", "condition"))
+
+    # slope
+    beta = pm.LogNormal('beta', mu=0, sigma=1, dims="condition")
+
+    g = 0.5
+    l = pm.Beta('l', alpha=2, beta=48)
+    
+    p = pm.Deterministic('p', 
+                         g + (1-g-l) * pm.math.invlogit(beta[cid] * pm.math.log(time / t[lid, cid])), 
+                         dims="obs")
+
+    y = pm.Binomial('y', p=p, n=n_trials_per_condition, observed=output_data['hits'].values, dims="obs")
+
+    idata["partial_pooling_log"] = pm.sample(
+        nuts_sampler="numpyro", 
+        draws=2000,
+        target_accept=0.99 
+    )
+
+# %%
+# posterior predicitive -- partial pooling (pp)
+ppc_n = 50
+ppc_times = np.linspace(1e-1,.7,ppc_n)
+
+predictions = dict()
+for cname, cid in condition_map.items():
+    with pp_log_model:
+        pm.set_data(
+            dict(
+                time = ppc_times, 
+                cid = np.repeat(cid,ppc_n),
+                lid = np.repeat(1, ppc_n).astype("int64") # load = 4
+                ), 
+            coords={"obs": range(ppc_n)}
+        )
+
+        predictions[cname] = pm.sample_posterior_predictive(
+            idata["partial_pooling_log"].sel(draw=slice(None, None, 5)), 
+            var_names=["p"],
+            predictions=True
+        ).predictions.p.stack(sample=("chain","draw"))
+
+# plot native scale 
+forest_plot(idata["partial_pooling_log"]);
+plot_posterior_predictions(ppc_times, predictions);
+
+# %%
+fig = plot_posterior_predictions(ppc_times, predictions);
+sns.boxplot(
+    data=output_data.loc[output_data.load==4], 
+    x="time_per_item", 
+    y="accuracy", 
+    hue="condition_name", 
+    hue_order=["semantic","visual"],
+    native_scale=True,
+    palette=colors_palette[:2],
+    medianprops={'color': 'red', 'linewidth': 2},
+    ax=fig.gca(),
+    legend=False
+    )
+# contrast 
+contrast = predictions["visual"]-predictions["semantic"]
+fig, ax = plt.subplots(figsize=(6,4))
+ax.fill_between(
+    ppc_times,
+    np.percentile(contrast, 5, axis=1),
+    np.percentile(contrast, 95, axis=1),
+    color=colors_palette[3],
+    alpha=0.3
+)
+ax.plot(
+    ppc_times, 
+    contrast.mean("sample"), 
+    label="contrast [visual-semantic]", 
+    linewidth=3, 
+    c=colors_palette[3], 
+);
+ax.legend()
 # %%

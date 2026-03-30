@@ -8,7 +8,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 import pickle
 
 #%% variable set up
-wave_code = "M-PG"
+wave_code = "M-PE"
 subject_ids = np.arange(1,16) #[2,3,4,5,6,7,9,10,11,21,22,23]
 exclude = 6
 
