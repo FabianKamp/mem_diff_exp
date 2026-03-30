@@ -126,7 +126,7 @@ function createWMInstructions() {
                     <strong>1/5 Memorize</strong><br><br>
                     In each trial we will ask you to memorize <strong>${load} images</strong>.
                     <br><br>
-                    The images will be shown for about <strong>0.5 to 2.5 seconds</strong>. 
+                    The images will be shown for about <strong>0.5 to 2 seconds</strong>. 
                     The time varies from trial to trial — some trials are fast, others are slower.
                     <br><br>
                     <strong>Important:</strong> Keep your eyes focused on the cross in the center of the screen while memorizing the images.
