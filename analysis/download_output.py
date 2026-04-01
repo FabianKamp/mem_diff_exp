@@ -10,7 +10,7 @@ user= os.getenv("EXP_USER")
 password= os.getenv("EXP_PASSWORD")
 root_url = os.getenv("EXP_URL")
 
-wave_id = "M-PG"
+wave_id = "M-V1"
 default_csv = f"./token/token_{wave_id}.csv"
 default_out_dir = f"./output_data/raw/{wave_id}"
 
@@ -53,18 +53,33 @@ def get_data(token):
             data = data
         )
 
+# load and sort by suffix
 token_df = pd.read_csv(args.token_csv)
+token_df["suffix"] = token_df.var_value.str[-1]
+token_df = token_df.sort_values(by=["suffix", "var_value"])
+
 unique_token = token_df.token.unique()
 for i, token in enumerate(unique_token):
     print(f'\rChecking tokens: {i+1}/{len(unique_token)}', end='', flush=True)
     
+    # set up
+    session_id = token_df.loc[token_df.token == token, "var_value"].iloc[0]
+    data_csv = f"{args.out_dir}/{session_id}.csv"
+    browser_records_csv = f"{args.out_dir}/{session_id}_browser_records.csv"
+
+    # check if already downloaded
+    if os.path.isfile(data_csv):
+        print(f'\tSkipping session: {session_id} - csv file already exists.')
+        continue
+    
+    # download
     output = get_data(token)
     if output is None:
         continue
     
     # save
     if "session_id" in output:
-        output["data"].to_csv(f"{args.out_dir}/{output["session_id"]}.csv")
-        output["interaction_records"].to_csv(f"{args.out_dir}/{output["session_id"]}_browser_records.csv")
+        output["data"].to_csv(data_csv)
+        output["interaction_records"].to_csv(browser_records_csv)
     else: 
         output["data"].to_csv(f"{args.out_dir}/{token}.csv")

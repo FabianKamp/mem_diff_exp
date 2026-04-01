@@ -159,25 +159,65 @@ def latin_square_check(file_list):
         
         print(" -> ok")
 
-if __name__ == "__main__":
+def random_check(file_list):        
+        # check to previous 
+        previous_data = []
+        random_columns = [
+            "set_id",
+            "encoding_time",
+            "encoding_1", 
+            "encoding_2", 
+            "encoding_3", 
+            "encoding_theta_1", 
+            "encoding_theta_2",
+            "encoding_theta_3",
+            "recognition_theta", 
+            "sample_position",
+            "condition_name"
+        ]
 
-    prefix = "M-PH"
+        for f in file_list: 
+            data = pd.read_json(f)
+            current_data = data.loc[data.trial_type=="wm"]
+            
+            if len(previous_data)==0 :
+                previous_data = current_data.copy()
+                for col in random_columns:
+                    print(col, end="\t")
+                print("\n")
+                continue
+            
+            for col in random_columns: 
+                print(np.sum(previous_data[col] == current_data[col]), end="\t\t")
+            
+            previous_data = current_data.copy()
+            print("\n")
+
+
+if __name__ == "__main__":
+    prefix = "M-V1"
     files = sorted(glob.glob(f"./input_data/{prefix}/*{prefix}*.json"))
     files = [f for f in files if '999' not in os.path.basename(f)]
+    every = 25
 
     old_dict = {}
     latin_list = []
 
     for i, f in enumerate(files):
-        if i % 12 == 0:
+        if i % 25 == 0:
             print(f"Count check: {f} ...", end="\n", flush=True)
             check_wm_input(f)
             check_lm_input(f)
     
     for i, f in enumerate(files):
-        if i % 12 == 0:
+        if i % 25 == 0:
             print("LM-WM match check: ", f, end="\t", flush=True)
             check_lm_wm_match(f)
+
+    print("Random check: ", f, end="\n", flush=True)
+    random_list = [files[i] for i in range(0,len(files),10)]
+    random_check(random_list)
+    
 
     for i, f in enumerate(files):  
         latin_list.append(f)

@@ -21,8 +21,10 @@ returned_sessions = [
 ]
 
 # load data
-output_data = pd.read_csv("./output_data/aggregated/aggregated_pilots.csv")
+csv_file = "./output_data/aggregated/aggregated_pilots.csv"
+output_data = pd.read_csv(csv_file)
 
+# %%
 # quick check 
 box = sns.boxplot(
     data=output_data, 

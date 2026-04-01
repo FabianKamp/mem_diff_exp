@@ -8,13 +8,12 @@ from matplotlib.backends.backend_pdf import PdfPages
 import pickle
 
 #%% variable set up
-wave_code = "M-PE"
-subject_ids = np.arange(1,16) #[2,3,4,5,6,7,9,10,11,21,22,23]
-exclude = 6
+wave_code = "M-V1"
+subject_ids = np.arange(1,100) #[2,3,4,5,6,7,9,10,11,21,22,23]
 
-subject_ids = subject_ids[subject_ids!=exclude]
+# exclude = 6
+# subject_ids = subject_ids[subject_ids!=exclude]
 
-show = False
 save = True
 
 #%% set up colors
@@ -40,22 +39,26 @@ all_data = pd.concat(all_data)
 n_subjects = all_data.session_id.nunique()
 
 #%% Preprocess working memory data
-# NAN = 9999
-# all_data.loc[all_data.response.isna(), "response"] = NAN
 wm_data = all_data.loc[
     (all_data.trial_type=='wm') & 
     (all_data.phase == "recognition")
     ].copy()
-print("NA responses: ", np.sum(wm_data.response.isna()))
 
 wm_data.response = wm_data.response.astype('Int64')
 wm_data.correct_response = wm_data.correct_response.astype('Int64')
-wm_data["correct"] = (wm_data.response == wm_data.correct_response)
-
 wm_data.encoding_time = wm_data.encoding_time.astype('Int64')
 wm_data.condition = wm_data.condition.astype('Int64')
 
+# recode NAN
+NAN = 9999
+wm_data.loc[wm_data.response.isna(), "response"] = NAN
+print("NA responses: ", np.sum(wm_data.response==NAN))
 
+# add col with correct
+wm_data["correct"] = (wm_data.response == wm_data.correct_response)
+
+
+# [~wm_data.correct.isna()]
 #%% aggregate visual vs semantic data
 vis_sem = wm_data.loc[wm_data.condition_name!='mixed']
 
@@ -311,11 +314,6 @@ figure_data.update({
     })
 
 # %%
-if show:
-    plt.show(block=False)
-    plt.pause(60)
-    plt.close('all')
-
 if save:
     pdf_file = f"./figures/descriptive/descr_{wave_code}_wm.pdf"
     data_file = f"./figures/descriptive/descr_{wave_code}_wm.pkl"

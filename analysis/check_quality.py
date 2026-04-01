@@ -11,8 +11,9 @@ import textwrap
 
 #%% 
 # variable set up
-wave_code = "M-PG"
-subject_ids = np.arange(1,16) #[2,3,4,5,6,7,9,10,11,21,22,23]
+wave_code = "M-V1"
+subject_ids = np.arange(1,100) #[2,3,4,5,6,7,9,10,11,21,22,23]
+
 all_figures = []
 save = True
 
@@ -146,13 +147,17 @@ def annotate_outliers(ax, data, x, y, label_col):
 results = []
 for session, subdata in all_data.groupby("session_id"):   
     wm_trials = subdata.loc[(subdata.trial_type == "wm")]
+    lm_trials = subdata.loc[(subdata.trial_type == "lm")]
     
-    results.append(dict(
+    time_dict = dict(
         session_id = session, 
         instruction = np.round(wm_trials.time_elapsed.iloc[0]/60e3), 
         WM = np.round((wm_trials.time_elapsed.iloc[-1]-wm_trials.time_elapsed.iloc[0])/60e3),
+        LM = np.round((lm_trials.time_elapsed.iloc[-1]-lm_trials.time_elapsed.iloc[0])/60e3),
         total = np.round(subdata.time_elapsed.iloc[-1]/60e3)
-        ))
+        )
+
+    results.append(time_dict)
 
 results = pd.DataFrame(results).melt(
     id_vars="session_id", 
@@ -419,83 +424,83 @@ all_figures.append(fig)
 
 # %% 
 # mouse checks
-def path_straightness(x, y):
-    direct = np.sqrt((x[-1]-x[0])**2 + (y[-1]-y[0])**2)
-    path_len = np.sum(np.sqrt(np.diff(x)**2 + np.diff(y)**2))
-    return direct / path_len if path_len > 0 else 1 
+# def path_straightness(x, y):
+#     direct = np.sqrt((x[-1]-x[0])**2 + (y[-1]-y[0])**2)
+#     path_len = np.sum(np.sqrt(np.diff(x)**2 + np.diff(y)**2))
+#     return direct / path_len if path_len > 0 else 1 
 
-def velocity_variance(x, y):
-    distances = np.sqrt(np.diff(x)**2 + np.diff(y)**2)
-    return np.std(distances) / np.mean(distances) if np.mean(distances) > 0 else 0
+# def velocity_variance(x, y):
+#     distances = np.sqrt(np.diff(x)**2 + np.diff(y)**2)
+#     return np.std(distances) / np.mean(distances) if np.mean(distances) > 0 else 0
 
-def angular_changes(x, y):
-    dx, dy = np.diff(x), np.diff(y)
-    angles = np.arctan2(dy, dx)
-    angle_changes = np.abs(np.diff(angles))
-    return np.mean(angle_changes)
+# def angular_changes(x, y):
+#     dx, dy = np.diff(x), np.diff(y)
+#     angles = np.arctan2(dy, dx)
+#     angle_changes = np.abs(np.diff(angles))
+#     return np.mean(angle_changes)
 
-def acceleration_pattern(x, y):
-    distances = np.sqrt(np.diff(x)**2 + np.diff(y)**2)
-    acceleration = np.diff(distances)
-    return np.std(acceleration)
+# def acceleration_pattern(x, y):
+#     distances = np.sqrt(np.diff(x)**2 + np.diff(y)**2)
+#     acceleration = np.diff(distances)
+#     return np.std(acceleration)
 
 
-mouse_data = all_data.loc[all_data.trial_type == "mouse-movement-check"]
+# mouse_data = all_data.loc[all_data.trial_type == "mouse-movement-check"]
 
-cols = 3
-rows = n_subjects//cols+1
-fig, ax = plt.subplots(rows, cols, 
-            figsize=(cols*4, rows*4), 
-            sharey=True,
-            sharex=True,
-            constrained_layout=True
-        )
-fax = ax.flatten()
+# cols = 3
+# rows = n_subjects//cols+1
+# fig, ax = plt.subplots(rows, cols, 
+#             figsize=(cols*4, rows*4), 
+#             sharey=True,
+#             sharex=True,
+#             constrained_layout=True
+#         )
+# fax = ax.flatten()
 
-error_count, i = 0, 0
-for sid, mouse_session in mouse_data.groupby("session_id"): 
-    mouse_summary = []
-    for _, row in mouse_session.iterrows():
-        if type(row.mouse_movement_x) != str or type(row.mouse_movement_y) != str:
-            error_count += 1
-            continue
+# error_count, i = 0, 0
+# for sid, mouse_session in mouse_data.groupby("session_id"): 
+#     mouse_summary = []
+#     for _, row in mouse_session.iterrows():
+#         if type(row.mouse_movement_x) != str or type(row.mouse_movement_y) != str:
+#             error_count += 1
+#             continue
 
-        x = ast.literal_eval(row.mouse_movement_x)
-        x = np.array(x)
-        x_centered = x - x[0]
-        y = ast.literal_eval(row.mouse_movement_y)
-        y = np.array(y) 
-        y_centered = y - y[0]
+#         x = ast.literal_eval(row.mouse_movement_x)
+#         x = np.array(x)
+#         x_centered = x - x[0]
+#         y = ast.literal_eval(row.mouse_movement_y)
+#         y = np.array(y) 
+#         y_centered = y - y[0]
 
-        if len(x)<5: 
-            continue
+#         if len(x)<5: 
+#             continue
 
-        fax[i].plot(x_centered, y_centered, 'k-o', markersize=1.5, linewidth=.3)
-        fax[i].plot(0, 0, 'ro', markersize=2) 
-        fax[i].set_title(sid)
+#         fax[i].plot(x_centered, y_centered, 'k-o', markersize=1.5, linewidth=.3)
+#         fax[i].plot(0, 0, 'ro', markersize=2) 
+#         fax[i].set_title(sid)
 
-        mouse_summary.append(dict(
-          straightness = path_straightness(x,y), 
-          velocity_var = velocity_variance(x,y),  
-          angular_changes = angular_changes(x,y),  
-          acc_pattern = acceleration_pattern(x,y)  
-        ))
+#         mouse_summary.append(dict(
+#           straightness = path_straightness(x,y), 
+#           velocity_var = velocity_variance(x,y),  
+#           angular_changes = angular_changes(x,y),  
+#           acc_pattern = acceleration_pattern(x,y)  
+#         ))
 
-    mouse_summary = pd.DataFrame(mouse_summary).mean().round(2)
-    # Simple approach
-    fax[i].text(
-        0.05, 0.99, 
-        mouse_summary.to_string(), 
-        transform=fax[i].transAxes,
-        fontsize=10, 
-        verticalalignment='top', 
-        family='monospace'
-        )
+#     mouse_summary = pd.DataFrame(mouse_summary).mean().round(2)
+#     # Simple approach
+#     fax[i].text(
+#         0.05, 0.99, 
+#         mouse_summary.to_string(), 
+#         transform=fax[i].transAxes,
+#         fontsize=10, 
+#         verticalalignment='top', 
+#         family='monospace'
+#         )
 
-    i += 1
+#     i += 1
 
-_ = [ax.remove() for ax in fax[i:]]
-all_figures.append(fig)
+# _ = [ax.remove() for ax in fax[i:]]
+# all_figures.append(fig)
 # %%
 # save
 if save:
