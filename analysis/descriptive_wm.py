@@ -158,7 +158,7 @@ for (ax, condition) in zip(ax, conditions):
         x="encoding_time", 
         y="accuracy", 
         widths=0.5, 
-        palette=colors_palette,
+        palette=colors_palette[:2],
         legend=False,
         ax=ax,
         )
