@@ -63,7 +63,8 @@ async function createTimeline(jsPsych){
         // demographics & botcheck
         experiment_timeline.push({
             timeline: [
-                createDemographics(),
+                createCaptcha(),
+                createDemographics(), 
                 botCheck(jsPsych)
             ],
             name: 'demographics'

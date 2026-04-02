@@ -159,7 +159,7 @@ function createHoneypod(key) {
         choices: [key],
         on_load: function() {
             startTrialTimer(
-                radius=12,
+                radius=20,
                 delay=100,
                 duration=10000,
                 top=80,
