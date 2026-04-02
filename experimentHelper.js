@@ -197,8 +197,6 @@ function botCheck(jsPsych) {
                                     Press <strong>Enter</strong> to continue to the last slide.
                                     From there you will be automatically redirected to Prolific.
                                     <br><br>
-                                    We will contact you as soon as possible.
-                                    <br><br>
                                     <strong>Please don\'t close the experiment until your redirected to Prolific.</strong>
                                 </p>
                                 <p class="continue-prompt">

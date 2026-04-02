@@ -121,9 +121,10 @@ function createCaptcha() {
                     <strong>Aborting the experiment</strong>
                 </p>
                 <p class="instruction-paragraph">
-                    The captcha was entered incorrectly too many times, so the experiment has been ended.
+                    The captcha was entered incorrectly too many times, so the experiment has been aborted.
                     <br><br>
-                    Press <strong>Enter</strong> to be redirected back to Prolific.
+                    Press <strong>Enter</strong> to continue to the last slide.
+                    From there you will be automatically redirected to Prolific.
                     <br><br>
                     <strong>Please do not close this page until you are redirected.</strong>
                 </p>
