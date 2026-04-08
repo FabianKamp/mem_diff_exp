@@ -62,7 +62,7 @@ all_figures.append(fig)
 
 # %%
 # captcha 
-survey_data = all_data.loc[(all_data.trial_type == "survey")]
+survey_data = all_data.loc[(all_data.trial_type == "survey")|(all_data.trial_type == "captcha-check")]
 
 # fig
 fig, ax = plt.subplots(
@@ -78,12 +78,12 @@ ax.text(0.05, header_pos, "Captcha Response", transform=ax.transAxes, fontsize=1
 text_pos = .85
 for (sid, response) in survey_data.groupby("session_id")["response"]:
     response_dict = ast.literal_eval(response.iloc[0])
-    key = 'Type the word you see in the image above'
-    if key not in response_dict: continue
-    captcha_response = response_dict[key]
-    text = "   ".join([sid, captcha_response])
-    ax.text(0.05, text_pos, text, transform=ax.transAxes, fontsize=9, verticalalignment='top')
-    text_pos -= 0.04
+    for key in ['captcha_input',  'Type the word you see in the image above']: 
+        if key not in response_dict: continue
+        captcha_response = response_dict[key]
+        text = "   ".join([sid, captcha_response])
+        ax.text(0.05, text_pos, text, transform=ax.transAxes, fontsize=9, verticalalignment='top')
+        text_pos -= 0.04
 
 ax.axis('off')  
 all_figures.append(fig)
