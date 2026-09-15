@@ -401,7 +401,7 @@ function createLM(timeline_variables, jsPsych) {
                 } 
 
                 data.phase = 'recognition'
-                data.trial_type = jsPsych.evaluateTimelineVariable('trial_type') 
+                data.trial_type = jsPsych.evaluateTimelineVariable('trial_type')
                 data.running_trial_id = jsPsych.evaluateTimelineVariable('trial_id')
                 data.encoding_trial_id = jsPsych.evaluateTimelineVariable('encoding_trial_id')
                 data.set_id = jsPsych.evaluateTimelineVariable('set_id')
@@ -410,15 +410,20 @@ function createLM(timeline_variables, jsPsych) {
                 data.condition_name = jsPsych.evaluateTimelineVariable('condition_name')
                 data.target_file = jsPsych.evaluateTimelineVariable('recognition_target_file')
                 data.foil_file = jsPsych.evaluateTimelineVariable('recognition_foil_file')
-                data.left_target = jsPsych.evaluateTimelineVariable('left_target') 
+                data.left_target = jsPsych.evaluateTimelineVariable('left_target')
                 data.correct_response = jsPsych.evaluateTimelineVariable('correct_response')
+
+                // Save cue data if this is a retro-cue experiment variant
+                if (experimentSettings.memory_experiment.cue_conditions) {
+                    data.cue_condition = jsPsych.evaluateTimelineVariable('cue_condition')
+                }
+
                 data.timed_out = (data.response === null);
                 data.timestamp = new Date().toLocaleTimeString()
 
                 if (data.subject_id==999) {
                     console.log("Condition: ", data.condition_name)
-                    console.log("Response: ", data.response)
-                    console.log("Correct response: ", data.correct_response)
+                    console.log("Response: ", data.response, "\tCorrect response: ", data.correct_response)
                 }
             }
         })

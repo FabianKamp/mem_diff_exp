@@ -9,7 +9,7 @@ import pickle
 
 #%% variable set up
 wave_code = "M-V1"
-subject_ids = np.arange(1,100) #[2,3,4,5,6,7,9,10,11,21,22,23]
+subject_ids = np.arange(1,120) #[2,3,4,5,6,7,9,10,11,21,22,23]
 
 # exclude = 6
 # subject_ids = subject_ids[subject_ids!=exclude]

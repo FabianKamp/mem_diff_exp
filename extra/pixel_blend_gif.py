@@ -9,16 +9,24 @@ from tqdm import tqdm
 
 # %%
 
-def create_gif(set_id, start_index=0):
+def create_gif(set_id, start_index=0, resize_scale=0.5):
     # Define input images
     imgA_path = f"../stimuli/exp_stimuli_pilot/{set_id:03d}/{1000+set_id}.jpg"
     imgB_path = f"../stimuli/exp_stimuli_pilot/{set_id:03d}/{4000+set_id}.jpg"
 
     # Number of steps/frames in the animation
-    n_steps = 50
+    n_steps = 30
 
-    imgA = np.array(Image.open(imgA_path).convert("RGB"), dtype=np.float32)
-    imgB = np.array(Image.open(imgB_path).convert("RGB"), dtype=np.float32)
+    imgA_img = Image.open(imgA_path).convert("RGB")
+    imgB_img = Image.open(imgB_path).convert("RGB")
+
+    if resize_scale != 1:
+        new_size = (int(imgA_img.width * resize_scale), int(imgA_img.height * resize_scale))
+        imgA_img = imgA_img.resize(new_size, Image.LANCZOS)
+        imgB_img = imgB_img.resize(new_size, Image.LANCZOS)
+
+    imgA = np.array(imgA_img, dtype=np.float32)
+    imgB = np.array(imgB_img, dtype=np.float32)
 
     assert imgA.shape == imgB.shape, "imgA and imgB must have the same dimensions"
 
@@ -41,9 +49,10 @@ def create_gif(set_id, start_index=0):
         append_images=frames[1:],
         duration=120,
         loop=0,
+        optimize=True,
     )
 
 # %%
-for i in tqdm(range(1, 10)):
+for i in tqdm(range(1, 30)):
     create_gif(i, start_index= i * 6)
 # %%

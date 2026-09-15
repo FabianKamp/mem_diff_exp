@@ -8,308 +8,328 @@ import matplotlib.pyplot as plt
 import statsmodels.formula.api as smf
 import pingouin as pg 
 from matplotlib.patches import Patch
-
 import seaborn as sns
-colors_palette = ["#F2857D","#7EBDC3","#9ED9A3","#F5B971"]
-sns.set_palette(colors_palette)
+from scipy.stats import pearsonr
+from scipy.stats import ttest_1samp, ttest_rel
+from scipy.stats import gaussian_kde
+from matplotlib.patches import Polygon
 
-# set working directory
+
+# %%
+# colors 
+color_dict = {
+    "semantic": "#EF5350", 
+    "visual": "#26C6DA", 
+    "mixed": "#76FF7A", 
+    "difference": "#BDBDBD",
+}
+
+colors_palette = list(color_dict.values())
+sns.set_palette(colors_palette)
+sns.set_theme(style="ticks")
+
+# %%
+#  set directories
 script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(os.path.dirname(script_dir))
 
-save=False
-# %% 
+save=True
 results_dir = "./results/v1_frequentist"
 figures_dir = "./figures/v1_final"
 
 # %%
-# load data - visual vs. semantic
-vs_data = pd.read_csv("./output_data/aggregated/aggregated_v1_vs.csv")
-mixed_data = pd.read_csv("./output_data/aggregated/aggregated_v1_mixed.csv")
 
-# exclude bad sessions
-with open("./output_data/excluded_sessions/exclude_sessions_v1.json", "r") as file:
-    excluded = json.load(file)["to_exclude"]
+def load_data():
+    # load data - visual vs. semantic
+    vs_data = pd.read_csv("./output_data/aggregated/aggregated_v1_vs.csv")
+    mixed_data = pd.read_csv("./output_data/aggregated/aggregated_v1_mixed.csv")
 
-vs_data = vs_data.loc[~vs_data.session_id.isin(excluded)]
-mixed_data = mixed_data.loc[~mixed_data.session_id.isin(excluded)]
+    # exclude bad sessions
+    with open("./output_data/excluded_sessions/exclude_sessions_v1.json", "r") as file:
+        excluded = json.load(file)["to_exclude"]
 
-print("n = ", vs_data.session_id.nunique())
+    vs_data = vs_data.loc[~vs_data.session_id.isin(excluded)]
+    mixed_data = mixed_data.loc[~mixed_data.session_id.isin(excluded)]
 
-# %%
-# quick check - accuracy
-box = sns.boxplot(
-    data=vs_data, 
-    x="time", 
-    y="accuracy", 
-    hue="condition_name", 
-    native_scale=True,
-    palette=colors_palette[:2],
-    showmeans = True,
-    medianprops={'color': 'red', 'linewidth': 2},
-    meanprops={'marker': 'o', 'markerfacecolor': 'red', 'markeredgecolor': 'white'}
+    # concat data files
+    vs_data["p"] = vs_data["accuracy"]
+    mixed_data["p"] = mixed_data["percent_semantic"]
+
+    rel_cols = ["session_id", "time", "condition_name", "condition", "dprime", "p"]
+    complete_data = pd.concat([vs_data[rel_cols], mixed_data[rel_cols]])
+
+    complete_data = complete_data.assign(
+        condition_name = pd.Categorical(
+            complete_data.condition_name,
+            categories=['visual', 'semantic', 'mixed'],  
+            ordered=True
+        ),
+        encoding_time = pd.Categorical(
+            complete_data.time.map({.4: "short", 2.: "long"}),
+            categories=['short', 'long'],  
+            ordered=True
+        )
     )
-box.grid(alpha=.3)
-box.set_xticks([.4,2])
-box.set_title("Visual vs Semantic Condition")
+    return complete_data
+
+complete_data = load_data()
+print("Total n = ", complete_data.session_id.nunique())
 
 # %% 
-# dprime plot 
-outname = "dprime_visual_semantic"
-
-sns.set_theme(style="whitegrid")
-plt.figure(figsize=(6, 4))
-bar = sns.barplot(
-    data=vs_data, 
-    x="time", 
-    y="dprime", 
-    hue="condition_name", 
-    native_scale=True,
-    palette=colors_palette[:2],
-    errorbar=("ci", 95),
-    edgecolor="white",
-    linewidth=1.5,
-    width=0.8,
-    capsize=0.1,          # adds caps to error bars
-    err_kws={"linewidth": 1.5}
-)
-
-bar.set_xlabel("Encoding Time (s)", fontsize=11)
-bar.set_ylabel("d'", fontsize=11)
-bar.set_xticks([0.4, 2])
-bar.set_xticklabels(["0.4", "2.0"])
-bar.yaxis.grid(True, alpha=0.7)
-bar.xaxis.grid(False)
-bar.set_axisbelow(True)
-bar.legend(frameon=True, fancybox=False, edgecolor="gray")
-sns.despine()
-plt.tight_layout()
-
-
-plt.show()
-
-# save 
-if save: 
-    plt.savefig(f"figures/v1_final/{outname}.pdf", bbox_inches="tight", facecolor="white")
-    vs_data[["session_id", "time", "dprime", "condition_name"]].to_csv(f"figures/v1_final/{outname}.csv", index=False)
-
-
-# %%
-# test interaction
-# set the order of conditions 
-vs_data = vs_data.assign(
-    condition_name = pd.Categorical(
-        vs_data.condition_name,
-        categories=['visual', 'semantic'],  
-        ordered=True
-    ),
-    encoding_time = pd.Categorical(
-        vs_data["time"].map({.4: "short", 2.: "long"}),
-        categories=['short', 'long'],  
-        ordered=True
-    )
-)
-
-# %% 
+# Test VISUAL vs SEMANTIC 
 # 1. Repeated measures ANOVA
 rm_anova = pg.rm_anova(
-    data=vs_data, 
+    data=complete_data.loc[complete_data.condition!=0], 
     dv='dprime', 
     within=['condition_name', 'encoding_time'],
     subject='session_id'
     )
+print("\n##### ANOVA #####\n", rm_anova)
 
 # 2. Post-hoc pairwise comparisons with Cohen's d
 posthocs = pg.pairwise_tests(
-    data=vs_data, 
+    data=complete_data.loc[complete_data.condition!=0], 
     dv='dprime',
     within=['condition_name', 'encoding_time'],
     subject='session_id',
     effsize='cohen'
     )
+print("\n##### POSTHOC #####\n", posthocs)
 
 # 3. Save results
+outname = "deprime_memory"
 if save:
-    rm_anova.to_csv(f'results/v1/{outname}_rm_anova.csv')
+    rm_anova.to_csv(f'results/v1/{outname}_anova.csv')
     posthocs.to_csv(f'results/v1/{outname}_posthocs.csv')
 
 # %%
-## difference of differences 
-pivot_df = (vs_data
-    .pivot(
-        index="session_id", 
-        columns=("condition_name", "encoding_time"), 
-        values="dprime"
-        )
-    .assign(
-        semantic_difference = lambda d: d[("semantic","long")]-d[("semantic","short")],
-        visual_difference = lambda d: d[("visual","long")]-d[("visual","short")]
-    )
-    .assign(
-        difference_of_differences = lambda d: d["semantic_difference"]-d["visual_difference"]
-    )
-)
-
-fig, ax = plt.subplots()
-sns.boxplot(
-    data=pivot_df, 
-    y="difference_of_differences",
-    ax=ax,
-    color="white"
-)
-
-sns.stripplot(
-    data=pivot_df, 
-    y="difference_of_differences",
-    ax=ax,
-    color=colors_palette[3]
-)
-
-ax.axhline(0, linestyle="--", color="k")
-
-# model = smf.ols('difference_of_differences ~ 1', data=pivot_df).fit()
-# print(model.summary())
-
-# %% 
-# mixed trials
-plt.figure()
-box = sns.boxplot(
-    data=mixed_data, 
+# plot INTERACTION semantic and visual
+plt.figure(figsize=(4,4))
+point = sns.pointplot(
+    data=complete_data.loc[complete_data.condition!=0], 
     x="time", 
     y="dprime", 
-    # errorbar=("ci", 95),
-    native_scale=True,
-    color=colors_palette[2],
-    )
-box.set_xticks([.4,2])
-box.set_title("Mixed Condition")
-
-# %%
-sns.set_theme(style="whitegrid")
-outname_dc = "dprime_direct_comparison"
-
-plt.figure(figsize=(6, 4))
-bar = sns.barplot(
-    data=mixed_data,
-    x="time",
-    y="dprime",
+    hue="condition_name", 
+    hue_order= ["semantic", "visual"],
+    palette=color_dict,
     errorbar=("ci", 95),
-    native_scale=True,
-    color=colors_palette[2],
-    edgecolor="white",
-    linewidth=1.5,
-    width=0.8,
-    capsize=0.1,
-    err_kws={"linewidth": 1.5}
+    dodge=0.1,
+    markers="o",
+    linestyles="-",
+    capsize=0.1,              # same as barplot
+    err_kws={"linewidth": 1.5},  # same as barplot
+    legend=False
 )
 
-bar.set_xlabel("Encoding Time (s)", fontsize=11)
-bar.set_ylabel("dprime", fontsize=11)
-bar.set_xticks([0.4, 2])
-bar.set_xticklabels(["0.4", "2.0"])
-bar.set_ylim(-.2, 1.2)
-bar.axhline(0, linestyle="--", color="k", alpha=0.5)
-bar.yaxis.grid(True, alpha=0.7)
-bar.xaxis.grid(False)
-
-legend_elements = [Patch(facecolor=colors_palette[2], edgecolor='white', label='direct comparison')]
-bar.legend(handles=legend_elements, frameon=True, fancybox=False, edgecolor="gray")
-bar.set_axisbelow(True)
-
-sns.despine()
-plt.tight_layout()
+point.set_ylim(bottom=0.2, top=1.2)
+outname = "interaction_plot"
 
 # save 
-plt.show()
+if save: 
+    plt.savefig(f"figures/v1_final/{outname}.pdf", bbox_inches="tight", facecolor="white")
+    complete_data.to_csv(f"figures/v1_final/{outname}.csv", index=False)
 
+# %%
+# test SEMANTIC vs DISTRACTOR / VISUAL
+# 1. Repeated measures ANOVA
+rm_anova = pg.rm_anova(
+    data=complete_data.loc[complete_data.condition_name!="visual"], 
+    dv='dprime', 
+    within=['condition_name', 'encoding_time'],
+    subject='session_id'
+    )
+print("\n##### ANOVA #####\n", rm_anova)
+
+# 2. Post-hoc pairwise comparisons with Cohen's d
+posthocs = pg.pairwise_tests(
+    data=complete_data.loc[complete_data.condition_name!="visual"], 
+    dv='dprime',
+    within=['condition_name', 'encoding_time'],
+    subject='session_id',
+    effsize='cohen'
+    )
+print("\n##### POSTHOC #####\n", posthocs)
+
+# 3. Save results
+outname = "deprime_semantic_memory"
 if save:
-    plt.savefig(f"figures/v1_final/{outname_dc}.pdf", bbox_inches="tight", facecolor="white")
-# %%
-# test difference in the mixed condition
-mixed_data["time_condition"] = mixed_data.encoding_time.map({400:"short", 2000:"long"})
-
-
-# same with scipy stats
-cond1 = mixed_data[mixed_data['time_condition'] == 'short']['dprime']
-cond2 = mixed_data[mixed_data['time_condition'] == 'long']['dprime']
-
-ttest = pg.ttest(cond2, cond1, paired=True)
-ttest.to_csv(f'results/v1/{outname_dc}_ttest.csv')
-
+    rm_anova.to_csv(f'results/v1/{outname}_anova.csv')
+    posthocs.to_csv(f'results/v1/{outname}_posthocs.csv')
 
 # %%
-
-vs_data_c = vs_data[["accuracy", "dprime", "encoding_time", "condition_name", "condition", "session_id"]].rename(columns=dict(accuracy="p"))
-mixed_data_c = mixed_data[["percent_semantic", "dprime", "encoding_time", "condition_name", "condition", "session_id"]].rename(columns=dict(percent_semantic="p"))
-
-complete_data = pd.concat([vs_data_c, mixed_data_c]).pivot(index=["encoding_time", "session_id"], values="dprime", columns="condition_name").reset_index()
-complete_data["predicted"] = complete_data["semantic"]- complete_data["visual"]
-complete_data["observed"] = complete_data["mixed"]
-complete_data["delta"] = complete_data["observed"] - complete_data["predicted"]
-
-
-# %% 
-# plotting
-
-from scipy.stats import gaussian_kde
-from matplotlib.patches import Polygon
-
-fig, ax = plt.subplots(figsize=(7, 7))
-
-encoding_times = sorted(complete_data["encoding_time"].unique())
-palette = {encoding_times[0]: "#9ED9A3",
-           encoding_times[1]: "#F5B971"}
-
-sns.scatterplot(
-    data=complete_data,
-    x="predicted",
-    y="observed",
-    hue="encoding_time",
-    palette=palette,
-    ax=ax
+# plot SEMANTIC MAIN effect
+plt.figure(figsize=(4,4))
+point = sns.pointplot(
+    data=complete_data.loc[complete_data.condition_name!="visual"], 
+    x="time", 
+    y="dprime", 
+    hue="condition_name", 
+    hue_order= ["semantic", "mixed"],
+    palette=color_dict,
+    errorbar=("ci", 95),
+    dodge=0.1,
+    markers="o",
+    linestyles="-",
+    capsize=0,             
+    err_kws={"linewidth": 2},
+    legend=False
 )
 
-ax.axline((0, 0), slope=1, color="gray", linestyle="--", linewidth=1, zorder=0)
-lw = .6
-ax.axline((0, 0.5), slope=1, color="gray", linestyle=":", linewidth=lw, zorder=0)
-ax.axline((0, -0.5), slope=1, color="gray", linestyle=":", linewidth=lw, zorder=0)
-ax.axline((0, -1.), slope=1, color="gray", linestyle=":", linewidth=lw, zorder=0)
-ax.axline((0, 1.), slope=1, color="gray", linestyle=":", linewidth=lw, zorder=0)
+point.set_ylim(bottom=-0.2, top=1.2)
+outname = "semantic_plot"
 
-lims = [min(ax.get_xlim()[0], ax.get_ylim()[0]),
-        max(ax.get_xlim()[1], ax.get_ylim()[1])]
-ax.set_xlim(lims)
-ax.set_ylim(lims)
-ax.set_aspect("equal", adjustable="box")
+save = True 
+if save: 
+    plt.savefig(f"figures/v1_final/{outname}.pdf", bbox_inches="tight", facecolor="white")
 
-# KDE perpendicular to diagonal, split by encoding_time
-center = (lims[0] + lims[1]) / 2 + (lims[1] - lims[0]) * 0.2  # shift toward upper right
+# %% 
+# TEST ADDITIVITY
+additivity_data_wide = complete_data.pivot(
+    index=["encoding_time", "time", "session_id"], 
+    values="dprime", 
+    columns="condition_name"
+    ).reset_index()
 
-for enc_time in encoding_times:
-    delta = complete_data.loc[complete_data["encoding_time"] == enc_time, "delta"].dropna()
-    kde = gaussian_kde(delta)
-    delta_range = np.linspace(delta.min(), delta.max(), 200)
-    density = kde(delta_range)
-    density_scaled = density / density.max() * (lims[1] - lims[0]) * 0.15
+additivity_data_wide["difference"] = additivity_data_wide["semantic"] - additivity_data_wide["visual"]
+
+additivity_data = additivity_data_wide.melt(
+    id_vars=["encoding_time", "time", "session_id"], 
+    value_vars=["difference", "mixed"], 
+    value_name="dprime"
+    )
+
+# test SEMANTIC vs DISTRACTOR / VISUAL
+# 1. Repeated measures ANOVA
+rm_anova = pg.rm_anova(
+    data=additivity_data, 
+    dv='dprime', 
+    within=['condition_name', 'encoding_time'],
+    subject='session_id'
+    )
+print("\n##### ANOVA #####\n", rm_anova)
+
+# 2. Post-hoc pairwise comparisons with Cohen's d
+posthocs = pg.pairwise_tests(
+    data=additivity_data,
+    dv='dprime',
+    within=['condition_name', 'encoding_time'],
+    subject='session_id',
+    effsize='cohen'
+    )
+print("\n##### POSTHOC #####\n", posthocs)
+
+# 3. Save results
+outname = "deprime_additivity"
+if save:
+    rm_anova.to_csv(f'results/v1/{outname}_anova.csv')
+    posthocs.to_csv(f'results/v1/{outname}_posthocs.csv')
+
+# 4. plot
+plt.figure(figsize=(4,4))
+point = sns.pointplot(
+    data=additivity_data,
+    x="time", 
+    y="dprime", 
+    hue="condition_name", 
+    palette=color_dict,
+    errorbar=("ci", 95),
+    dodge=0.1,
+    markers="o",
+    linestyles="-",
+    capsize=0,              
+    err_kws={"linewidth": 2},  
+    legend=False
+)
+
+# %%
+# regressing the direct dprime on the other two
+# Multiple regression: observed ~ semantic + visual + intercept 
+# the intercept is basically accounting for the bias
+import statsmodels.formula.api as smf
+
+additivity_agg = additivity_data_wide.groupby("session_id")[["semantic", "visual", "mixed", "difference"]].mean().reset_index()
+model = smf.ols("mixed ~ semantic + visual", data=additivity_agg).fit()
+print(model.summary())
+
+# Marginal effects plots
+fig, ax = plt.subplot_mosaic("MVS", figsize=(12,4), sharey=True)
+
+x_lims = [-1.,1.5]
+additivity_agg["error"] = additivity_agg["mixed"] - additivity_agg["difference"]
+ax["M"].scatter(
+    additivity_agg["difference"], 
+    additivity_agg["mixed"], 
+    c=color_dict["mixed"], 
+    edgecolor="k", 
+    linewidth=.1, 
+    s=100
+    )
+
+sns.kdeplot(
+    x=additivity_agg["difference"],
+    y=additivity_agg["mixed"],
+    ax=ax["M"],
+    levels=4,           # number of contour levels
+    color="black",      # or use cmap="Blues" for filled
+    linewidths=1,
+    alpha=0.3,
+    thresh=0.2,
+    bw_adjust=1.5,
+    zorder=0
+)
+
+ax["M"].axline(
+    (0, 0), 
+    slope=1, 
+    color="k", 
+    alpha=0.3, 
+    linestyle="--", 
+    linewidth=.8, 
+    zorder=0
+)
+
+ax["M"].set_xlim(*x_lims)
+ax["M"].set_ylim(*x_lims)
+
+ax["M"].scatter(
+    additivity_agg["difference"].mean(), 
+    additivity_agg["mixed"].mean(), 
+    c='k', 
+    s=100,
+    marker='x'
+    )
 
 
-    # Mark the mean
-    mean_delta = delta.mean()
-    mean_x = center - mean_delta / 2
-    mean_y = center + mean_delta / 2
-    ax.plot(mean_x, mean_y, marker=(2, 0, -45), color=palette[enc_time], markersize=12, markeredgewidth=2)
+for i, var1 in zip("VS", ["semantic", "visual"]):
+    var2 = "visual" if var1 == "semantic" else "semantic"
 
-    # Build polygon coordinates
-    x_base = center - delta_range / 2
-    y_base = center + delta_range / 2
-    x_density = x_base + density_scaled / np.sqrt(2)
-    y_density = y_base + density_scaled / np.sqrt(2)
+    x_range = np.linspace(additivity_agg[var1].min(),additivity_agg[var1].max(), 100)
+    pred_data = pd.DataFrame({var1: x_range, var2: additivity_agg[var2].mean()})
+    pred_data["predicted"] = model.predict(pred_data)
 
-    poly_x = np.concatenate([x_base, x_density[::-1]])
-    poly_y = np.concatenate([y_base, y_density[::-1]])
-    polygon = Polygon(np.column_stack([poly_x, poly_y]),
-                      facecolor="none", edgecolor=palette[enc_time], linewidth=1.5, zorder=10)
-    ax.add_patch(polygon)
+    ax[i].scatter(
+        additivity_agg[var1], 
+        additivity_agg["mixed"], 
+        c=color_dict[var1], 
+        edgecolor="k", 
+        linewidth=.1, 
+        s=100
+    )
+    ax[i].plot(
+        x_range, 
+        pred_data["predicted"], 
+        color=color_dict[var1], 
+        linewidth=3, 
+    )
 
+    ax[i].set_xlabel(f"dprime_{var1}")
+
+plt.tight_layout()
+
+
+save = True
+outname = "additivity_plot"
+if save: 
+    plt.savefig(f"figures/v1_final/{outname}.pdf", bbox_inches="tight", facecolor="white")
 
 # %%

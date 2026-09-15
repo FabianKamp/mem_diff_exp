@@ -107,4 +107,4 @@ ax2.set_yticks([])
 fig2.savefig('../figures/explanatory/experiment_idea_1d.svg', bbox_inches='tight')
 plt.show()
 
-# %%
+ # %%

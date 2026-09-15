@@ -12,7 +12,10 @@ import textwrap
 #%% 
 # variable set up
 wave_code = "M-V1"
-subject_ids = np.arange(1,100) #[2,3,4,5,6,7,9,10,11,21,22,23]
+subject_ids = np.arange(1,120) #[2,3,4,5,6,7,9,10,11,21,22,23]
+
+# exclude 34
+subject_ids = subject_ids[subject_ids!=34]
 
 all_figures = []
 save = True
@@ -110,7 +113,7 @@ for sid, session_feedback in feedback_data.groupby("session_id"):
         text = "   ".join([sid, feedback])
         wrapped = textwrap.fill(text, width=80)  
         ax.text(0.05, text_pos, wrapped, transform=ax.transAxes, fontsize=9, verticalalignment='top')
-        text_pos -= 0.03 * (wrapped.count('\n') + 1) 
+        text_pos -= 0.05 * (wrapped.count('\n') + 1) 
 
 ax.axis('off')  
 all_figures.append(fig)
@@ -149,21 +152,28 @@ for session, subdata in all_data.groupby("session_id"):
     wm_trials = subdata.loc[(subdata.trial_type == "wm")]
     lm_trials = subdata.loc[(subdata.trial_type == "lm")]
     
-    time_dict = dict(
-        session_id = session, 
-        instruction = np.round(wm_trials.time_elapsed.iloc[0]/60e3), 
-        WM = np.round((wm_trials.time_elapsed.iloc[-1]-wm_trials.time_elapsed.iloc[0])/60e3),
-        LM = np.round((lm_trials.time_elapsed.iloc[-1]-lm_trials.time_elapsed.iloc[0])/60e3),
-        total = np.round(subdata.time_elapsed.iloc[-1]/60e3)
-        )
+    try:
+        time_dict = dict(
+            session_id = session, 
+            instruction = np.round(wm_trials.time_elapsed.iloc[0]/60e3), 
+            WM = np.round((wm_trials.time_elapsed.iloc[-1]-wm_trials.time_elapsed.iloc[0])/60e3),
+            LM = np.round((lm_trials.time_elapsed.iloc[-1]-lm_trials.time_elapsed.iloc[0])/60e3),
+            total = np.round(subdata.time_elapsed.iloc[-1]/60e3)
+            )
 
-    results.append(time_dict)
+        results.append(time_dict)
+
+    except: 
+        print(f"Error processing {session}")
+
 
 results = pd.DataFrame(results).melt(
     id_vars="session_id", 
     var_name="section", 
     value_name="duration"
     )
+
+print(results.groupby("section").median("duration"))
 
 fig, ax = plt.subplots(
     1,
@@ -193,7 +203,7 @@ all_figures.append(fig)
 
 # %% 
 # time outs
-missing_data = []
+time_outs = []
 
 i = 0 
 for session, outdata in all_data.groupby("session_id"):  
@@ -201,13 +211,13 @@ for session, outdata in all_data.groupby("session_id"):
     missing = dict(
         session_id = session,
         timed_out = outdata.timed_out.astype(int).sum())
-    missing_data.append(missing)
+    time_outs.append(missing)
     print(session)
-missing_data = pd.DataFrame(missing_data)
+time_outs = pd.DataFrame(time_outs)
 
 fig, ax = plt.subplots(constrained_layout=True)
 bar = sns.barplot(
-    data=missing_data,
+    data=time_outs.loc[time_outs.timed_out>0],
     x="session_id",
     y="timed_out",
     color="w",
@@ -237,16 +247,21 @@ for session, outdata in all_data.groupby("session_id"):
     
     ncatch = len(catch_trials)
     accuracy = (catch_trials.correct.sum()/ncatch)
+    errors = (ncatch-catch_trials.correct.sum())
     if accuracy<.8: print(f"Warning: {session} - {accuracy}")
     
-    attention_accuracy.append(accuracy)
+    attention_accuracy.append(dict(
+        session_id = session,
+        accuracy = accuracy,
+        errors = errors
+    ))
 
+attention_checks = pd.DataFrame(attention_accuracy)
 fig, ax = plt.subplots(constrained_layout=True)
-session_ids = all_data.loc[~all_data.session_id.isna(), "session_id"].unique().astype(str)
-
 bar = sns.barplot(
-    x=session_ids,
-    y=attention_accuracy, 
+    data=attention_checks.loc[attention_checks.accuracy<1],
+    x="session_id",
+    y="errors", 
     color="w",
     edgecolor="k",
     ax=ax
@@ -268,7 +283,7 @@ for file in record_files:
 all_records = pd.concat(all_records)
 all_records["session_id"] = all_records.session_id.str.rstrip("_browser_record")
 
-i, results = 0, []
+i, browser_counts = 0, []
 for session, records in all_records.groupby("session_id"): 
     records = records.loc[records.trial>1]
     
@@ -277,24 +292,40 @@ for session, records in all_records.groupby("session_id"):
     
     count_df = records.groupby("event").trial.count().reset_index()
     count_df = count_df.rename(columns={"trial":"count"})
-    count_df["subject_id"] = session
+    count_df["session_id"] = session
     count_df["time_other_window"] = time_other_window
     
-    results.append(count_df)
+    browser_counts.append(count_df)
 
-results = pd.concat(results)
-results = results.loc[results.event=="blur"]
+browser_counts = (
+    pd.concat(browser_counts)
+    .pivot(index="session_id", columns="event",values="count")
+    .reset_index()
+)
 
 fig, ax = plt.subplots(constrained_layout=True)
 sns.barplot(
-    data=results, 
-    y="count", 
-    x="subject_id", 
+    data=browser_counts, 
+    y="blur", 
+    x="session_id", 
     facecolor="none",
     edgecolor="black",
     ax=ax, 
     legend=False)
-ax.set_ylabel("Count of tasks events")
+ax.tick_params(axis='x', labelrotation=90)
+
+fig, ax = plt.subplots(constrained_layout=True)
+sns.barplot(
+    data=browser_counts, 
+    y="fullscreenexit", 
+    x="session_id", 
+    facecolor="none",
+    edgecolor="black",
+    ax=ax, 
+    legend=False)
+ax.tick_params(axis='x', labelrotation=90)
+
+
 all_figures.append(fig)
 
 # %% 
@@ -302,7 +333,6 @@ all_figures.append(fig)
 wm_rt =[]
 
 for session_id, sub_data in all_data.groupby("session_id"):
-    session_id = str(int(session_id.split("-")[-2]))
     # wm
     wm_times = sub_data.loc[
         (sub_data.trial_type=="wm") & 
@@ -349,6 +379,7 @@ ax.axhline(10, linestyle=":", c="k", alpha=.5)
 ax.axhline(5, linestyle=":", c="k", alpha=.5)
 ax.set_ylabel("Reaction times")
 ax.set_ylabel("")
+ax.set_xticklabels(ax.get_xticklabels(), rotation=90, ha='right')
 
 all_figures.append(fig)
 
@@ -384,42 +415,38 @@ results = {
 }
 
 fig, ax = plt.subplots(
-    1,2,
     constrained_layout=True, 
     sharey=True,
     figsize=(12,5)
     )
 
-for i, el in enumerate(results.items()):
-    bars = sns.barplot(
-        data=el[1], 
-        x="session_id", 
-        y="trial_time",
-        color="w",
-        edgecolor="k",
-        errorbar=None,
-        ax=ax[i]
-    )
+bars = sns.barplot(
+    data=results["preload time"], 
+    x="session_id", 
+    y="trial_time",
+    color="w",
+    edgecolor="k",
+    errorbar=None,
+    ax=ax
+)
 
-    scatter = sns.scatterplot(
-        data=el[1],
-        x="session_id",
-        y="trial_time",
-        size=1,
-        legend=False,
-        facecolor='none',
-        edgecolor='grey',
-        ax=ax[i]
-    )
+scatter = sns.scatterplot(
+    data=results["preload time"], 
+    x="session_id",
+    y="trial_time",
+    size=1,
+    legend=False,
+    facecolor='none',
+    edgecolor='grey',
+    ax=ax
+)
 
-    ax[i].set_title(el[0].title())
-    ax[i].axhline(30)
-    ax[i].axhline(20, linestyle=":", c="k", alpha=.5)
-    ax[i].axhline(10, linestyle=":", c="k", alpha=.5)
-    ax[i].axhline(2., linestyle=":", c="k", alpha=.5)
-    ax[i].set_ylabel("Trial times")
-    ax[i].set_ylabel("")
-
+ax.set_title("Preload Time")
+ax.set_xticklabels(ax.get_xticklabels(), rotation=90, ha='right')
+ax.axhline(15, linestyle=":", c="k", alpha=.5)
+ax.axhline(10, linestyle=":", c="k", alpha=.5)
+ax.axhline(5, linestyle=":", c="k", alpha=.5)
+ax.axhline(2, linestyle=":", c="k", alpha=.5)
 all_figures.append(fig)
 
 # %% 
@@ -501,6 +528,21 @@ all_figures.append(fig)
 
 # _ = [ax.remove() for ax in fax[i:]]
 # all_figures.append(fig)
+
+# %% 
+# aggregate into data quality file
+data_quality = (time_outs
+    .merge(attention_checks, on="session_id", how="outer")
+    .rename(columns=dict(
+        timed_out = "time_outs",
+        accuracy = "attention_check_accuracy", 
+        errors = "attention_check_errors"
+        ))
+    .merge(browser_counts[["session_id", "blur", "fullscreenexit"]], on="session_id", how="outer")
+    .fillna(0)
+)
+data_quality.to_csv(f"./output_data/data_quality/qc_{wave_code}.csv", index=False)
+
 # %%
 # save
 if save:
@@ -508,3 +550,5 @@ if save:
     with PdfPages(pdf_file) as pdf:
         for f in all_figures:
             pdf.savefig(f)
+
+# %%

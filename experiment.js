@@ -1,6 +1,6 @@
 async function createTimeline(jsPsych){
     // load session/subject/wave id
-    const session_id = jsPsych.data.getURLVariable('sid') ||  "M-V1-999-A"
+    const session_id = jsPsych.data.getURLVariable('sid') ||  "M-V2-999-A"
     var [version_id, wave_id, subject_id, backup] = session_id.split('-');  
     subject_id = parseInt(subject_id, 10);
 
@@ -38,6 +38,12 @@ async function createTimeline(jsPsych){
     if (version_id == 'M') {
         console.log("starting memory task")
 
+        // Determine task version: V1 = original, V2 = retro-cue
+        const isRetroCue = wave_id.includes("V2");
+        const createWMTask = isRetroCue ? createRetroCueWM : createWM;
+        const createWMInstr = isRetroCue ? createRetroCueInstructions : createWMInstructions;
+        console.log("Task version:", isRetroCue ? "V2 (retro-cue)" : "V1 (original)");
+
         // split data into practice, wm and lm task
         var practice_input_data = input_data.filter((trial) => trial.trial_type === "practice");
         var wm_input_data = input_data.filter((trial) => trial.trial_type === "wm" || trial.trial_type === "catch");
@@ -64,7 +70,7 @@ async function createTimeline(jsPsych){
         experiment_timeline.push({
             timeline: [
                 createCaptcha(),
-                createDemographics(), 
+                createDemographics(),
                 botCheck(jsPsych)
             ],
             name: 'demographics'
@@ -74,7 +80,7 @@ async function createTimeline(jsPsych){
         experiment_timeline.push({
             timeline: [
                 checkTime(jsPsych, 15),
-                createWMInstructions()
+                createWMInstr()
             ],
             name: 'wm_instructions'
         })
@@ -85,7 +91,7 @@ async function createTimeline(jsPsych){
                 startingWMPractice(),
                 fullscreen_tracker.check(),
                 countdown(3),
-                createWM(practice_input_data, jsPsych)
+                createWMTask(practice_input_data, jsPsych)
             ],
             name: 'wm_practice'
         })
@@ -97,7 +103,7 @@ async function createTimeline(jsPsych){
                 preloadBlock(wm_input_data_block1, jsPsych),
                 fullscreen_tracker.check(),
                 countdown(3),
-                createWM(wm_input_data_block1, jsPsych)
+                createWMTask(wm_input_data_block1, jsPsych)
             ],
             name: "wm_block_1"
         })
@@ -110,7 +116,7 @@ async function createTimeline(jsPsych){
                 preloadBlock(wm_input_data_block2, jsPsych),
                 fullscreen_tracker.check(),
                 countdown(3),
-                createWM(wm_input_data_block2, jsPsych),
+                createWMTask(wm_input_data_block2, jsPsych),
             ],
             name: "wm_block_2"
         })
@@ -123,7 +129,7 @@ async function createTimeline(jsPsych){
                 preloadBlock(wm_input_data_block3, jsPsych),
                 fullscreen_tracker.check(),
                 countdown(3),
-                createWM(wm_input_data_block3, jsPsych),
+                createWMTask(wm_input_data_block3, jsPsych),
             ],
             name: "wm_block_3"
         })
