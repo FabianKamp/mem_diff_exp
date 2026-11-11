@@ -18,10 +18,10 @@ from matplotlib.patches import Polygon
 # %%
 # colors 
 color_dict = {
-    "semantic": "#EF5350", 
-    "visual": "#26C6DA", 
-    "mixed": "#76FF7A", 
-    "difference": "#BDBDBD",
+    "semantic": "#E69F00", 
+    "visual": "#0072B2", 
+    "mixed": "#009E73", 
+    "difference": "#000000",
 }
 
 colors_palette = list(color_dict.values())
@@ -33,7 +33,7 @@ sns.set_theme(style="ticks")
 script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(os.path.dirname(script_dir))
 
-save=True
+save=False
 results_dir = "./results/v1_frequentist"
 figures_dir = "./figures/v1_final"
 
@@ -103,7 +103,7 @@ if save:
     posthocs.to_csv(f'results/v1/{outname}_posthocs.csv')
 
 # %%
-# plot INTERACTION semantic and visual
+# plot INTERACTION semantic and visual ()
 plt.figure(figsize=(4,4))
 point = sns.pointplot(
     data=complete_data.loc[complete_data.condition!=0], 
@@ -121,13 +121,56 @@ point = sns.pointplot(
     legend=False
 )
 
+
 point.set_ylim(bottom=0.2, top=1.2)
 outname = "interaction_plot"
 
 # save 
-if save: 
+if save:
     plt.savefig(f"figures/v1_final/{outname}.pdf", bbox_inches="tight", facecolor="white")
     complete_data.to_csv(f"figures/v1_final/{outname}.csv", index=False)
+
+# %%
+# plot INTERACTION 
+# as horizontal barplot with FacetGrid (long | short)
+
+g = sns.FacetGrid(
+    data=complete_data,
+    col="encoding_time",
+    col_order=["long", "short"],
+    height=3,
+    aspect=1,
+    sharex=True,
+    sharey=True
+)
+
+g.map_dataframe(
+    sns.barplot,
+    x="p",
+    y="condition_name",
+    order=["semantic", "visual", "mixed"],
+    # hue="condition_name",
+    hue_order=["semantic", "visual", "mixed"],
+    palette=color_dict,
+    errorbar=("ci", 95),
+    capsize=0.1,
+    err_kws={"linewidth": 1.5},
+    orient="h",
+    legend=False
+)
+
+g.set_xlabels("dprime")
+g.set_ylabels("condition")
+# g.set(xlim=(-0.2, 1.2))
+# g.set(xlim=(0.4, .8))
+g.set_titles(col_template="{col_name}")
+outname = "interaction_barplot"
+
+
+# save
+save=False
+if save:
+    g.savefig(f"figures/v1_final/{outname}.pdf", bbox_inches="tight", facecolor="white")
 
 # %%
 # test SEMANTIC vs DISTRACTOR / VISUAL
@@ -178,7 +221,6 @@ point = sns.pointplot(
 point.set_ylim(bottom=-0.2, top=1.2)
 outname = "semantic_plot"
 
-save = True 
 if save: 
     plt.savefig(f"figures/v1_final/{outname}.pdf", bbox_inches="tight", facecolor="white")
 

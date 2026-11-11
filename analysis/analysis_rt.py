@@ -8,15 +8,64 @@ import matplotlib.pyplot as plt
 import statsmodels.formula.api as smf
 from scipy.stats import ttest_rel
 import pingouin as pg 
-
-
 import seaborn as sns
-colors_palette = ["#F2857D","#7EBDC3","#9ED9A3","#F5B971"]
-sns.set_palette(colors_palette)
 
+# %% 
+# colors 
+color_dict = {
+    "semantic": "#E69F00", 
+    "visual": "#0072B2", 
+    "mixed": "#009E73", 
+    "difference": "#000000",
+}
+
+colors_palette = list(color_dict.values())
+sns.set_palette(colors_palette)
+sns.set_theme(style="ticks")
+
+# %%
 # set working directory
 script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(os.path.dirname(script_dir))
+
+# %%
+# load data
+
+def load_data():
+    # load data - visual vs. semantic
+    vs_data = pd.read_csv("./output_data/aggregated/aggregated_v1_vs.csv")
+    mixed_data = pd.read_csv("./output_data/aggregated/aggregated_v1_mixed.csv")
+
+    # exclude bad sessions
+    with open("./output_data/excluded_sessions/exclude_sessions_v1.json", "r") as file:
+        excluded = json.load(file)["to_exclude"]
+
+    vs_data = vs_data.loc[~vs_data.session_id.isin(excluded)]
+    mixed_data = mixed_data.loc[~mixed_data.session_id.isin(excluded)]
+
+    # concat data files
+    vs_data["p"] = vs_data["accuracy"]
+    mixed_data["p"] = mixed_data["percent_semantic"]
+
+    rel_cols = ["session_id", "time", "condition_name", "condition", "dprime", "p", ""]
+    complete_data = pd.concat([vs_data[rel_cols], mixed_data[rel_cols]])
+
+    complete_data = complete_data.assign(
+        condition_name = pd.Categorical(
+            complete_data.condition_name,
+            categories=['visual', 'semantic', 'mixed'],  
+            ordered=True
+        ),
+        encoding_time = pd.Categorical(
+            complete_data.time.map({.4: "short", 2.: "long"}),
+            categories=['short', 'long'],  
+            ordered=True
+        )
+    )
+    return complete_data
+
+complete_data = load_data()
+print("Total n = ", complete_data.session_id.nunique())
 
 # %%
 vs_data = pd.read_csv("./output_data/aggregated/aggregated_v1_vs.csv")
@@ -42,11 +91,21 @@ mixed_data["response"] = mixed_data.response.str.split('_').str[1]
 # quick check 
 plt.figure()
 sns.boxplot(
-    data=vs_data, 
+    data=vs_data,
     x="time",
-    y="rt_hit_median", 
+    y="rt_hit_thresh",
     hue="condition_name",
     palette=colors_palette[:2]
+)
+sns.stripplot(
+    data=vs_data,
+    x="time",
+    y="rt_hit_thresh",
+    hue="condition_name",
+    palette=colors_palette[:2],
+    dodge=True,
+    alpha=0.6,
+    legend=False
 )
 plt.title("Median Time")
 
@@ -125,6 +184,8 @@ rm_anova = pg.rm_anova(
     within=['condition_name', 'encoding_time'],
     subject='session_id'
     )
+print(rm_anova)
+print("\n")
 
 # 2. Post-hoc pairwise comparisons with Cohen's d
 posthocs = pg.pairwise_tests(
@@ -134,6 +195,7 @@ posthocs = pg.pairwise_tests(
     subject='session_id',
     effsize='cohen'
     )
+print(posthocs)
 
 # 3. Save results
 rm_anova.to_csv(f'results/v1/{outname}_rm_anova.csv')
@@ -215,6 +277,9 @@ rm_anova = pg.rm_anova(
     subject='session_id'
     )
 
+print(rm_anova)
+print("\n")
+
 # 2. Post-hoc pairwise comparisons with Cohen's d
 posthocs = pg.pairwise_tests(
     data=mixed_data, 
@@ -223,6 +288,9 @@ posthocs = pg.pairwise_tests(
     subject='session_id',
     effsize='cohen'
     )
+
+print(posthocs)
+
 
 # 3. Save results
 rm_anova.to_csv(f'results/v1/{outname}_rm_anova.csv')

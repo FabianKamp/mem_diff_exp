@@ -15,7 +15,7 @@ plt.close()
 subject_ids = np.arange(1,25)
 
 show = True
-save = True
+save = False
 
 #%% set up colors
 colors_palette = ["#ef476f","#ffd166","#06d6a0","#118ab2","#073b4c"]

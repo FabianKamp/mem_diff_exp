@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats import norm
 
+# %%
 # set colors
 colors_palette = ["#F2857D","#7EBDC3","#9ED9A3","#F5B971"]
 sns.set_palette(colors_palette)

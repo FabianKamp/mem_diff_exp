@@ -18,9 +18,12 @@ import seaborn as sns
 
 # colors 
 color_dict = {
-    "semantic": "#EF5350", 
-    "visual": "#26C6DA", 
-    "mixed": "#76FF7A", 
+    "semantic": "#E69F00", 
+    "semantic_bc": "#E69F00", 
+    "visual": "#0072B2", 
+    "visual_bc": "#0072B2", 
+    "mixed": "#009E73", 
+    "difference": "#000000",
     "other": "#1A1A1A",
     "short": "#AB47BC",
     "long": "#FF9800",
@@ -84,7 +87,6 @@ box.set_xticks([.4,2])
 
 # %%
 # last point plot
-
 sns.set_theme(style="ticks")
 plt.figure(figsize=(6, 6))
 bar = sns.pointplot(
@@ -129,6 +131,95 @@ print(rm_anova)
 # 2. Post-hoc pairwise comparisons with Cohen's d
 posthocs = pg.pairwise_tests(
     data=lm_data, 
+    dv='dprime',
+    within=['wm_test_condition', 'encoding_time'],
+    subject='session_id',
+    effsize='cohen'
+    )
+print(posthocs)
+
+# 3. Save results
+if save: 
+    rm_anova.to_csv(f'results/v1/{outname}_rm_anova.csv')
+    posthocs.to_csv(f'results/v1/{outname}_posthocs.csv')
+
+# %% 
+# testing effect plots
+# add a column with the dprime difference to baseline
+testing_effect = lm_data[["session_id", "dprime", "wm_test_condition", "time", "encoding_time"]]
+testing_effect = testing_effect.pivot(
+    index = ["session_id", "encoding_time", "time"], 
+    columns= "wm_test_condition", 
+    values="dprime" 
+).reset_index()
+
+testing_effect["visual_bc"] = testing_effect.visual - testing_effect.not_tested
+testing_effect["semantic_bc"] = testing_effect.semantic - testing_effect.not_tested
+
+testing_effect = testing_effect.melt(
+    id_vars=["session_id", "encoding_time", "time"], 
+    value_vars=["visual_bc", "semantic_bc"], 
+    var_name="wm_test_condition", 
+    value_name="dprime"
+)
+
+testing_effect["encoding_time"] = (
+    testing_effect
+    .encoding_time
+    .map(dict(short="short encoding", long="long encoding"))
+)
+
+testing_effect["wm_test_condition"] = (
+    testing_effect
+    .wm_test_condition
+    .map(dict(semantic_bc="semantic", visual_bc="visual"))
+)
+
+g = sns.FacetGrid(
+    data=testing_effect,
+    col="encoding_time",
+    col_order=["long encoding", "short encoding"],
+    height=3,
+    aspect=1,
+    sharex=True,
+    sharey=True
+)
+
+g.map_dataframe(
+    sns.barplot,
+    x="dprime",
+    y="wm_test_condition",
+    order=["semantic", "visual"],
+    # hue="condition_name",
+    hue_order=["semantic", "visual"],
+    palette=color_dict,
+    errorbar=("ci", 95),
+    capsize=0.1,
+    err_kws={"linewidth": 1.5},
+    orient="h",
+    legend=False
+)
+
+g.set_xlabels("testing effect [delta d']")
+g.set_ylabels("wm test")
+# g.set(xlim=(-0.2, 1.2))
+# g.set(xlim=(0.4, .8))
+g.set_titles(col_template="{col_name}")
+outname = "interaction_barplot"
+
+# %% 
+# 1. Repeated measures ANOVA
+rm_anova = pg.rm_anova(
+    data=testing_effect, 
+    dv='dprime', 
+    within=['wm_test_condition', 'encoding_time'],
+    subject='session_id'
+    )
+print(rm_anova)
+print("\n\n")
+# 2. Post-hoc pairwise comparisons with Cohen's d
+posthocs = pg.pairwise_tests(
+    data=testing_effect, 
     dv='dprime',
     within=['wm_test_condition', 'encoding_time'],
     subject='session_id',

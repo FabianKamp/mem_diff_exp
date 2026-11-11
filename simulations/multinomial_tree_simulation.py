@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import pymc as pm
 import arviz as az
+import seaborn as sns
 from scipy import stats
 
 # %%
@@ -118,10 +119,10 @@ true_params = {
     "n_participants": 80,
     "n_trials": 26,
     "ms_short": 0.5,
-    "ms_long": 0.7,
-    "mv_short": 0.7,  
-    "mv_long": 0.5,   
-    "b": 0.8,
+    "ms_long": 0.8,
+    "mv_short": 0.6,  
+    "mv_long": 0.7,   
+    "b": .8,
     "sd_ms": 0.1,
     "sd_mv": 0.1,
     "sd_b": 0.1,
@@ -330,24 +331,117 @@ print(f"  c[0] (short): {(mv_short_group / ms_short_group).mean():.3f} (true: {t
 print(f"  c[1] (long):  {(mv_long_group / ms_long_group).mean():.3f} (true: {true_params['mv_long']/true_params['ms_long']:.2f})")
 
 # %%
-# Plot the key contrasts
-fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+# Plot memory parameters - crossover lineplot (vertical) using seaborn
+mu_ms = trace.posterior["mu_ms"].values
+mu_mv = trace.posterior["mu_mv"].values
+mu_b = trace.posterior["mu_b"].values
 
-# Top row: ms and mv estimates (indexed)
-az.plot_posterior(trace, var_names=["mu_ms"], ax=axes[0, 0])
-axes[0, 0].set_title("Source memory (mu_ms) - logit scale\n[0]=short, [1]=long")
+# Transform to probability scale
+ms_short = 1 / (1 + np.exp(-mu_ms[:, :, 0].flatten()))
+ms_long = 1 / (1 + np.exp(-mu_ms[:, :, 1].flatten()))
+mv_short = 1 / (1 + np.exp(-mu_mv[:, :, 0].flatten()))
+mv_long = 1 / (1 + np.exp(-mu_mv[:, :, 1].flatten()))
+b_samples = 1 / (1 + np.exp(-mu_b.flatten()))
 
-az.plot_posterior(trace, var_names=["mu_mv"], ax=axes[0, 1])
-axes[0, 1].set_title("Verbatim memory (mu_mv) - logit scale\n[0]=short, [1]=long")
+# Build DataFrame from posterior samples (ms and mv only)
+plot_df = pd.DataFrame({
+    "probability": np.concatenate([ms_long, ms_short, mv_long, mv_short]),
+    "encoding_time": (["Long"] * len(ms_long) + ["Short"] * len(ms_short) +
+                      ["Long"] * len(mv_long) + ["Short"] * len(mv_short)),
+    "parameter": (["ms (semantic)"] * (len(ms_long) + len(ms_short)) +
+                  ["mv (visual)"] * (len(mv_long) + len(mv_short)))
+})
 
-# Bottom row: c relationship and contrast
-az.plot_posterior(trace, var_names=["c_logit"], ax=axes[1, 0])
-axes[1, 0].set_title("c = logit(mv) - logit(ms)\n[0]=short, [1]=long")
+# Compute c_diff statistics for annotation
+c_diff_samples = trace.posterior["c_diff"].values.flatten()
+hdi_low, hdi_high = np.percentile(c_diff_samples, [3, 97])
+c_diff_mean = c_diff_samples.mean()
 
-az.plot_posterior(trace, var_names=["c_diff"], ax=axes[1, 1], ref_val=0)
-axes[1, 1].set_title("c_diff: (c_short - c_long)")
-axes[1, 1].axvline(x=0, color='red', linestyle='--', alpha=0.7)
+fig, ax = plt.subplots(figsize=(6, 5))
+sns.pointplot(
+    data=plot_df,
+    x="encoding_time",
+    y="probability",
+    hue="parameter",
+    order=["Long", "Short"],
+    palette={"ms (semantic)": "steelblue", "mv (visual)": "coral"},
+    dodge=0.1,
+    errorbar=("pi", 94),
+    markers="o",
+    linestyles="-",
+    ax=ax
+)
+ax.set_ylim(0.4, 1)
+ax.axhline(0.5, color='gray', linestyle='--', alpha=0.3)
+ax.set_xlabel("Encoding time")
+ax.set_ylabel("Probability")
+ax.set_title("Memory parameters: ms vs mv crossover (94% HDI)")
+ax.legend(title="Parameter", loc='best')
 
+# Add effect size annotation
+ax.text(0.5, 0.95, f"Δc = {c_diff_mean:.2f} [{hdi_low:.2f}, {hdi_high:.2f}]",
+        transform=ax.transAxes, ha='center', fontsize=10,
+        bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+
+plt.tight_layout()
+plt.show()
+
+# %%
+# Plot bias parameter separately
+b_median = np.median(b_samples)
+b_hdi = np.percentile(b_samples, [3, 97])
+
+fig, ax = plt.subplots(figsize=(3, 4))
+bias_df = pd.DataFrame({"b (bias)": b_samples})
+sns.violinplot(data=bias_df, y="b (bias)", color='seagreen', alpha=0.7, ax=ax, inner=None)
+ax.scatter(0, b_median, color='white', s=80, zorder=5, edgecolor='darkgreen', linewidth=2)
+ax.vlines(0, b_hdi[0], b_hdi[1], color='darkgreen', linewidth=3)
+ax.set_ylim(0.4, 1)
+ax.set_ylabel("Probability")
+ax.set_title(f"Bias: {b_median:.2f} [{b_hdi[0]:.2f}, {b_hdi[1]:.2f}]")
+ax.set_xticks([])
+plt.tight_layout()
+plt.show()
+
+# %%
+# Plot ratio mv/ms by encoding time
+ratio_short = mv_short / ms_short
+ratio_long = mv_long / ms_long
+
+ratio_df = pd.DataFrame({
+    "ratio": np.concatenate([ratio_long, ratio_short]),
+    "encoding_time": ["Long"] * len(ratio_long) + ["Short"] * len(ratio_short)
+})
+
+fig, ax = plt.subplots(figsize=(5, 5))
+sns.pointplot(
+    data=ratio_df,
+    x="encoding_time",
+    y="ratio",
+    order=["Long", "Short"],
+    color="purple",
+    errorbar=("pi", 94),
+    markers="o",
+    linestyles="-",
+    ax=ax
+)
+ax.axhline(1, color='gray', linestyle='--', alpha=0.5, label='mv = ms')
+ax.set_xlabel("Encoding time")
+ax.set_ylabel("Ratio (mv / ms)")
+ax.set_title("Visual/Semantic memory ratio (94% HDI)")
+
+# Add annotation with ratio values
+ratio_long_median = np.median(ratio_long)
+ratio_short_median = np.median(ratio_short)
+ratio_long_hdi = np.percentile(ratio_long, [3, 97])
+ratio_short_hdi = np.percentile(ratio_short, [3, 97])
+
+ax.text(0.02, 0.98, f"Long:  {ratio_long_median:.2f} [{ratio_long_hdi[0]:.2f}, {ratio_long_hdi[1]:.2f}]\n"
+                    f"Short: {ratio_short_median:.2f} [{ratio_short_hdi[0]:.2f}, {ratio_short_hdi[1]:.2f}]",
+        transform=ax.transAxes, va='top', fontsize=9,
+        bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+
+ax.legend(loc='lower right')
 plt.tight_layout()
 plt.show()
 

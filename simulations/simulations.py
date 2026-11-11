@@ -2,6 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+# %%
 def project_point_on_line(p, theta_deg):
     """Projects a 2D point p onto a line through the origin at theta_deg."""
     rad = np.radians(theta_deg)
@@ -88,5 +89,39 @@ with PdfPages('./figures/explanatory/decision_axis.pdf') as pdf:
 
 
 # %%
+# Percent correct to d-prime simulation
+from scipy.stats import norm
 
+# Percent correct range (must be > 0.5 for 2AFC, and < 1.0)
+pc = np.linspace(0.51, 0.90, 100)
+
+# Calculate d-prime: d' = √2 × z(Pc)
+dprime = np.sqrt(2) * norm.ppf(pc)
+
+# Calculate slope: d(d')/d(Pc) = √2 / φ(Φ⁻¹(Pc))
+slope = np.sqrt(2) / norm.pdf(norm.ppf(pc))
+
+fig, ax1 = plt.subplots(figsize=(6, 5))
+
+# Plot d-prime on left y-axis
+ax1.plot(pc * 100, dprime, linewidth=2, color='#1976D2', label="d'")
+ax1.set_xlabel('Percent Correct (%)')
+ax1.set_ylabel("d' (d-prime)", color='#1976D2')
+ax1.tick_params(axis='y', labelcolor='#1976D2')
+ax1.axhline(y=0, color='gray', linestyle='--', alpha=0.5)
+ax1.axvline(x=50, color='gray', linestyle='--', alpha=0.5)
+ax1.set_xlim(50, 90)
+
+# Plot slope on right y-axis
+ax2 = ax1.twinx()
+ax2.plot(pc * 100, slope, linewidth=2, color='#E53935', label="slope")
+ax2.set_ylabel("d(d')/d(Pc)", color='#E53935')
+ax2.tick_params(axis='y', labelcolor='#E53935')
+
+ax1.set_title("d' = √2 × Φ⁻¹(Pc) and its slope")
+ax1.grid(alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# %%
 
